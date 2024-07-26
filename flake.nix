@@ -3,16 +3,15 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
-	nixos-hardware.url = "github:nixos/nixos-hardware?ref=kernel-latest";
-	#nixos-generators.url = "";
+	#nixos-hardware.url = "github:nixos/nixos-hardware?ref=kernel-latest";
   };
 
-  outputs = { self, nixpkgs, nixos-hardware }:
-  {
-    laptop2 = "todo";
-
-    packages.x86_64-linux.default = (nixpkgs.lib.nixosSystem {
-	  modules = [];
-	});
+  outputs = inputs@{ self, nixpkgs, ... }: {
+    nixosConfigurations.laptop2 = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      modules = [
+        #./configuration.nix
+      ];
+    };
   };
 }
