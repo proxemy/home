@@ -10,7 +10,10 @@
     nixosConfigurations.laptop2 = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
-        #./configuration.nix
+		"${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal-new-kernel-no-zfs.nix"
+        "${nixpkgs}/nixos/modules/profiles/minimal.nix"
+        "${nixpkgs}/nixos/modules/profiles/hardened.nix"
+		./cfgs/common.nix
       ];
     };
   };
