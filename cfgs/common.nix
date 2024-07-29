@@ -11,4 +11,15 @@
 		tmux
 		neovim
 	];
+	
+	# TODO move this to specialized laptop2.nix
+	isoImage = {
+		isoBaseName = "laptop2-nixos";
+		volumeID = "laptop2-nixos";
+		contents = [
+			{ source = (pkgs.writeTextDir "test.sh" "echo TEST") + "/test.sh";
+			  target = "test.sh";
+			}
+		];
+	};
 }
