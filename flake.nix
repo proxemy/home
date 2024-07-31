@@ -7,14 +7,16 @@
   };
 
   outputs = inputs@{ self, nixpkgs, ... }: {
-    nixosConfigurations.laptop2 = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      modules = [
-		"${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal-new-kernel-no-zfs.nix"
-        "${nixpkgs}/nixos/modules/profiles/minimal.nix"
-        "${nixpkgs}/nixos/modules/profiles/hardened.nix"
-		./cfgs/common.nix
-      ];
-    };
+    nixosConfigurations = {
+		laptop2 = nixpkgs.lib.nixosSystem {
+			system = "x86_64-linux";
+			modules = [
+				"${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal-new-kernel-no-zfs.nix"
+				# TODO reactivate hardened kernel and find missing ext4 support in installer
+				#"${nixpkgs}/nixos/modules/profiles/hardened.nix"
+				./cfgs/common.nix
+			];
+		};
+	};
   };
 }
