@@ -1,7 +1,8 @@
 { config, lib, pkgs, ... }:
 {
 	# this seems to be an unknown property and breaks the iso with unpopulated /mnt-root in stage 1
-	#nix.settings.system-features = [ "nix-command" "flakes" "big-parallel" "kvm" ];
+	nix.settings.system-features = [ "nix-command" "flakes" "big-parallel" "kvm" ];
+	nix.extraOptions = "experimental-features = nix-command flakes";
 
 	boot.supportedFilesystems = [ "ext4" ];
 
@@ -44,7 +45,7 @@ sudo mount /dev/disk/by-label/nixos /mnt
 sudo swapon /dev/disk/by-label/swap
 
 sudo nixos-generate-config --root /mnt
-sudo nixos-install
+echo "RUN: sudo nixos-install"
 '';
 			  target = "partition.sh";
 			}
