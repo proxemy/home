@@ -4,13 +4,19 @@
 	nix.settings.system-features = [ "nix-command" "flakes" "big-parallel" "kvm" ];
 	nix.extraOptions = "experimental-features = nix-command flakes";
 
-	boot.supportedFilesystems = [ "ext4" ];
+	boot= {
+		supportedFilesystems = [ "ext4" ];
+		loader.grub.device = "/dev/sda";
+	};
 
 	environment.systemPackages = with pkgs; [
 		git
 		tmux
 		neovim
 	];
+
+	# not supported by flakes. will copy /etc/nixos/configuration.nix into iso
+	#system.copySystemConfiguration = true;
 
 	
 	# TODO move this to specialized laptop2.nix
