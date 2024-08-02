@@ -14,7 +14,7 @@
 				"${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal-new-kernel-no-zfs.nix"
 				# TODO reactivate hardened kernel and find missing ext4 support in installer
 				#"${nixpkgs}/nixos/modules/profiles/hardened.nix"
-				./configuration.nix
+				./nix/common.nix
 			];
 		};
 		f = nixpkgs.lib.mkFlake {};
