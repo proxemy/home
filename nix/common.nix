@@ -1,6 +1,5 @@
 { config, lib, pkgs, ... }:
 {
-	# this seems to be an unknown property and breaks the iso with unpopulated /mnt-root in stage 1
 	nix.settings.system-features = [ "nix-command" "flakes" "big-parallel" "kvm" ];
 	nix.extraOptions = "experimental-features = nix-command flakes";
 
@@ -18,14 +17,13 @@
 	# not supported by flakes. will copy /etc/nixos/configuration.nix into iso
 	#system.copySystemConfiguration = true;
 
-	
-	# TODO move this to specialized laptop2.nix
 	isoImage = {
 		edition = lib.mkForce "laptop2";
 		isoBaseName = "laptop2-nixos";
 		volumeID = "laptop2-nixos";
 		contents = [
-			{ source = pkgs.writeText "partition.sh" ''
+			# TODO move this to hostname parameterizable or specialized install.nix
+			{ source = pkgs.writeText "install.sh" ''
 #!/usr/bin/bash
 set -xeuo pipefail
 
@@ -50,10 +48,10 @@ sudo mkswap -L swap "$DEV"2
 sudo mount /dev/disk/by-label/nixos /mnt
 sudo swapon /dev/disk/by-label/swap
 
-sudo nixos-generate-config --root /mnt
-echo "RUN: sudo nixos-install"
+#sudo nixos-generate-config --root /mnt
+sudo nixos-install --flake "github:proxemy/home#laptop2"
 '';
-			  target = "partition.sh";
+			  target = "install.sh";
 			}
 		];
 	};
