@@ -17,6 +17,8 @@
 	# not supported by flakes. will copy /etc/nixos/configuration.nix into iso
 	#system.copySystemConfiguration = true;
 
+	installer.cloneConfigIncludes = [ "./common.nix" ];
+
 	isoImage = {
 		edition = lib.mkForce "laptop2";
 		isoBaseName = "laptop2-nixos";
@@ -48,11 +50,18 @@ sudo mkswap -L swap "$DEV"2
 sudo mount /dev/disk/by-label/nixos /mnt
 sudo swapon /dev/disk/by-label/swap
 
-#sudo nixos-generate-config --root /mnt
-sudo nixos-install --flake "github:proxemy/home#laptop2"
+sudo nixos-generate-config --root /mnt
+sudo nixos-install
+#sudo nixos-install --flake "github:proxemy/home#laptop2"
 '';
-			  target = "install.sh";
+			  target = "/install.sh";
 			}
+			#{ 
+			  #source = ../flake.nix;
+			  #source = "${sourceInfo.outpath}" + "/*";
+			  #source = self.sourceInfo.outPath + "/*";
+			  #target = "/";
+			#}
 		];
 	};
 }
