@@ -13,6 +13,7 @@
 			system = "x86_64-linux";
 			modules = [
 				"${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal-new-kernel-no-zfs.nix"
+				"${nixpkgs}/nixos/modules/profiles/clone-config.nix"
 				# TODO reactivate hardened kernel and fix missing ext4 support in live-nixos
 				#"${nixpkgs}/nixos/modules/profiles/hardened.nix"
 				./nix/common.nix
@@ -26,6 +27,9 @@
 		buildInputs = with nixpkgs.legacyPackages.x86_64-linux; [
 			nixos-generators
 			nixos-install-tools
+			nixos-option
+			nixos-shell
+			nixos-anywhere
 		];
 	};
   };
