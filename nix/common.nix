@@ -14,6 +14,11 @@
 		neovim
 	];
 
+	services = {
+		xserver.desktopManager.xfce.enable = true;
+		displayManager.defaultSession = "xfce";
+	};
+
 	# not supported by flakes. will copy /etc/nixos/configuration.nix into iso
 	#system.copySystemConfiguration = true;
 	system = {
