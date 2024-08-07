@@ -16,6 +16,12 @@
 
 	# not supported by flakes. will copy /etc/nixos/configuration.nix into iso
 	#system.copySystemConfiguration = true;
+	system = {
+		autoUpgrade = {
+			enable = true;
+			allowReboot = true;
+		};
+	};
 
 	installer.cloneConfigIncludes = [ "./common.nix" ];
 
