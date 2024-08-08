@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ sourceInfo, config, lib, pkgs, ... }:
 {
 	nix.settings.system-features = [ "nix-command" "flakes" "big-parallel" "kvm" ];
 	nix.extraOptions = "experimental-features = nix-command flakes";
@@ -70,12 +70,9 @@ sudo nixos-install
 '';
 			  target = "/install.sh";
 			}
-			#{ 
-			  #source = ../flake.nix;
-			  #source = "${sourceInfo.outpath}" + "/*";
-			  #source = self.sourceInfo.outPath + "/*";
-			  #target = "/";
-			#}
+			{ source = sourceInfo.outPath;
+			  target = "/flake-sourceInfo";
+			}
 		];
 	};
 }
