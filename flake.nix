@@ -30,7 +30,7 @@
           nixos-install-tools
           nixos-option
           nixos-shell
-          nixos-anywhere
+          #nixos-anywhere
         ];
       };
     };
