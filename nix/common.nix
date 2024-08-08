@@ -6,7 +6,10 @@
 
 	boot= {
 		supportedFilesystems = [ "ext4" ];
-		loader.grub.device = "/dev/sda";
+		loader.grub = {
+			device = "/dev/sda";
+			enable = lib.mkForce true;
+		};
 	};
 
 	environment.systemPackages = with pkgs; [
@@ -65,8 +68,10 @@ sudo mount /dev/disk/by-label/nixos /mnt
 sudo swapon /dev/disk/by-label/swap
 
 sudo nixos-generate-config --root /mnt
-sudo nixos-install
-#sudo nixos-install --flake "github:proxemy/home#laptop2"
+sudo mkdir /mnt/etc/nixos/home
+sudo cp -r /iso/flake-sourceInfo/* /mnt/etc/nixos/home/
+#sudo nixos-install
+#sudo nixos-install --flake "github:proxemy/home#laptop2" --root /mnt --verbose
 '';
 			  target = "/install.sh";
 			}
