@@ -2,6 +2,7 @@
 {
 	nix.settings.system-features = [ "nix-command" "flakes" "big-parallel" "kvm" ];
 	nix.extraOptions = "experimental-features = nix-command flakes";
+	#nix.nixPath = [ "nixos-config=github:proxemy/home" ];
 
 	boot= {
 		supportedFilesystems = [ "ext4" ];
@@ -26,6 +27,7 @@
 			enable = true;
 			allowReboot = true;
 		};
+		#nixos-generate-config.configuration = "asd wert";
 	};
 
 	installer.cloneConfigIncludes = [ "./common.nix" ];
@@ -34,6 +36,7 @@
 		edition = lib.mkForce "laptop2";
 		isoBaseName = "laptop2-nixos";
 		volumeID = "laptop2-nixos";
+		#includeSystemBuildDependencies = true;
 		contents = [
 			# TODO move this to hostname parameterizable or specialized install.nix
 			{ source = pkgs.writeText "install.sh" ''
