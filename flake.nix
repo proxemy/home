@@ -9,16 +9,28 @@
   outputs =
     inputs@{ self, nixpkgs, ... }:
     {
-
       nixosConfigurations = {
+
         laptop2 = nixpkgs.lib.nixosSystem {
-		  specialArgs = { inherit (self) sourceInfo; };
           system = "x86_64-linux";
           modules = [
-            "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal-new-kernel-no-zfs.nix"
-            # TODO reactivate hardened kernel and fix missing ext4 support in live-nixos
-            #"${nixpkgs}/nixos/modules/profiles/hardened.nix"
+            "${nixpkgs}/nixos/modules/profiles/minimal.nix"
+            "${nixpkgs}/nixos/modules/profiles/hardened.nix"
+            ./nix/laptop2.nix
             ./nix/common.nix
+          ];
+        };
+
+        laptop2-installer = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = {
+            inherit (self) sourceInfo;
+            #laptop2 = self.outputs.nixosConfigurations.laptop2;
+          };
+          modules = [
+            "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal-new-kernel-no-zfs.nix"
+            ./nix/common.nix
+            ./nix/laptop2-installer.nix
           ];
         };
       };
