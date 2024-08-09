@@ -2,7 +2,7 @@
 
 set -xeuo pipefail
 
-nixos-generate --flake .#laptop2 --format iso --out-link result
+nixos-generate --flake .#laptop2-installer --format iso --out-link result
 ISO=$(find result/iso/ -iname '*.iso')
 test -f "$ISO"
 test -b /dev/sda
