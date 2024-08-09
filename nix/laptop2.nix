@@ -9,15 +9,19 @@
 
 	fileSystems = {
 		"/" = {
-			device = "/dev/disk-by-label/nixos";
+			device = "/dev/disk/by-label/nixos";
 			fsType = "ext4";
 			options = [ "noatime" ];
 		};
 	};
 
+	swapDevices = [{ label = "swap"; }];
+
 	services = {
-		xserver.desktopManager.xfce.enable = true;
+		xserver = {
+			enable = true;
+			desktopManager.xfce.enable = true;
+		};
 		displayManager.defaultSession = "xfce";
 	};
-
 }

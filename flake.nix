@@ -14,10 +14,12 @@
         laptop2 = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           modules = [
-            "${nixpkgs}/nixos/modules/profiles/minimal.nix"
-            "${nixpkgs}/nixos/modules/profiles/hardened.nix"
-            ./nix/laptop2.nix
+            # TODO: compilation breaks with there two below, find high value attributes
+            # in them an renable them selectively by hand
+            #"${nixpkgs}/nixos/modules/profiles/minimal.nix"
+            #"${nixpkgs}/nixos/modules/profiles/hardened.nix"
             ./nix/common.nix
+            ./nix/laptop2.nix
           ];
         };
 
@@ -25,6 +27,7 @@
           system = "x86_64-linux";
           specialArgs = {
             inherit (self) sourceInfo;
+            # TODO: populate iso nix store with laptop2's build dependencies
             #laptop2 = self.outputs.nixosConfigurations.laptop2;
           };
           modules = [

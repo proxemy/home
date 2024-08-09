@@ -1,5 +1,9 @@
 { pkgs, ... }:
 {
+	# https://www.tweag.io/blog/2020-07-31-nixos-flakes/
+	# "required to have nix beta flake support"
+	nix.package = pkgs.nixUnstable;
+
 	nix.settings.system-features = [ "nix-command" "flakes" "big-parallel" "kvm" ];
 	nix.extraOptions = "experimental-features = nix-command flakes";
 	#nix.nixPath = [ "nixos-config=github:proxemy/home" ];

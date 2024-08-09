@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+{ pkgs, lib, sourceInfo, /*laptop2,*/ ... }:
 {
 	#nixos-generate-config.configuration = "asd wert";
 	#installer.cloneConfigIncludes = [ "./common.nix" ];
@@ -9,6 +9,9 @@
 		isoBaseName = "laptop2-nixos";
 		volumeID = "laptop2-nixos";
 		#includeSystemBuildDependencies = true;
+
+		#storeContents = [ laptop2 ];
+
 		contents = [
 			# TODO move this to hostname parameterizable or specialized install.nix
 			{ source = pkgs.writeText "install.sh" ''
@@ -39,14 +42,13 @@ sudo swapon /dev/disk/by-label/swap
 sudo nixos-generate-config --root /mnt
 sudo mkdir /mnt/etc/nixos/home
 sudo cp -r /iso/flake-sourceInfo/* /mnt/etc/nixos/home/
-#sudo nixos-install
-#sudo nixos-install --flake "github:proxemy/home#laptop2" --root /mnt --verbose
+sudo nixos-install --flake /mnt/etc/nixos/home#laptop2 --root /mnt --verbose
 '';
 			  target = "/install.sh";
 			}
-			#{ source = sourceInfo.outPath;
-			  #target = "/flake-sourceInfo";
-			#}
+			{ source = sourceInfo.outPath;
+			  target = "/flake-sourceInfo";
+			}
 		];
 	};
 
