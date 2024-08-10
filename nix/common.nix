@@ -2,7 +2,8 @@
 {
 	# https://www.tweag.io/blog/2020-07-31-nixos-flakes/
 	# "required to have nix beta flake support"
-	nix.package = pkgs.nixUnstable;
+	#nix.package = pkgs.nixUnstable; # nixUnstable ist deprecated, use nixVersions.{latest,git}
+	nix.package = pkgs.nixVersions.latest;
 
 	nix.settings.system-features = [ "nix-command" "flakes" "big-parallel" "kvm" ];
 	nix.extraOptions = "experimental-features = nix-command flakes";
@@ -22,6 +23,9 @@
 			enable = true;
 			allowReboot = true;
 			dates = "04:00";
+			flake = "github:proxemy/home";
+			flags = [ "-L" "--show-trace" "--verbose" "--no-eval-cache" ];
+			randomizedDelaySec = "30min";
 		};
 		#nixos-generate-config.configuration = "asd wert";
 	};
