@@ -17,6 +17,16 @@
 
 	swapDevices = [{ label = "swap"; }];
 
+	users.users.leme = {
+		isNormalUser = true;
+		extraGroups = [ "wheel" ];
+		initialPassword = "asd";
+		createHome = true;
+		#openssh.authorizedKeys = [ "TODO" ];
+	};
+
+	networking.hostName = "laptop2";
+
 	services = {
 		xserver = {
 			enable = true;
