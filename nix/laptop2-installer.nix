@@ -1,19 +1,24 @@
 { pkgs, lib, sourceInfo, /*laptop2,*/ ... }:
 {
-	#nixos-generate-config.configuration = "asd wert";
 	#installer.cloneConfigIncludes = [ "./common.nix" ];
 	#nix.nixPath = [ "nixos-config=github:proxemy/home" ];
+	#system = {
+		#copySystemConfiguration = true;
+		#nixos-generate-config.configuration = "asd wert";
+	#};
 
 	isoImage = {
 		edition = lib.mkForce "laptop2";
 		isoBaseName = "laptop2-nixos";
 		volumeID = "laptop2-nixos";
-		#includeSystemBuildDependencies = true;
 
+		# TODO: finalize a self contained/offline installer iso
+		# the 2 options might be a lead. 'includeSystemBuildDeps' bloats the
+		# nix/store extremly and storeContents expects JSON as input.
+		#includeSystemBuildDependencies = true;
 		#storeContents = [ laptop2 ];
 
 		contents = [
-			# TODO move this to hostname parameterizable or specialized install.nix
 			{ source = pkgs.writeText "install.sh" ''
 #!/usr/bin/bash
 set -xeuo pipefail
@@ -51,7 +56,4 @@ sudo nixos-install --flake /mnt/etc/nixos/home#laptop2 --root /mnt --verbose
 			}
 		];
 	};
-
-
-
 }

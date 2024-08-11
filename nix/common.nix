@@ -7,7 +7,6 @@
 
 	nix.settings.system-features = [ "nix-command" "flakes" "big-parallel" "kvm" ];
 	nix.extraOptions = "experimental-features = nix-command flakes";
-	#nix.nixPath = [ "nixos-config=github:proxemy/home" ];
 
 	environment.systemPackages = with pkgs; [
 		git
@@ -16,7 +15,6 @@
 	];
 
 	# not supported by flakes. will copy /etc/nixos/configuration.nix into iso
-	#system.copySystemConfiguration = true;
 	system = {
 		stateVersion = "24.11";
 		autoUpgrade = {
@@ -27,7 +25,6 @@
 			flags = [ "-L" "--show-trace" "--verbose" "--no-eval-cache" ];
 			randomizedDelaySec = "30min";
 		};
-		#nixos-generate-config.configuration = "asd wert";
 	};
 
 	hardware.bluetooth.enable = false;
