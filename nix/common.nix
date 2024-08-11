@@ -22,7 +22,7 @@
 			allowReboot = true;
 			dates = "04:00";
 			flake = "github:proxemy/home";
-			flags = [ "-L" "--show-trace" "--verbose" "--no-eval-cache" ];
+			flags = [ "-L" ]; # to get extended build logs
 			randomizedDelaySec = "30min";
 		};
 	};
