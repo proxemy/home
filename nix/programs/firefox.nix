@@ -202,7 +202,7 @@ in
 
 			# uBlock Origin:
 			"uMatrix@raymondhill.net" = {
-				install_url = "https://addons.mozilla.org/firefox/downloads/latest/ublock-origin/latest.xpi";
+				install_url = "https://addons.mozilla.org/firefox/downloads/latest/uMatrix/latest.xpi";
 				installation_mode = "force_installed";
 			};
 

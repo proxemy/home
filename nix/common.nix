@@ -5,7 +5,21 @@
 		# "required to have nix beta flake support"
 		package = pkgs.nixVersions.latest;
 
-		settings.system-features = [ "nix-command" "flakes" "big-parallel" "kvm" ];
+		settings = {
+			system-features = [ "nix-command" "flakes" "big-parallel" "kvm" ];
+			#auto-optimize-store = true; # optimize the store on every build, heavy IO + cpu
+		};
+
+		optimise = {
+			automatic = true;
+			dates = [ "weekly" ];
+		};
+
+		gc = {
+			automatic = true;
+			options = "--delete-old";
+			dates = "weekly";
+		};
 	};
 
 	# TODO: move these packages in a user context, not global installation.
@@ -21,7 +35,7 @@
 		autoUpgrade = {
 			enable = true;
 			allowReboot = true;
-			dates = "04:00";
+			dates = "03:00";
 			flake = "github:proxemy/home";
 			flags = [ "-L" "--verbose" "--show-trace" ]; # to get extended build logs
 			randomizedDelaySec = "30min";
