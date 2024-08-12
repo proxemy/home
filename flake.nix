@@ -17,7 +17,7 @@
             # TODO: compilation breaks with there two below, find high value attributes
             # in them an renable them selectively by hand
             #"${nixpkgs}/nixos/modules/profiles/minimal.nix"
-            #"${nixpkgs}/nixos/modules/profiles/hardened.nix"
+            "${nixpkgs}/nixos/modules/profiles/hardened.nix"
             ./nix/common.nix
             ./nix/laptop2.nix
           ];
