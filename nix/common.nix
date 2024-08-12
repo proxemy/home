@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 {
 	nix = {
 		# https://www.tweag.io/blog/2020-07-31-nixos-flakes/
@@ -23,10 +23,34 @@
 			allowReboot = true;
 			dates = "04:00";
 			flake = "github:proxemy/home";
-			flags = [ "-L" ]; # to get extended build logs
+			flags = [ "-L" "--verbose" "--show-trace" ]; # to get extended build logs
 			randomizedDelaySec = "30min";
 		};
 	};
 
 	hardware.bluetooth.enable = false;
+
+	services.openssh = lib.mkForce {
+		enable = true;
+		settings = {
+			PasswordAuthentication = false;
+			KbdInteractiveAuthentication = false;
+			PermitRootLogin = "no";
+			UseDns = false;
+			X11Forwarding = false;
+		};
+		extraConfig = ''
+			Banner none
+			LoginGraceTime 10
+			ChallengeResponseAuthentication no
+			KerberosAuthentication no
+			GSSAPIAuthentication no
+			AllowAgentForwarding no
+			AllowTcpForwarding no
+			PermitTunnel no
+			PermitUserEnvironment no
+
+			#UseRoaming no # <- client config
+		'';
+	};
 }
