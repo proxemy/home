@@ -184,6 +184,11 @@ let
 		"extensions.formautofill.creditCards.enabled" = false;
 		"dom.popup_allowed_events" = "click dblclick mousedown pointerdown";
 		"keyword.enabled" = false;
+
+		# dark theme
+		"ui.systemUsesDarkTheme" = 1;
+		"layout.css.prefers-color-scheme.content-override" = 0;
+		"extensions.activeThemeID" = "default-theme@mozilla.org";
 	};
 in
 {
