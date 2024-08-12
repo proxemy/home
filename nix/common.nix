@@ -1,11 +1,12 @@
 { pkgs, ... }:
 {
-	# https://www.tweag.io/blog/2020-07-31-nixos-flakes/
-	# "required to have nix beta flake support"
-	nix.package = pkgs.nixVersions.latest;
+	nix = {
+		# https://www.tweag.io/blog/2020-07-31-nixos-flakes/
+		# "required to have nix beta flake support"
+		package = pkgs.nixVersions.latest;
 
-	nix.settings.system-features = [ "nix-command" "flakes" "big-parallel" "kvm" ];
-	nix.extraOptions = "experimental-features = nix-command flakes";
+		settings.system-features = [ "nix-command" "flakes" "big-parallel" "kvm" ];
+	};
 
 	# TODO: move these packages in a user context, not global installation.
 	environment.systemPackages = with pkgs; [
