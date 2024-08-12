@@ -46,6 +46,8 @@
           nixos-install-tools
           nixos-option
           nixos-shell
+          nixos-rebuild
+          nixos-container
           #nixos-anywhere
         ];
       };
