@@ -34,4 +34,8 @@
 		};
 		displayManager.defaultSession = "xfce";
 	};
+
+	imports = [
+		./programs/firefox.nix
+	];
 }
