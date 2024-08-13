@@ -42,7 +42,10 @@
 		};
 	};
 
-	hardware.bluetooth.enable = false;
+	hardware = {
+		bluetooth.enable = false;
+		pulseaudio.enable = true;
+	};
 
 	services.openssh = lib.mkForce {
 		enable = true;
