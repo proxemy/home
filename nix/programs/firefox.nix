@@ -200,7 +200,7 @@ in
 			# blocks all addons except the ones specified below
 			"*".installation_mode = "blocked";
 
-			# uBlock Origin:
+			# uMatrix:
 			"uMatrix@raymondhill.net" = {
 				install_url = "https://addons.mozilla.org/firefox/downloads/latest/uMatrix/latest.xpi";
 				installation_mode = "force_installed";
