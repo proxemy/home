@@ -1,4 +1,4 @@
-{ home-manager, config, ... }:
+{ home-manager, dotfiles, config, ... }:
 {
 	imports = [ home-manager.nixosModules.home-manager ];
 
@@ -8,7 +8,14 @@
 	home-manager.users.leme = {
 		home = {
 			inherit (config.system) stateVersion;
+
+			# copy dotfiles into $HOME
+			file."/" = {
+				source = dotfiles;
+				recursive = true;
+			};
 		};
+
 		programs.git = {
 			enable = true;
 			#extraConfig.include = { path = "~/.config/gitconfig/proxemy" };

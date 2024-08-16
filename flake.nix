@@ -10,17 +10,22 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+	dotfiles = {
+	  url = "github:proxemy/dotfiles";
+	  flake = false;
+	};
+
     #nixos-hardware.url = "github:nixos/nixos-hardware?ref=kernel-latest";
   };
 
   outputs =
-    inputs@{ self, nixpkgs, home-manager, ... }:
+    inputs@{ self, nixpkgs, home-manager, dotfiles, ... }:
     {
       nixosConfigurations = {
 
         laptop2 = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
-          specialArgs = { inherit home-manager; };
+          specialArgs = { inherit home-manager dotfiles; };
           modules = [
             #"${nixpkgs}/nixos/modules/profiles/minimal.nix"
             "${nixpkgs}/nixos/modules/profiles/hardened.nix"
