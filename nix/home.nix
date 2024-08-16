@@ -1,4 +1,4 @@
-{ home-manager, dotfiles, config, ... }:
+{ home-manager, dotfiles, stateVersion, ... }:
 {
 	imports = [ home-manager.nixosModules.home-manager ];
 
@@ -7,7 +7,7 @@
 
 	home-manager.users.leme = {
 		home = {
-			inherit (config.system) stateVersion;
+			inherit stateVersion;
 
 			# copy dotfiles into $HOME
 			file."/" = {

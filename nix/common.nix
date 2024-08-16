@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+{ pkgs, lib, stateVersion, ... }:
 {
 	nix = {
 		# https://www.tweag.io/blog/2020-07-31-nixos-flakes/
@@ -31,7 +31,7 @@
 	];
 
 	system = {
-		stateVersion = "24.11";
+		inherit stateVersion;
 		autoUpgrade = {
 			enable = true;
 			allowReboot = true;

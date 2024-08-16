@@ -19,13 +19,15 @@
   };
 
   outputs =
-    inputs@{ self, nixpkgs, home-manager, dotfiles, ... }:
+    { self, nixpkgs, home-manager, dotfiles, ... }:
+    let
+      stateVersion = "24.11";
+    in
     {
       nixosConfigurations = {
-
         laptop2 = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
-          specialArgs = { inherit home-manager dotfiles; };
+          specialArgs = { inherit stateVersion home-manager dotfiles; };
           modules = [
             #"${nixpkgs}/nixos/modules/profiles/minimal.nix"
             "${nixpkgs}/nixos/modules/profiles/hardened.nix"
@@ -39,6 +41,7 @@
           system = "x86_64-linux";
           specialArgs = {
             inherit (self) sourceInfo;
+            inherit stateVersion;
             # TODO: populate iso nix store with laptop2's build dependencies
             #laptop2 = self.outputs.nixosConfigurations.laptop2;
           };
@@ -63,8 +66,9 @@
           #nixos-anywhere
 
           #TODO: make the home-manager tool available in devShell.
-		  # first step to build only dotfiles for non-nixos systems
+          # first step to build only dotfiles for non-nixos systems
+          #home-manager
         ];
       };
-    };
+  };
 }
