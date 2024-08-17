@@ -65,9 +65,7 @@
           nixos-container
           #nixos-anywhere
 
-          #TODO: make the home-manager tool available in devShell.
-          # first step to build only dotfiles for non-nixos systems
-          #home-manager
+          nixpkgs.outputs.legacyPackages.x86_64-linux.home-manager
         ];
       };
   };
