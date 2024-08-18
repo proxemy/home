@@ -79,6 +79,10 @@
 
           nixpkgs.outputs.legacyPackages.x86_64-linux.home-manager
         ];
+        shellHook = ''
+			echo "nixos-rebuild build --flake .#laptop2";
+			echo "home-manager build --flake .#leme";
+		'';
       };
   };
 }
