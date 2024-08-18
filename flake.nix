@@ -10,10 +10,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-	dotfiles = {
-	  url = "github:proxemy/dotfiles";
-	  flake = false;
-	};
+    dotfiles = {
+      url = "github:proxemy/dotfiles";
+      flake = false;
+    };
 
     #nixos-hardware.url = "github:nixos/nixos-hardware?ref=kernel-latest";
   };
