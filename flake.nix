@@ -37,7 +37,9 @@
               home-manager = {
                 useGlobalPkgs = true;
                 useUserPackages = true;
-                users.leme = import ./nix/home.nix { inherit stateVersion dotfiles; };
+                users.leme = import ./nix/home.nix {
+                  inherit stateVersion dotfiles home-manager;
+                };
               };
             }
           ];
@@ -61,7 +63,7 @@
 
       homeConfigurations.leme = home-manager.lib.homeManagerConfiguration {
         pkgs = nixpkgs.outputs.legacyPackages.x86_64-linux;
-        extraSpecialArgs = { inherit stateVersion dotfiles; };
+        extraSpecialArgs = { inherit stateVersion dotfiles home-manager; };
         modules = [ ./nix/home.nix ];
       };
 

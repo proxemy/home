@@ -1,4 +1,4 @@
-{ stateVersion, dotfiles, ... }:
+{ stateVersion, dotfiles, home-manager, ... }:
 {
 	home = {
 		inherit stateVersion;
@@ -6,11 +6,9 @@
 		username = "leme";
 		homeDirectory = "/home/leme";
 
-		# copy dotfiles into $HOME
-		file."/" = {
-			source = dotfiles.outPath;
-			recursive = true;
-		};
+		activation.copy-dotfiles = home-manager.lib.hm.dag.entryAfter [ "linkGeneration" ] ''
+			cp -r ${dotfiles.outPath}/* "$HOME"/
+		'';
 	};
 
 	programs.git = {
