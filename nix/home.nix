@@ -1,24 +1,20 @@
-{ home-manager, dotfiles, stateVersion, ... }:
+{ stateVersion, dotfiles, ... }:
 {
-	imports = [ home-manager.nixosModules.home-manager ];
+	home = {
+		inherit stateVersion;
 
-	home-manager.useGlobalPkgs = true;
-	home-manager.useUserPackages = true;
+		username = "leme";
+		homeDirectory = "/home/leme";
 
-	home-manager.users.leme = {
-		home = {
-			inherit stateVersion;
-
-			# copy dotfiles into $HOME
-			file."/" = {
-				source = dotfiles;
-				recursive = true;
-			};
+		# copy dotfiles into $HOME
+		file."/" = {
+			source = dotfiles.outPath;
+			recursive = true;
 		};
+	};
 
-		programs.git = {
-			enable = true;
-			#extraConfig.include = { path = "~/.config/gitconfig/proxemy" };
-		};
+	programs.git = {
+		enable = true;
+		#extraConfig.include = { path = "~/.config/gitconfig/proxemy" };
 	};
 }

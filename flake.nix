@@ -27,13 +27,19 @@
       nixosConfigurations = {
         laptop2 = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
-          specialArgs = { inherit stateVersion home-manager dotfiles; };
+          specialArgs = { inherit stateVersion dotfiles; };
           modules = [
-            #"${nixpkgs}/nixos/modules/profiles/minimal.nix"
             "${nixpkgs}/nixos/modules/profiles/hardened.nix"
-            ./nix/home.nix
             ./nix/common.nix
             ./nix/laptop2.nix
+
+            home-manager.nixosModule {
+              home-manager = {
+                useGlobalPkgs = true;
+                useUserPackages = true;
+                users.leme = import ./nix/home.nix { inherit stateVersion dotfiles; };
+              };
+            }
           ];
         };
 
