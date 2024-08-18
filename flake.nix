@@ -59,6 +59,12 @@
         };
       };
 
+      homeConfigurations.leme = home-manager.lib.homeManagerConfiguration {
+        pkgs = nixpkgs.outputs.legacyPackages.x86_64-linux;
+        extraSpecialArgs = { inherit stateVersion dotfiles; };
+        modules = [ ./nix/home.nix ];
+      };
+
       # naive shell for quick progress
       # TODO: make it 'system' aware
       devShells.x86_64-linux.default = nixpkgs.legacyPackages.x86_64-linux.mkShell {
