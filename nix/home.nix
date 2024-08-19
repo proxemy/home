@@ -7,7 +7,7 @@
 		homeDirectory = "/home/leme";
 
 		activation.copy-dotfiles = home-manager.lib.hm.dag.entryAfter [ "linkGeneration" ] ''
-			cp -r ${dotfiles.outPath}/* "$HOME"/
+			cp --recursive "${dotfiles.outPath}"/. "$HOME"/
 		'';
 	};
 
