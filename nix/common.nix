@@ -47,27 +47,35 @@
 		pulseaudio.enable = true;
 	};
 
-	services.openssh = lib.mkForce {
-		enable = true;
-		settings = {
-			PasswordAuthentication = false;
-			KbdInteractiveAuthentication = false;
-			PermitRootLogin = "no";
-			UseDns = false;
-			X11Forwarding = false;
-		};
-		extraConfig = ''
-			Banner none
-			LoginGraceTime 10
-			ChallengeResponseAuthentication no
-			KerberosAuthentication no
-			GSSAPIAuthentication no
-			AllowAgentForwarding no
-			AllowTcpForwarding no
-			PermitTunnel no
-			PermitUserEnvironment no
+	services ={
+		openssh = lib.mkForce {
+			enable = true;
+			settings = {
+				PasswordAuthentication = false;
+				KbdInteractiveAuthentication = false;
+				PermitRootLogin = "no";
+				UseDns = false;
+				X11Forwarding = false;
+			};
+			extraConfig = ''
+				Banner none
+				LoginGraceTime 10
+				ChallengeResponseAuthentication no
+				KerberosAuthentication no
+				GSSAPIAuthentication no
+				AllowAgentForwarding no
+				AllowTcpForwarding no
+				PermitTunnel no
+				PermitUserEnvironment no
 
-			#UseRoaming no # <- client config
-		'';
+				#UseRoaming no # <- client config
+			'';
+		};
+		xserver.xkb = lib.mkDefault {
+			layout = "de";
+			variant = "deadacute";
+			options = "terminate:ctrl_alt_del";
+		};
+
 	};
 }
