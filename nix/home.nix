@@ -6,9 +6,11 @@
 		username = "leme";
 		homeDirectory = "/home/leme";
 
-		activation.copy-dotfiles = home-manager.lib.hm.dag.entryAfter [ "linkGeneration" ] ''
-			cp --recursive "${dotfiles.outPath}"/. "$HOME"/
-		'';
+		file."dotfiles" = {
+			source = dotfiles;
+			target = "fakedir/.."; # ugly trick to link files directly into $HOME
+			recursive = true;
+		};
 	};
 
 	programs = {
