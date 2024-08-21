@@ -11,7 +11,19 @@
 		'';
 	};
 
-	programs.git = {
+	programs = {
+		git = {
+			enable = true;
+			#extraConfig.include = { path = "~/.config/gitconfig/proxemy" };
+		};
+		bash = {
+			enable = true;
+			profileExtra = ''
+				source ~/.bash_aliases
+			'';
+		};
+	};
+
 		enable = true;
 		#extraConfig.include = { path = "~/.config/gitconfig/proxemy" };
 	};
