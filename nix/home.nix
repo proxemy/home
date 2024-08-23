@@ -20,8 +20,9 @@
 		};
 		bash = {
 			enable = true;
-			profileExtra = ''
-				source ~/.bash_aliases
+			#.bash_aliases lives in dotfiles
+			initExtra = ''
+				test -f ~/.bash_aliases && source ~/.bash_aliases
 			'';
 		};
 	};
