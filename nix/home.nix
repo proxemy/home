@@ -1,4 +1,4 @@
-{ stateVersion, dotfiles, home-manager, ... }:
+{ stateVersion, dotfiles, ... }:
 {
 	home = {
 		inherit stateVersion;
@@ -54,6 +54,12 @@
 				"xfwm4/custom/<Super>Right" = "move_window_right_key";
 				"xfwm4/custom/<Super><Shift>End" = "move_window_next_workspace_key";
 				"xfwm4/custom/<Super><Shift>Home" = "move_window_prev_workspace_key";
+			};
+			xfce4-panel = {
+				"panels/dark-mode" = true;
+			};
+			xsettings = {
+				"Net/ThemeName" = "Adwaita-dark";
 			};
 		};
 	};

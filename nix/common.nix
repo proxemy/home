@@ -28,6 +28,7 @@
 		tmux
 		neovim
 		mtr
+		tree
 	];
 
 	system = {
