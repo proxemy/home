@@ -1,7 +1,7 @@
-{ stateVersion, dotfiles, ... }:
+{ cfg, dotfiles, ... }:
 {
 	home = {
-		inherit stateVersion;
+		inherit (cfg) stateVersion;
 
 		username = "leme";
 		homeDirectory = "/home/leme";

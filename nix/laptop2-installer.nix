@@ -1,4 +1,4 @@
-{ pkgs, lib, sourceInfo, /*laptop2,*/ ... }:
+{ pkgs, lib, sourceInfo, /*laptop2, dotfiles*/ ... }:
 {
 	#installer.cloneConfigIncludes = [ "./common.nix" ];
 	#nix.nixPath = [ "nixos-config=github:proxemy/home" ];

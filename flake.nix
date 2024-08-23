@@ -21,13 +21,16 @@
   outputs =
     { self, nixpkgs, home-manager, dotfiles, ... }:
     let
-      stateVersion = "24.11";
+      cfg = {
+        stateVersion = "24.11";
+        username = "leme";
+      };
     in
     {
       nixosConfigurations = {
         laptop2 = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
-          specialArgs = { inherit stateVersion dotfiles; };
+          specialArgs = { inherit cfg dotfiles; };
           modules = [
             "${nixpkgs}/nixos/modules/profiles/hardened.nix"
             ./nix/common.nix
@@ -38,7 +41,7 @@
                 useGlobalPkgs = true;
                 useUserPackages = true;
                 users.leme = import ./nix/home.nix {
-                  inherit stateVersion dotfiles home-manager;
+                  inherit cfg dotfiles;
                 };
               };
             }
@@ -48,8 +51,8 @@
         laptop2-installer = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           specialArgs = {
+            inherit cfg;
             inherit (self) sourceInfo;
-            inherit stateVersion;
             # TODO: populate iso nix store with laptop2's build dependencies
             #laptop2 = self.outputs.nixosConfigurations.laptop2;
           };
@@ -63,7 +66,7 @@
 
       homeConfigurations.leme = home-manager.lib.homeManagerConfiguration {
         pkgs = nixpkgs.outputs.legacyPackages.x86_64-linux;
-        extraSpecialArgs = { inherit stateVersion dotfiles home-manager; };
+        extraSpecialArgs = { inherit cfg dotfiles; };
         modules = [ ./nix/home.nix ];
       };
 
