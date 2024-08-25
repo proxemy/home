@@ -1,4 +1,4 @@
-{ pkgs, lib, sourceInfo, /*laptop2, dotfiles*/ ... }:
+{ pkgs, lib, secrets, sourceInfo, /*laptop2, dotfiles*/ ... }:
 {
 	#installer.cloneConfigIncludes = [ "./common.nix" ];
 	#nix.nixPath = [ "nixos-config=github:proxemy/home" ];
@@ -44,15 +44,18 @@ sudo mkswap -L swap "$DEV"2
 sudo mount /dev/disk/by-label/nixos /mnt
 sudo swapon /dev/disk/by-label/swap
 
-sudo nixos-generate-config --root /mnt
 sudo mkdir /mnt/etc/nixos/home
 sudo cp -r /iso/flake-sourceInfo/* /mnt/etc/nixos/home/
+CWD=/mnt/etc/nixos/home sudo git-crypt unlock /iso/git-crypt-key-file
 sudo nixos-install --flake /mnt/etc/nixos/home#laptop2 --root /mnt --verbose
 '';
 			  target = "/install.sh";
 			}
 			{ source = sourceInfo.outPath;
 			  target = "/flake-sourceInfo";
+			}
+			{ source = secrets.git-crypt.key-file;
+			  target = "/git-crypt-key-file";
 			}
 		];
 	};
