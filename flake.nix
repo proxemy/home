@@ -29,7 +29,7 @@
     in
     {
       nixosConfigurations = {
-        laptop2 = nixpkgs.lib.nixosSystem {
+        laptop2 = nixpkgs.lib.nixosSystem rec {
           system = "x86_64-linux";
           specialArgs = { inherit cfg secrets dotfiles; };
           modules = [
@@ -41,7 +41,7 @@
               home-manager = {
                 useGlobalPkgs = true;
                 useUserPackages = true;
-                users.leme = import ./nix/home.nix { inherit cfg secrets dotfiles; };
+                users.leme = import ./nix/home.nix specialArgs;
               };
             }
           ];
