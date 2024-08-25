@@ -24,7 +24,7 @@
 
 	# TODO: move these packages in a user context, not global installation.
 	environment.systemPackages = with pkgs; [
-		git
+		git git-crypt
 		tmux
 		neovim
 		mtr

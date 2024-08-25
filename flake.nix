@@ -25,12 +25,13 @@
         stateVersion = "24.11";
         username = "leme";
       };
+      secrets = import ./nix/secrets.nix { inherit nixpkgs; };
     in
     {
       nixosConfigurations = {
         laptop2 = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
-          specialArgs = { inherit cfg dotfiles; };
+          specialArgs = { inherit cfg secrets dotfiles; };
           modules = [
             "${nixpkgs}/nixos/modules/profiles/hardened.nix"
             ./nix/common.nix
@@ -40,9 +41,7 @@
               home-manager = {
                 useGlobalPkgs = true;
                 useUserPackages = true;
-                users.leme = import ./nix/home.nix {
-                  inherit cfg dotfiles;
-                };
+                users.leme = import ./nix/home.nix { inherit cfg secrets dotfiles; };
               };
             }
           ];
@@ -51,7 +50,7 @@
         laptop2-installer = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           specialArgs = {
-            inherit cfg;
+            inherit cfg secrets;
             inherit (self) sourceInfo;
             # TODO: populate iso nix store with laptop2's build dependencies
             #laptop2 = self.outputs.nixosConfigurations.laptop2;
@@ -74,6 +73,7 @@
       # TODO: make it 'system' aware
       devShells.x86_64-linux.default = nixpkgs.legacyPackages.x86_64-linux.mkShell {
         buildInputs = with nixpkgs.legacyPackages.x86_64-linux; [
+          git git-crypt
           nixos-generators
           nixos-install-tools
           nixos-option
