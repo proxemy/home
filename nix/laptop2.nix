@@ -1,4 +1,4 @@
-{...}: {
+{ secrets, ...}: {
 	boot= {
 		supportedFilesystems = [ "ext4" ];
 		loader.grub = {
@@ -17,12 +17,17 @@
 
 	swapDevices = [{ label = "swap"; }];
 
-	users.users.leme = {
-		isNormalUser = true;
-		extraGroups = [ "wheel" ];
-		initialPassword = "asd";
-		createHome = true;
-		#openssh.authorizedKeys = [ "TODO" ];
+	users.users = {
+		${secrets.user.name} = {
+			isNormalUser = true;
+			extraGroups = [ "wheel" ];
+			initialHashedPassword = secrets.user.hashed_pw;
+			createHome = true;
+			#openssh.authorizedKeys = [ "TODO" ];
+		};
+		root = {
+			initialHashedPassword = secrets.root.hashed_pw;
+		};
 	};
 
 	networking.hostName = "laptop2";

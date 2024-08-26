@@ -1,10 +1,10 @@
-{ cfg, dotfiles, ... }:
+{ cfg, secrets, dotfiles, ... }:
 {
 	home = {
 		inherit (cfg) stateVersion;
 
-		username = "leme";
-		homeDirectory = "/home/leme";
+		username = secrets.user.name;
+		homeDirectory = "/home/${secrets.user.name}";
 
 		file."dotfiles" = {
 			source = dotfiles;

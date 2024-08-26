@@ -23,7 +23,6 @@
     let
       cfg = {
         stateVersion = "24.11";
-        username = "leme";
       };
       secrets = import ./nix/secrets.nix { inherit nixpkgs; };
     in
@@ -41,7 +40,7 @@
               home-manager = {
                 useGlobalPkgs = true;
                 useUserPackages = true;
-                users.leme = import ./nix/home.nix specialArgs;
+                users.${secrets.user.name} = import ./nix/home.nix specialArgs;
               };
             }
           ];
@@ -63,9 +62,10 @@
         };
       };
 
-      homeConfigurations.leme = home-manager.lib.homeManagerConfiguration {
+      homeConfigurations.${secrets.user.name} =
+      home-manager.lib.homeManagerConfiguration {
         pkgs = nixpkgs.outputs.legacyPackages.x86_64-linux;
-        extraSpecialArgs = { inherit cfg dotfiles; };
+        extraSpecialArgs = { inherit cfg secrets dotfiles; };
         modules = [ ./nix/home.nix ];
       };
 
@@ -85,9 +85,9 @@
           nixpkgs.outputs.legacyPackages.x86_64-linux.home-manager
         ];
         shellHook = ''
-			echo "nixos-rebuild build --flake .#laptop2";
-			echo "home-manager build --flake .#leme";
-		'';
+          echo "nixos-rebuild build --flake .#laptop2";
+          echo "home-manager build --flake .#$(grep -P 'user = ' -A 1 nix/secrets.nix | grep -oP '(?<=name = ")\w+(?=")')";
+        '';
       };
   };
 }
