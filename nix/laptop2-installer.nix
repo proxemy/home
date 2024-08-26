@@ -19,41 +19,47 @@
 		#storeContents = [ laptop2 ];
 
 		contents = [
-			{ source = pkgs.writeText "install.sh" ''
+			{ source = pkgs.writeShellScript "install.sh" ''
 #!/usr/bin/bash
 set -xeuo pipefail
 
-DEV="$1"
+DEV="/dev/sda"
 
-sudo partx --show "$DEV"
+partx --show "$DEV"
 
 echo "Partitioning disc: '$DEV'! All data will be lost!"
 read -p "Proceed? [y/N]:" confirm
 [[ "$confirm" =~ y|Y ]] || { echo "Arborting"; exit 0; }
 
-sudo wipefs "$DEV"
-sudo parted -s "$DEV" mklabel msdos
+wipefs "$DEV"
+parted -s "$DEV" mklabel msdos
 
-sudo parted -s "$DEV" -- mkpart primary 1MB -16GB
-sudo parted -s "$DEV" -- set 1 boot on
-sudo parted -s "$DEV" -- mkpart primary linux-swap -16GB 100%
+parted -s "$DEV" -- mkpart primary 1MB -16GB
+parted -s "$DEV" -- set 1 boot on
+parted -s "$DEV" -- mkpart primary linux-swap -16GB 100%
 
-sudo mkfs.ext4 -L nixos "$DEV"1
-sudo mkswap -L swap "$DEV"2
+mkfs.ext4 -L nixos "$DEV"1
+mkswap -L swap "$DEV"2
 
-sudo mount /dev/disk/by-label/nixos /mnt
-sudo swapon /dev/disk/by-label/swap
+mount /dev/disk/by-label/nixos /mnt
+swapon /dev/disk/by-label/swap
 
-sudo mkdir /mnt/etc/nixos/home
-sudo cp -r /iso/flake-sourceInfo/* /mnt/etc/nixos/home/
-CWD=/mnt/etc/nixos/home sudo git-crypt unlock /iso/git-crypt-key-file
-sudo nixos-install --flake /mnt/etc/nixos/home#laptop2 --root /mnt --verbose
+HOMEDIR=/mnt/etc/nixos/home
+
+git init --initial-branch=main "$HOMEDIR"
+mkdir -p "$HOMEDIR"/.git/git-crypt/keys
+cp /iso/git-crypt-key-file "$HOMEDIR"/.git/git-crypt/default
+git --work-tree="$HOMEDIR" --git-dir="$HOMEDIR"/.git remote add origin "https://github.com/proxemy/home"
+git --work-tree="$HOMEDIR" --git-dir="$HOMEDIR"/.git pull --set-upstream origin main
+#cp -r /iso/flake-sourceInfo/* "$HOMEDIR"
+
+nixos-install --flake /mnt/etc/nixos/home#laptop2 --root /mnt --verbose
 '';
 			  target = "/install.sh";
 			}
-			{ source = sourceInfo.outPath;
+			/*{ source = sourceInfo.outPath;
 			  target = "/flake-sourceInfo";
-			}
+			}*/
 			{ source = secrets.git-crypt.key-file;
 			  target = "/git-crypt-key-file";
 			}
