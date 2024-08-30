@@ -21,15 +21,16 @@
   outputs =
     { self, nixpkgs, home-manager, dotfiles, ... }:
     let
+      system = "x86_64-linux";
       cfg = {
         stateVersion = "24.11";
       };
-      secrets = import ./nix/secrets.nix { inherit nixpkgs; };
+      secrets = import ./nix/secrets.nix { nixpkgs = nixpkgs.legacyPackages.${system}; };
     in
     {
       nixosConfigurations = {
         laptop2 = nixpkgs.lib.nixosSystem rec {
-          system = "x86_64-linux";
+		inherit system;
           specialArgs = { inherit cfg secrets dotfiles; };
           modules = [
             "${nixpkgs}/nixos/modules/profiles/hardened.nix"
@@ -47,7 +48,7 @@
         };
 
         laptop2-installer = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
+          inherit system;
           specialArgs = {
             inherit cfg secrets;
             inherit (self) sourceInfo;
@@ -64,15 +65,15 @@
 
       homeConfigurations.${secrets.user.name} =
       home-manager.lib.homeManagerConfiguration {
-        pkgs = nixpkgs.outputs.legacyPackages.x86_64-linux;
+        pkgs = nixpkgs.outputs.legacyPackages.${system};
         extraSpecialArgs = { inherit cfg secrets dotfiles; };
         modules = [ ./nix/home.nix ];
       };
 
       # naive shell for quick progress
       # TODO: make it 'system' aware
-      devShells.x86_64-linux.default = nixpkgs.legacyPackages.x86_64-linux.mkShell {
-        buildInputs = with nixpkgs.legacyPackages.x86_64-linux; [
+      devShells.${system}.default = nixpkgs.legacyPackages.${system}.mkShell {
+        buildInputs = with nixpkgs.legacyPackages.${system}; [
           git git-crypt
           nixos-generators
           nixos-install-tools
@@ -82,7 +83,7 @@
           nixos-container
           #nixos-anywhere
 
-          nixpkgs.outputs.legacyPackages.x86_64-linux.home-manager
+          nixpkgs.outputs.legacyPackages.${system}.home-manager
         ];
         shellHook = ''
           echo "nixos-rebuild build --flake .#laptop2";
