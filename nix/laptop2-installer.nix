@@ -47,8 +47,8 @@ swapon /dev/disk/by-label/swap
 HOMEDIR=/mnt/etc/nixos/home
 
 git init --initial-branch=main "$HOMEDIR"
-mkdir -p "$HOMEDIR"/.git/git-crypt/keys
-cp /iso/git-crypt-key-file "$HOMEDIR"/.git/git-crypt/default
+cd "$HOMEDIR"
+git-crypt unlock /iso/git-crypt-key-file
 git --work-tree="$HOMEDIR" --git-dir="$HOMEDIR"/.git remote add origin "https://github.com/proxemy/home"
 git --work-tree="$HOMEDIR" --git-dir="$HOMEDIR"/.git pull --set-upstream origin main
 #cp -r /iso/flake-sourceInfo/* "$HOMEDIR"
