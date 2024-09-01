@@ -30,7 +30,7 @@
     {
       nixosConfigurations = rec {
         laptop2 = nixpkgs.lib.nixosSystem rec {
-		inherit system;
+        inherit system;
           specialArgs = { inherit cfg secrets dotfiles; };
           modules = [
             "${nixpkgs}/nixos/modules/profiles/hardened.nix"
@@ -76,7 +76,6 @@
           nixos-shell
           nixos-rebuild
           nixos-container
-          #nixos-anywhere
 
           nixpkgs.outputs.legacyPackages.${system}.home-manager
         ];

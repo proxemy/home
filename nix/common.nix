@@ -48,7 +48,7 @@
 		pulseaudio.enable = true;
 	};
 
-	services ={
+	services = {
 		openssh = lib.mkForce {
 			enable = true;
 			settings = {
@@ -77,6 +77,5 @@
 			variant = "deadacute";
 			options = "terminate:ctrl_alt_del";
 		};
-
 	};
 }

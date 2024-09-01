@@ -1,5 +1,5 @@
-{ secrets, ...}: {
-	boot= {
+{ secrets, ... }: {
+	boot = {
 		supportedFilesystems = [ "ext4" ];
 		loader.grub = {
 			device = "/dev/sda";
@@ -30,7 +30,7 @@
 		};
 	};
 
-	networking.hostName = "laptop2";
+	networking.hostName = secrets.hostnames.laptop2;
 
 	services = {
 		xserver = {
