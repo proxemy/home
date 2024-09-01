@@ -1,5 +1,5 @@
 {
-  description = "Test flake to build minimum raspeberry image.";
+  description = "TODO";
 
   inputs = {
 
