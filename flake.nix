@@ -28,7 +28,7 @@
       secrets = import ./nix/secrets.nix { nixpkgs = nixpkgs.legacyPackages.${system}; };
     in
     {
-      nixosConfigurations = {
+      nixosConfigurations = rec {
         laptop2 = nixpkgs.lib.nixosSystem rec {
 		inherit system;
           specialArgs = { inherit cfg secrets dotfiles; };
@@ -53,6 +53,9 @@
           specialArgs = { inherit secrets; inherit (self) sourceInfo; };
           modules = [ ./nix/installer/laptop2 ];
         };
+
+        # Aliases to map host- and flake target names
+        ${secrets.hostnames.laptop2} = laptop2;
       };
 
       homeConfigurations.${secrets.user.name} =
