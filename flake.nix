@@ -49,17 +49,9 @@
 
         laptop2-installer = nixpkgs.lib.nixosSystem {
           inherit system;
-          specialArgs = {
-            inherit cfg secrets;
-            inherit (self) sourceInfo;
-            # TODO: populate iso nix store with laptop2's build dependencies
-            #laptop2 = self.outputs.nixosConfigurations.laptop2;
-          };
-          modules = [
-            "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal-new-kernel-no-zfs.nix"
-            ./nix/common.nix
-            ./nix/laptop2-installer.nix
-          ];
+          # TODO: populate iso nix store with laptop2's build dependencies
+          specialArgs = { inherit secrets; inherit (self) sourceInfo; };
+          modules = [ ./nix/installer/laptop2 ];
         };
       };
 
