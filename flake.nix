@@ -30,21 +30,9 @@
     {
       nixosConfigurations = rec {
         laptop2 = nixpkgs.lib.nixosSystem rec {
-        inherit system;
-          specialArgs = { inherit cfg secrets dotfiles; };
-          modules = [
-            "${nixpkgs}/nixos/modules/profiles/hardened.nix"
-            ./nix/common.nix
-            ./nix/laptop2.nix
-
-            home-manager.nixosModule {
-              home-manager = {
-                useGlobalPkgs = true;
-                useUserPackages = true;
-                users.${secrets.user.name} = import ./nix/home.nix specialArgs;
-              };
-            }
-          ];
+          inherit system;
+          specialArgs = { inherit cfg secrets dotfiles home-manager; };
+          modules = [ ./nix/system/laptop2 ];
         };
 
         laptop2-installer = nixpkgs.lib.nixosSystem {

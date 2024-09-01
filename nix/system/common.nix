@@ -1,5 +1,20 @@
-{ pkgs, lib, cfg, ... }:
+{ pkgs, lib, modulesPath, cfg, secrets, home-manager, dotfiles, ... }:
 {
+	imports = [
+		"${modulesPath}/profiles/minimal.nix"
+		"${modulesPath}/profiles/hardened.nix"
+
+		home-manager.nixosModule {
+			home-manager = {
+				useGlobalPkgs = true;
+				useUserPackages = true;
+				users.${secrets.user.name} = import ./../home.nix {
+					inherit cfg secrets dotfiles;
+				};
+			};
+		}
+	];
+
 	nix = {
 		# https://www.tweag.io/blog/2020-07-31-nixos-flakes/
 		# "required to have nix beta flake support"

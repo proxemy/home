@@ -1,4 +1,10 @@
-{ secrets, ... }: {
+{ pkgs, lib, cfg, secrets, ... }:
+{
+	imports = [
+		./../common.nix
+		./../../programs/firefox.nix
+	];
+
 	boot = {
 		supportedFilesystems = [ "ext4" ];
 		loader.grub = {
@@ -39,8 +45,4 @@
 		};
 		displayManager.defaultSession = "xfce";
 	};
-
-	imports = [
-		./programs/firefox.nix
-	];
 }
