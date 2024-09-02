@@ -26,6 +26,6 @@ swapon /dev/disk/by-label/swap
 
 HOMEDIR=/mnt/etc/nixos/home
 mkdir -p "$HOMEDIR"
-cp -r /iso/home-git "$HOMEDIR"
+cp -r /iso/home-git/. "$HOMEDIR"
 
 nixos-install --flake /mnt/etc/nixos/home#laptop2 --root /mnt --verbose

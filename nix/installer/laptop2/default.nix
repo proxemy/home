@@ -24,7 +24,6 @@ in
 		# the 2 options might be a lead. 'includeSystemBuildDeps' bloats the
 		# nix/store extremly and storeContents expects JSON as input.
 		#includeSystemBuildDependencies = true;
-		#storeContents = [ laptop2 ];
 
 		contents = [
 			# TODO once the shell scripts have been split up, rename target files

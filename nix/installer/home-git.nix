@@ -19,9 +19,10 @@
 		git config branch.main.remote origin
 		git config branch.main.merge refs/heads/main
 
-		cp --recursive ${sourceInfo}/. $out
-
 		git config include.path ~/.config/gitconfig/proxemy
+
+		cp --recursive ${sourceInfo}/. $out
+		git add . # required, so nixos-install can access all copied files
 	'';
 }
 
