@@ -44,6 +44,7 @@
 
         # Aliases to map host- and flake target names
         ${secrets.hostnames.laptop2} = laptop2;
+        "${secrets.hostnames.laptop2}-installer" = laptop2-installer;
       };
 
       homeConfigurations.${secrets.user.name} =
@@ -70,27 +71,13 @@
         shellHook = ''
           echo "nixos-rebuild build --flake .#laptop2";
           echo "home-manager build --flake .#$(grep -P 'user = ' -A 1 nix/secrets.nix | grep -oP '(?<=name = ")\w+(?=")')";
-          echo "nix run .#dd-laptop2-installer"
+          echo "nix run .#dd-installer -- <hostname> [<block device>]"
         '';
       };
 
-      apps.${system}.dd-laptop2-installer = {
+      apps.${system}.dd-installer = {
         type = "app";
-        program = "${
-          nixpkgs.legacyPackages.${system}.writeShellScript "dd-laptop2.installer.sh" ''
-            set -xeuo pipefail
-
-            # nixos-rebuild build --flake .#laptop2
-            nixos-generate --flake .#laptop2-installer --format iso --out-link result
-            # home-manager build --flake .#"${secrets.user.name}"
-
-            ISO=$(find result/iso/ -iname '*.iso')
-            test -f "$ISO"
-            test -b /dev/sda
-
-            sudo umount /dev/sda* || true
-            sudo dd if="$ISO" of=/dev/sda status=progress conv=fsync
-          ''}";
-	  };
+        program = ./scripts/build-dd-installer.sh;
+      };
   };
 }
