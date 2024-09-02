@@ -22,16 +22,10 @@ mkswap -L swap "$DEV"2
 mount /dev/disk/by-label/nixos /mnt
 swapon /dev/disk/by-label/swap
 
-
-# TODO create dedicated setup.sh and install.sh with the content below
 # TODO create shellcheck flake tests for all .sh files
-HOMEDIR=/mnt/etc/nixos/home
 
-git init --initial-branch=main "$HOMEDIR"
-cd "$HOMEDIR"
-git-crypt unlock /iso/git-crypt-key-file
-git --work-tree="$HOMEDIR" --git-dir="$HOMEDIR"/.git remote add origin "https://github.com/proxemy/home"
-git --work-tree="$HOMEDIR" --git-dir="$HOMEDIR"/.git pull --set-upstream origin main
-#cp -r /iso/flake-sourceInfo/* "$HOMEDIR"
+HOMEDIR=/mnt/etc/nixos/home
+mkdir -p "$HOMEDIR"
+cp -r /iso/home-git "$HOMEDIR"
 
 nixos-install --flake /mnt/etc/nixos/home#laptop2 --root /mnt --verbose

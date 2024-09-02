@@ -1,4 +1,7 @@
 { pkgs, lib, modulesPath, secrets, sourceInfo, /*laptop2, dotfiles*/ ... }:
+let
+	home-git = import ./../home-git.nix { inherit pkgs secrets sourceInfo; };
+in
 {
 	imports = [
 		"${modulesPath}/installer/cd-dvd/installation-cd-minimal-new-kernel-no-zfs.nix"
@@ -25,14 +28,11 @@
 
 		contents = [
 			# TODO once the shell scripts have been split up, rename target files
-			{ source = sourceInfo + "/nix/installer/laptop2/format.sh";
+			{ source = sourceInfo + "/nix/installer/laptop2/install.sh";
 			  target = "/install.sh";
 			}
-			/*{ source = sourceInfo.outPath;
-			  target = "/flake-sourceInfo";
-			}*/
-			{ source = secrets.git-crypt.key-file;
-			  target = "/git-crypt-key-file";
+			{ source = home-git;
+			  target = "/home-git";
 			}
 		];
 	};
