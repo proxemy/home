@@ -28,4 +28,9 @@ HOMEDIR=/mnt/etc/nixos/home
 mkdir -p "$HOMEDIR"
 cp -r /iso/home-git/. "$HOMEDIR"
 
-nixos-install --flake /mnt/etc/nixos/home#laptop2 --root /mnt --verbose
+nixos-install \
+	--flake /mnt/etc/nixos/home#laptop2 \
+	--root /mnt \
+	--no-root-passwd \
+	--verbose \
+	--show-trace

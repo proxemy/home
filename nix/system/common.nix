@@ -1,7 +1,6 @@
 { pkgs, lib, modulesPath, cfg, secrets, home-manager, dotfiles, ... }:
 {
 	imports = [
-		"${modulesPath}/profiles/minimal.nix"
 		"${modulesPath}/profiles/hardened.nix"
 
 		home-manager.nixosModule {
