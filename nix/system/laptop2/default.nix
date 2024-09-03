@@ -11,6 +11,8 @@
     ./../../programs/firefox.nix
   ];
 
+  nixpkgs.hostPlatform = "x86_64-linux";
+
   boot = {
     supportedFilesystems = [ "ext4" ];
     loader.grub = {

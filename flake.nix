@@ -24,14 +24,17 @@
       nixpkgs,
       home-manager,
       dotfiles,
-      ...
     }:
     let
+      supportedSystems = [ "x86_64-linux" "aarch64-linux" ];
+      forSystems = nixpkgs.lib.genAttrs supportedSystems;
       system = "x86_64-linux";
+
       cfg = {
         stateVersion = "24.11";
         homeDir = "/etc/nixos/home";
       };
+
       secrets = import ./nix/secrets.nix { nixpkgs = nixpkgs.legacyPackages.${system}; };
     in
     {
