@@ -39,7 +39,7 @@
     in
     {
       nixosConfigurations = rec {
-        ${secrets.hostnames.laptop2} = nixpkgs.lib.nixosSystem rec {
+        ${secrets.hostNames.laptop2} = nixpkgs.lib.nixosSystem rec {
           inherit system;
           specialArgs = {
             inherit
@@ -52,7 +52,7 @@
           modules = [ ./nix/system/laptop2 ];
         };
 
-        "${secrets.hostnames.laptop2}-installer" = nixpkgs.lib.nixosSystem {
+        "${secrets.hostNames.laptop2}-installer" = nixpkgs.lib.nixosSystem {
           inherit system;
           # TODO: populate iso nix store with laptop2's build dependencies
           specialArgs = {
@@ -87,9 +87,10 @@
           nixpkgs.outputs.legacyPackages.${system}.home-manager
         ];
         shellHook = ''
-          echo "nixos-rebuild build --flake .#${secrets.hostnames.laptop2}[-installer]";
+          echo "nixos-rebuild build --flake .#${secrets.hostNames.laptop2}[-installer]";
           echo "home-manager build --flake .#${secrets.user.name}";
           echo "nix run .#dd-installer -- <hostname> [<block device>]"
+          echo "Known hosts: ${builtins.toJSON secrets.hostNames}"
         '';
       };
 

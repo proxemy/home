@@ -44,7 +44,7 @@
     };
   };
 
-  networking.hostName = secrets.hostnames.laptop2;
+  networking.hostName = secrets.hostNames.laptop2;
 
   services = {
     xserver = {
