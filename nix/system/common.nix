@@ -87,6 +87,10 @@
         "--show-trace"
       ]; # extended build logs
       randomizedDelaySec = "30min";
+      rebootWindow = {
+        lower = "03:00";
+        upper = "04:00";
+      };
     };
   };
 
