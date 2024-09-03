@@ -30,22 +30,18 @@
     in
     {
       nixosConfigurations = rec {
-        laptop2 = nixpkgs.lib.nixosSystem rec {
+        ${secrets.hostnames.laptop2} = nixpkgs.lib.nixosSystem rec {
           inherit system;
           specialArgs = { inherit cfg secrets dotfiles home-manager; };
           modules = [ ./nix/system/laptop2 ];
         };
 
-        laptop2-installer = nixpkgs.lib.nixosSystem {
+        "${secrets.hostnames.laptop2}-installer" = nixpkgs.lib.nixosSystem {
           inherit system;
           # TODO: populate iso nix store with laptop2's build dependencies
           specialArgs = { inherit cfg secrets; inherit (self) sourceInfo; };
           modules = [ ./nix/installer/laptop2 ];
         };
-
-        # Aliases to map host- and flake target names
-        ${secrets.hostnames.laptop2} = laptop2;
-        "${secrets.hostnames.laptop2}-installer" = laptop2-installer;
       };
 
       homeConfigurations.${secrets.user.name} =
@@ -70,8 +66,8 @@
           nixpkgs.outputs.legacyPackages.${system}.home-manager
         ];
         shellHook = ''
-          echo "nixos-rebuild build --flake .#laptop2";
-          echo "home-manager build --flake .#$(grep -P 'user = ' -A 1 nix/secrets.nix | grep -oP '(?<=name = ")\w+(?=")')";
+          echo "nixos-rebuild build --flake .#${secrets.hostnames.laptop2}[-installer]";
+          echo "home-manager build --flake .#${secrets.user.name}";
           echo "nix run .#dd-installer -- <hostname> [<block device>]"
         '';
       };
