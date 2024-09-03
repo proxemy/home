@@ -19,7 +19,13 @@
   };
 
   outputs =
-    { self, nixpkgs, home-manager, dotfiles, ... }:
+    {
+      self,
+      nixpkgs,
+      home-manager,
+      dotfiles,
+      ...
+    }:
     let
       system = "x86_64-linux";
       cfg = {
@@ -32,22 +38,33 @@
       nixosConfigurations = rec {
         ${secrets.hostnames.laptop2} = nixpkgs.lib.nixosSystem rec {
           inherit system;
-          specialArgs = { inherit cfg secrets dotfiles home-manager; };
+          specialArgs = {
+            inherit
+              cfg
+              secrets
+              dotfiles
+              home-manager
+              ;
+          };
           modules = [ ./nix/system/laptop2 ];
         };
 
         "${secrets.hostnames.laptop2}-installer" = nixpkgs.lib.nixosSystem {
           inherit system;
           # TODO: populate iso nix store with laptop2's build dependencies
-          specialArgs = { inherit cfg secrets; inherit (self) sourceInfo; };
+          specialArgs = {
+            inherit cfg secrets;
+            inherit (self) sourceInfo;
+          };
           modules = [ ./nix/installer/laptop2 ];
         };
       };
 
-      homeConfigurations.${secrets.user.name} =
-      home-manager.lib.homeManagerConfiguration {
+      homeConfigurations.${secrets.user.name} = home-manager.lib.homeManagerConfiguration {
         pkgs = nixpkgs.outputs.legacyPackages.${system};
-        extraSpecialArgs = { inherit cfg secrets dotfiles; };
+        extraSpecialArgs = {
+          inherit cfg secrets dotfiles;
+        };
         modules = [ ./nix/home.nix ];
       };
 
@@ -55,7 +72,8 @@
       # TODO: make it 'system' aware
       devShells.${system}.default = nixpkgs.legacyPackages.${system}.mkShell {
         buildInputs = with nixpkgs.legacyPackages.${system}; [
-          git git-crypt
+          git
+          git-crypt
           nixos-generators
           nixos-install-tools
           nixos-option
