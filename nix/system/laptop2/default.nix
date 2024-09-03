@@ -31,19 +31,6 @@
 
   swapDevices = [ { label = "swap"; } ];
 
-  users.users = {
-    ${secrets.user.name} = {
-      isNormalUser = true;
-      extraGroups = [ "wheel" ];
-      initialHashedPassword = secrets.user.hashed_pw;
-      createHome = true;
-      #openssh.authorizedKeys = [ "TODO" ];
-    };
-    root = {
-      initialHashedPassword = secrets.root.hashed_pw;
-    };
-  };
-
   networking.hostName = secrets.hostNames.laptop2;
 
   services = {

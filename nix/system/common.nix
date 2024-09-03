@@ -22,6 +22,19 @@
     }
   ];
 
+  users.users = {
+    ${secrets.user.name} = {
+      isNormalUser = true;
+      extraGroups = [ "wheel" ];
+      initialHashedPassword = secrets.user.hashed_pw;
+      createHome = true;
+      #openssh.authorizedKeys = [ "TODO" ];
+    };
+    root = {
+      initialHashedPassword = secrets.root.hashed_pw;
+    };
+  };
+
   nix = {
     # https://www.tweag.io/blog/2020-07-31-nixos-flakes/
     # "required to have nix beta flake support"
