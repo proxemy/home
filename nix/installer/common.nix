@@ -1,14 +1,19 @@
-{ pkgs, cfg, ... }:
+{
+  pkgs,
+  cfg,
+  hostName,
+  ...
+}:
 {
   environment = {
     systemPackages = with pkgs; [
       git
       git-crypt
     ];
-    variables = {
-      HOMEDIR = cfg.homeDir;
-    };
+    shellAliases.home-install = "sudo -E bash /iso/install.sh ${cfg.homeDir}";
   };
+
+  networking.hostName = hostName;
 
   nix = {
     package = pkgs.nixVersions.latest;

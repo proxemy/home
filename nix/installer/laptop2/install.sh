@@ -2,8 +2,8 @@
 set -euo pipefail
 
 DEV="/dev/sda"
-test -z ${HOMEDIR:-""} && { echo "\$HOMEDIR not set"; exit 1; }
-test -b $DEV || { echo "\$DEV '$DEV' is not a block device"; exit 1; }
+HOMEDIR="/mnt/${1:-$ARG_1_HOMEDIR_NOT_SET}"
+test -b "$DEV" || { echo "\$DEV '$DEV' is not a block device"; exit 1; }
 
 partx --show "$DEV"
 
@@ -28,11 +28,11 @@ swapon /dev/disk/by-label/swap
 
 # TODO create shellcheck flake tests for all .sh files
 
-mkdir -p /mnt/"$HOMEDIR"
-cp -r /iso/home-git/. /mnt/"$HOMEDIR"
+mkdir -p "$HOMEDIR"
+cp -r /iso/home-git/. "$HOMEDIR"
 
 nixos-install \
-	--flake /mnt/etc/nixos/home#laptop2 \
+  --flake "$HOMEDIR"#$(hostname) \
 	--root /mnt \
 	--no-root-passwd \
 	--verbose \

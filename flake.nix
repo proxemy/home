@@ -62,6 +62,7 @@
           specialArgs = {
             inherit cfg secrets;
             inherit (self) sourceInfo;
+            hostName = secrets.hostNames.laptop2;
           };
           modules = [ ./nix/installer/laptop2 ];
         };
