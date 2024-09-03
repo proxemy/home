@@ -1,10 +1,4 @@
-{
-  pkgs,
-  lib,
-  cfg,
-  secrets,
-  ...
-}:
+{ ... }:
 {
   imports = [
     ./../common.nix
@@ -30,8 +24,6 @@
   };
 
   swapDevices = [ { label = "swap"; } ];
-
-  networking.hostName = secrets.hostNames.laptop2;
 
   services = {
     xserver = {

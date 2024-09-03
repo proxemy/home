@@ -2,6 +2,7 @@
   pkgs,
   lib,
   modulesPath,
+  hostName,
   cfg,
   secrets,
   home-manager,
@@ -34,6 +35,8 @@
       initialHashedPassword = secrets.root.hashed_pw;
     };
   };
+
+  networking.hostName = hostName;
 
   nix = {
     # https://www.tweag.io/blog/2020-07-31-nixos-flakes/

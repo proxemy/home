@@ -51,6 +51,7 @@
               dotfiles
               home-manager
               ;
+            hostName = secrets.hostNames.laptop2;
           };
           modules = [ ./nix/system/laptop2 ];
         };
@@ -74,6 +75,7 @@
               dotfiles
               home-manager
               ;
+            hostName = secrets.hostNames.rpi1;
           };
           modules = [ ./nix/system/rpi1 ];
         };
