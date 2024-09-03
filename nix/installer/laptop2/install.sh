@@ -1,13 +1,17 @@
 #!/usr/bin/bash
-set -xeuo pipefail
+set -euo pipefail
 
 DEV="/dev/sda"
+test -z ${HOMEDIR:-""} && { echo "\$HOMEDIR not set"; exit 1; }
+test -b $DEV || { echo "\$DEV '$DEV' is not a block device"; exit 1; }
 
 partx --show "$DEV"
 
 echo "Partitioning disc: '$DEV'! All data will be lost!"
 read -p "Proceed? [y/N]:" confirm
 [[ "$confirm" =~ y|Y ]] || { echo "Arborting"; exit 0; }
+
+set -x
 
 wipefs "$DEV"
 parted -s "$DEV" mklabel msdos
@@ -24,9 +28,8 @@ swapon /dev/disk/by-label/swap
 
 # TODO create shellcheck flake tests for all .sh files
 
-HOMEDIR=/mnt/etc/nixos/home
-mkdir -p "$HOMEDIR"
-cp -r /iso/home-git/. "$HOMEDIR"
+mkdir -p /mnt/"$HOMEDIR"
+cp -r /iso/home-git/. /mnt/"$HOMEDIR"
 
 nixos-install \
 	--flake /mnt/etc/nixos/home#laptop2 \

@@ -51,7 +51,7 @@
 			enable = true;
 			allowReboot = true;
 			dates = "03:00";
-			flake = "github:proxemy/home";
+			flake = cfg.homeDir;
 			flags = [ /*"-L" "--verbose"*/ "--show-trace" ]; # extended build logs
 			randomizedDelaySec = "30min";
 		};

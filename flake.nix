@@ -24,6 +24,7 @@
       system = "x86_64-linux";
       cfg = {
         stateVersion = "24.11";
+        homeDir = "/etc/nixos/home";
       };
       secrets = import ./nix/secrets.nix { nixpkgs = nixpkgs.legacyPackages.${system}; };
     in
@@ -38,7 +39,7 @@
         laptop2-installer = nixpkgs.lib.nixosSystem {
           inherit system;
           # TODO: populate iso nix store with laptop2's build dependencies
-          specialArgs = { inherit secrets; inherit (self) sourceInfo; };
+          specialArgs = { inherit cfg secrets; inherit (self) sourceInfo; };
           modules = [ ./nix/installer/laptop2 ];
         };
 

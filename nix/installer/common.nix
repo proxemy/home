@@ -1,8 +1,11 @@
-{ pkgs, ... }:
+{ pkgs, cfg, ... }:
 {
-	environment.systemPackages = with pkgs; [
-		git git-crypt
-	];
+	environment = {
+		systemPackages = with pkgs; [
+			git git-crypt
+		];
+		variables = { HOMEDIR = cfg.homeDir; };
+	};
 
 	nix = {
 		package = pkgs.nixVersions.latest;
