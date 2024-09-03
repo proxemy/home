@@ -26,7 +26,10 @@
       dotfiles,
     }:
     let
-      supportedSystems = [ "x86_64-linux" "aarch64-linux" ];
+      supportedSystems = [
+        "x86_64-linux"
+        "aarch64-linux"
+      ];
       forSystems = nixpkgs.lib.genAttrs supportedSystems;
       system = "x86_64-linux";
 
@@ -60,6 +63,19 @@
             inherit (self) sourceInfo;
           };
           modules = [ ./nix/installer/laptop2 ];
+        };
+
+        ${secrets.hostNames.rpi1} = nixpkgs.lib.nixosSystem {
+          inherit system;
+          specialArgs = {
+            inherit
+              cfg
+              secrets
+              dotfiles
+              home-manager
+              ;
+          };
+          modules = [ ./nix/system/rpi1 ];
         };
       };
 
