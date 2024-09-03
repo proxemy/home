@@ -76,5 +76,7 @@
         type = "app";
         program = ./scripts/build-dd-installer.sh;
       };
-  };
+
+      formatter.${system} = nixpkgs.legacyPackages.${system}.nixfmt-rfc-style;
+    };
 }
