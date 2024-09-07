@@ -7,7 +7,7 @@
   ...
 }:
 let
-  home-git = import ./../home-git.nix { inherit pkgs secrets sourceInfo; };
+  home-git-repo = import ./../home-git-repo.nix { inherit pkgs secrets sourceInfo; };
 in
 {
   imports = [
@@ -39,7 +39,7 @@ in
         target = "/install.sh";
       }
       {
-        source = home-git;
+        source = home-git-repo;
         target = "/home-git";
       }
     ];
