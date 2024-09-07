@@ -65,15 +65,22 @@
     };
   };
 
-  environment.systemPackages = with pkgs; [
-    git
-    git-crypt
-    tmux
-    neovim
-    mtr
-    tree
-    wget
-  ];
+  environment = {
+    systemPackages = with pkgs; [
+      git
+      git-crypt
+      tmux
+      neovim
+      mtr
+      tree
+      wget
+    ];
+    variables = {
+      HOMEDIR = cfg.homeDir;
+    };
+  };
+
+  boot.binfmt.emulatedSystems = lib.lists.remove pkgs.system cfg.supportedSystems;
 
   system = {
     inherit (cfg) stateVersion;
