@@ -32,7 +32,7 @@
       #openssh.authorizedKeys = [ "TODO" ];
     };
     root = {
-      initialHashedPassword = secrets.root.hashed_pw;
+      initialHashedPassword = lib.mkForce secrets.root.hashed_pw;
     };
   };
 
