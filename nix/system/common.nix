@@ -12,6 +12,7 @@
 {
   imports = [
     "${modulesPath}/profiles/hardened.nix"
+    ./auto-update.nix
 
     home-manager.nixosModule
     {
@@ -84,21 +85,6 @@
 
   system = {
     inherit (cfg) stateVersion;
-    autoUpgrade = {
-      enable = true;
-      allowReboot = true;
-      dates = "03:00";
-      flake = cfg.homeDir;
-      flags = [
-        # "-L" "--verbose"
-        "--show-trace"
-      ]; # extended build logs
-      randomizedDelaySec = "30min";
-      rebootWindow = {
-        lower = "03:00";
-        upper = "04:00";
-      };
-    };
   };
 
   hardware = {
