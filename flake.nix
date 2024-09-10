@@ -30,8 +30,9 @@
         stateVersion = "24.11";
         homeDir = "/etc/nixos/home";
         supportedSystems = [
-          "x86_64-linux"
           "aarch64-linux"
+          "armv7l-linux"
+          "x86_64-linux"
         ];
       };
 
