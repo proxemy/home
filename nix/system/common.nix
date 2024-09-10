@@ -45,6 +45,7 @@
     package = pkgs.nixVersions.latest;
 
     settings = {
+      trusted-users = [ secrets.user.name ];
       system-features = [
         "nix-command"
         "flakes"
