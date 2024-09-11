@@ -1,4 +1,10 @@
-{ pkgs, cfg, ... }:
+{
+  pkgs,
+  cfg,
+  secrets,
+  sourceInfo,
+  ...
+}:
 {
   system.autoUpgrade = {
     enable = true;
@@ -28,5 +34,20 @@
         ${pkgs.nix}/bin flake update
       '';
     };
+  };
+
+  system.activationScripts = {
+    init-home-git-repo =
+      let
+        home-git-repo = import ./../installer/home-git-repo.nix { inherit pkgs secrets sourceInfo; };
+      in
+      {
+        deps = [ "etc" ];
+        supportsDryActivation = false;
+        text = ''
+          mkdir -p ${cfg.homeDir}
+          cp -r ${home-git-repo}/. ${cfg.homeDir}
+        '';
+      };
   };
 }

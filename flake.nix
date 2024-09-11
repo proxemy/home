@@ -46,6 +46,7 @@
         ${secrets.hostNames.laptop2} = nixpkgs.lib.nixosSystem rec {
           inherit system;
           specialArgs = {
+            inherit (self) sourceInfo;
             inherit
               cfg
               secrets
@@ -71,6 +72,7 @@
         ${secrets.hostNames.rpi1} = nixpkgs.lib.nixosSystem {
           inherit system;
           specialArgs = {
+            inherit (self) sourceInfo;
             inherit
               cfg
               secrets
