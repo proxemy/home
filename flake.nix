@@ -24,7 +24,7 @@
       nixpkgs,
       home-manager,
       dotfiles,
-    }:
+    }@inputs:
     let
       cfg = {
         stateVersion = "24.11";
@@ -37,13 +37,14 @@
       };
 
       forSystems = nixpkgs.lib.genAttrs cfg.supportedSystems;
-      system = "x86_64-linux";
+      system = "x86_64-linux"; # builtins.currentSystem;
+      nixpkgs = inputs.nixpkgs.legacyPackages.${system};
 
-      secrets = import ./nix/secrets.nix { nixpkgs = nixpkgs.legacyPackages.${system}; };
+      secrets = import ./nix/secrets.nix { inherit nixpkgs; };
     in
     {
-      nixosConfigurations = rec {
-        ${secrets.hostNames.laptop2} = nixpkgs.lib.nixosSystem rec {
+      nixosConfigurations = {
+        ${secrets.hostNames.laptop2} = inputs.nixpkgs.lib.nixosSystem rec {
           inherit system;
           specialArgs = {
             inherit (self) sourceInfo;
@@ -58,7 +59,7 @@
           modules = [ ./nix/system/laptop2 ];
         };
 
-        "${secrets.hostNames.laptop2}-installer" = nixpkgs.lib.nixosSystem {
+        "${secrets.hostNames.laptop2}-installer" = inputs.nixpkgs.lib.nixosSystem {
           inherit system;
           # TODO: populate iso nix store with laptop2's build dependencies
           specialArgs = {
@@ -69,7 +70,7 @@
           modules = [ ./nix/installer/laptop2 ];
         };
 
-        ${secrets.hostNames.rpi1} = nixpkgs.lib.nixosSystem {
+        ${secrets.hostNames.rpi1} = inputs.nixpkgs.lib.nixosSystem {
           inherit system;
           specialArgs = {
             inherit (self) sourceInfo;
@@ -86,7 +87,7 @@
       };
 
       homeConfigurations.${secrets.user.name} = home-manager.lib.homeManagerConfiguration {
-        pkgs = nixpkgs.outputs.legacyPackages.${system};
+        pkgs = nixpkgs;
         extraSpecialArgs = {
           inherit cfg secrets dotfiles;
         };
@@ -95,8 +96,8 @@
 
       # naive shell for quick progress
       # TODO: make it 'system' aware
-      devShells.${system}.default = nixpkgs.legacyPackages.${system}.mkShell {
-        buildInputs = with nixpkgs.legacyPackages.${system}; [
+      devShells.${system}.default = nixpkgs.mkShell {
+        buildInputs = with nixpkgs; [
           git
           git-crypt
           nixos-generators
@@ -105,8 +106,7 @@
           nixos-shell
           nixos-rebuild
           nixos-container
-
-          nixpkgs.outputs.legacyPackages.${system}.home-manager
+          nixpkgs.home-manager # input arg 'home-manager' would be taken otherwise
         ];
         shellHook = ''
           echo "nixos-rebuild build --flake .#${secrets.hostNames.laptop2}[-installer]";
@@ -121,6 +121,6 @@
         program = ./scripts/build-dd-installer.sh;
       };
 
-      formatter.${system} = nixpkgs.legacyPackages.${system}.nixfmt-rfc-style;
+      formatter.${system} = nixpkgs.nixfmt-rfc-style;
     };
 }
