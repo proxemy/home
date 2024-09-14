@@ -6,14 +6,15 @@
 pkgs.stdenv.mkDerivation {
   name = "initial-home-git";
 
-  nativeBuildInputs = with pkgs; [
+  buildInputs = with pkgs; [
     git
     git-crypt
   ];
 
+  doChecks = false;
   dontUnpack = true;
 
-  buildPhase = with pkgs; ''
+  buildPhase = with pkgs.pkgsBuildBuild; ''
     ${git}/bin/git init --initial-branch=main $out
     cd $out
 
@@ -26,6 +27,7 @@ pkgs.stdenv.mkDerivation {
     ${git}/bin/git config branch.main.remote origin
     ${git}/bin/git config branch.main.merge refs/heads/main
 
+    # TODO proxemy config path is impure, needs to refer to dotfiles repo OR fake name/email for adding below
     ${git}/bin/git config include.path ~/.config/gitconfig/proxemy
 
     cp --recursive ${sourceInfo}/. $out
