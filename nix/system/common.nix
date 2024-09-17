@@ -11,7 +11,7 @@
 }:
 {
   imports = [
-    "${modulesPath}/profiles/hardened.nix"
+    #"${modulesPath}/profiles/hardened.nix"
     ./auto-update.nix
 
     home-manager.nixosModule
@@ -72,7 +72,7 @@
       git
       git-crypt
       tmux
-      neovim
+      #neovim
       mtr
       tree
       wget

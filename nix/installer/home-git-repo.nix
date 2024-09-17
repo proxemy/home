@@ -15,10 +15,13 @@ pkgs.stdenv.mkDerivation {
   dontUnpack = true;
 
   buildPhase = with pkgs.pkgsBuildBuild; ''
-    ${git}/bin/git init --initial-branch=main $out
-    cd $out
+    ${git}/bin/git init --initial-branch=main "$out"
+    cd "$out"
 
-    ${git-crypt}/bin/git-crypt unlock ${secrets.git-crypt.key-file}
+    # TODO git-crypt does not work well in cross compilation
+    #${git-crypt}/bin/git-crypt unlock ${secrets.git-crypt.key-file}
+    mkdir -p "$out"/.git/git-crypt/keys
+    cp ${secrets.git-crypt.key-file} "$out/.git/git-crypt/keys/default"
 
     ${git}/bin/git remote add origin "https://github.com/proxemy/home"
     ${git}/bin/git remote set-url --push origin git@github.com:proxemy/home.git
