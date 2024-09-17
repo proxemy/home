@@ -11,7 +11,7 @@
 }:
 {
   imports = [
-    #"${modulesPath}/profiles/hardened.nix"
+    "${modulesPath}/profiles/hardened.nix"
     ./auto-update.nix
 
     home-manager.nixosModule
@@ -72,7 +72,6 @@
       git
       git-crypt
       tmux
-      #neovim
       mtr
       tree
       wget
@@ -80,6 +79,10 @@
     variables = {
       HOMEDIR = cfg.homeDir;
     };
+  };
+
+  programs = lib.mkDefault {
+    neovim.enable = true;
   };
 
   boot.binfmt.emulatedSystems = lib.lists.remove pkgs.system cfg.supportedSystems;
