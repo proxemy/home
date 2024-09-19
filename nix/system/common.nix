@@ -117,13 +117,17 @@
         PermitTunnel no
         PermitUserEnvironment no
 
+        # TODO migrate to/create ssh client config
         #UseRoaming no # <- client config
       '';
     };
+
     xserver.xkb = lib.mkDefault {
       layout = "de";
       variant = "deadacute";
       options = "terminate:ctrl_alt_del";
     };
+
+    pipewire.enable = false; # conflict with Pulseaudio
   };
 }
