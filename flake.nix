@@ -44,7 +44,7 @@
     in
     {
       nixosConfigurations = {
-        ${secrets.hostNames.laptop2} = inputs.nixpkgs.lib.nixosSystem rec {
+        ${secrets.hostNames.laptop2} = inputs.nixpkgs.lib.nixosSystem {
           inherit system;
           specialArgs = {
             inherit (self) sourceInfo;
@@ -109,10 +109,13 @@
           nixpkgs.home-manager # input arg 'home-manager' would be taken otherwise
         ];
         shellHook = ''
-          echo "nixos-rebuild build --flake .#${secrets.hostNames.laptop2}[-installer]";
-          echo "home-manager build --flake .#${secrets.user.name}";
-          echo "nix run .#dd-installer -- <hostname> [<block device>]"
-          echo "Known hosts: ${builtins.toJSON secrets.hostNames}"
+          echo -e "" \
+          "nixos-rebuild build --flake .#${secrets.hostNames.laptop2}[-installer]\n" \
+          "home-manager build --flake .#${secrets.user.name}\n" \
+          "nix run .#dd-installer -- <hostname> [<block device>]\n" \
+          "nixos-generate --flake .#${secrets.hostNames.rpi1} --format iso --out-link result\n" \
+          "nix build '.#nixosConfigurations.${secrets.hostNames.rpi1}.config.system.build.sdImage'\n" \
+          "Hosts: ${builtins.toString (builtins.attrValues secrets.hostNames)}"
         '';
       };
 
