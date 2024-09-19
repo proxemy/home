@@ -1,5 +1,8 @@
 { lib, ... }:
 {
+  # zfs is broken and dedicated '-no-zfs.nix' profile is missing
+  boot.supportedFilesystems.zfs = lib.mkForce false;
+
   # Apparmor is marked broken on aarch64
   security.apparmor.enable = lib.mkForce false;
 
