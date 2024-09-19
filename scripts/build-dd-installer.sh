@@ -19,7 +19,7 @@ if [ ! -z "$target_device" && -b "$target_device" ]; then
 	exit 1
 fi
 
-nixos-generate --flake .#"$host_name"-installer --format iso --out-link result
+nixos-generate --flake .#"$host_name" --format iso --out-link result
 
 iso=$(find result/iso/ -iname '*.iso')
 
