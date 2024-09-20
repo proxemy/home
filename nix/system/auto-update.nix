@@ -12,7 +12,8 @@
     dates = "03:00";
     flake = cfg.homeDir;
     flags = [
-      # "-L" "--verbose"
+      "--print-build-logs"
+      # "--verbose"
       "--show-trace"
     ]; # extended build logs
     randomizedDelaySec = "30min";
@@ -28,10 +29,10 @@
     requiredBy = [ "nixos-upgrade.service" ];
     serviceConfig = {
       ExecStart = ''
-        cd ${cfg.homeDir}
-        ${pkgs.git}/bin fetch origin
-        ${pkgs.git}/bin reset --hard origin/main
-        ${pkgs.nix}/bin flake update
+        GIT_ARGS="--work-tree=${cfg.homeDir} --git-dir=${cfg.homeDir}/.git"
+        ${pkgs.git}/bin $GIT_ARGS fetch origin
+        ${pkgs.git}/bin $GIT_ARGS reset --hard origin/main
+        ${pkgs.nix}/bin flake update ${cfg.homeDir}
       '';
     };
   };
