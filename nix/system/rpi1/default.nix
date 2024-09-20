@@ -25,17 +25,10 @@
 
   sdImage.compressImage = false;
 
-  # TODO Disabled for testing, since 'swapDevice' might fully create a swapfile
-  /*sdImage.postBuildCommands = ''
-    dd if=/dev/zero of="$out"/swapfile bs=1024 count=$((1024*1024*8))
-    chmod 0600 "$out"/swapfile
-    mkswap "$out"/swapfile
-  '';*/
-
   swapDevices = [
     {
       device = "/swapfile";
-      size = 8 * 1024;
+      size = 12 * 1024;
     }
   ];
 }
