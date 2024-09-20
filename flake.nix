@@ -114,7 +114,7 @@
           "home-manager build --flake .#${secrets.user.name}\n" \
           "nix run .#dd-installer -- <hostname> [<block device>]\n" \
           "nixos-generate --flake .#${secrets.hostNames.rpi1} --format iso --out-link result\n" \
-          "nix build '.#nixosConfigurations.${secrets.hostNames.rpi1}.config.system.build.sdImage'\n" \
+          "nix build .#nixosConfigurations.${secrets.hostNames.rpi1}.config.system.build.sdImage\n" \
           "Hosts: ${builtins.toString (builtins.attrValues secrets.hostNames)}"
         '';
       };

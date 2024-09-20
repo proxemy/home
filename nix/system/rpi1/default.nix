@@ -1,4 +1,4 @@
-{ lib, modulesPath, cfg, ... }:
+{ modulesPath, ... }:
 {
   imports = [
     "${modulesPath}/installer/sd-card/sd-image-aarch64-new-kernel.nix"
@@ -12,10 +12,6 @@
   nixpkgs = {
     buildPlatform = "x86_64-linux";
     hostPlatform = "aarch64-linux";
-  };
-
-  system = {
-    inherit (cfg) stateVersion;
   };
 
   sdImage.compressImage = false;
