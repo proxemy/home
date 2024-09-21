@@ -41,10 +41,11 @@
       nixpkgs = inputs.nixpkgs.legacyPackages.${system};
 
       secrets = import ./nix/secrets.nix { inherit nixpkgs; };
+      hosts = secrets.hostNamesAliases;
     in
     {
       nixosConfigurations = {
-        ${secrets.hostNames.laptop2} = inputs.nixpkgs.lib.nixosSystem {
+        ${hosts.laptop2} = inputs.nixpkgs.lib.nixosSystem {
           inherit system;
           specialArgs = {
             inherit (self) sourceInfo;
@@ -54,23 +55,23 @@
               dotfiles
               home-manager
               ;
-            hostName = secrets.hostNames.laptop2;
+            hostName = hosts.laptop2;
           };
           modules = [ ./nix/system/laptop2 ];
         };
 
-        "${secrets.hostNames.laptop2}-installer" = inputs.nixpkgs.lib.nixosSystem {
+        "${hosts.laptop2}-installer" = inputs.nixpkgs.lib.nixosSystem {
           inherit system;
           # TODO: populate iso nix store with laptop2's build dependencies
           specialArgs = {
             inherit cfg secrets;
             inherit (self) sourceInfo;
-            hostName = secrets.hostNames.laptop2;
+            hostName = hosts.laptop2;
           };
           modules = [ ./nix/installer/laptop2 ];
         };
 
-        ${secrets.hostNames.rpi1} = inputs.nixpkgs.lib.nixosSystem {
+        ${hosts.rpi1} = inputs.nixpkgs.lib.nixosSystem {
           inherit system;
           specialArgs = {
             inherit (self) sourceInfo;
@@ -80,7 +81,7 @@
               dotfiles
               home-manager
               ;
-            hostName = secrets.hostNames.rpi1;
+            hostName = hosts.rpi1;
           };
           modules = [ ./nix/system/rpi1 ];
         };
@@ -110,12 +111,12 @@
         ];
         shellHook = ''
           echo -e "" \
-          "nixos-rebuild build --flake .#${secrets.hostNames.laptop2}[-installer]\n" \
+          "nixos-rebuild build --flake .#${hosts.laptop2}[-installer]\n" \
           "home-manager build --flake .#${secrets.userName}\n" \
           "nix run .#dd-installer -- <hostname> [<block device>]\n" \
-          "nixos-generate --flake .#${secrets.hostNames.rpi1} --format iso --out-link result\n" \
-          "nix build .#nixosConfigurations.${secrets.hostNames.rpi1}.config.system.build.sdImage\n" \
-          "Hosts: ${builtins.toString (builtins.attrValues secrets.hostNames)}"
+          "nixos-generate --flake .#${hosts.rpi1} --format iso --out-link result\n" \
+          "nix build .#nixosConfigurations.${hosts.rpi1}.config.system.build.sdImage\n" \
+          "Hosts: ${builtins.toString secrets.hostNamesList}"
         '';
       };
 
