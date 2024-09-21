@@ -12,6 +12,7 @@
 {
   imports = [
     "${modulesPath}/profiles/hardened.nix"
+    secrets.module
     ./auto-update.nix
 
     home-manager.nixosModule
@@ -19,23 +20,10 @@
       home-manager = {
         useGlobalPkgs = true;
         useUserPackages = true;
-        users.${secrets.user.name} = import ./../home.nix { inherit cfg secrets dotfiles; };
+        users.${secrets.userName} = import ./../home.nix { inherit cfg secrets dotfiles; };
       };
     }
   ];
-
-  users.users = {
-    ${secrets.user.name} = {
-      isNormalUser = true;
-      extraGroups = [ "wheel" ];
-      initialHashedPassword = secrets.user.hashed_pw;
-      createHome = true;
-      #openssh.authorizedKeys = [ "TODO" ];
-    };
-    root = {
-      initialHashedPassword = lib.mkForce secrets.root.hashed_pw;
-    };
-  };
 
   networking.hostName = hostName;
 
@@ -45,7 +33,7 @@
     package = pkgs.nixVersions.latest;
 
     settings = {
-      trusted-users = [ secrets.user.name ];
+      trusted-users = [ secrets.userName ];
       system-features = [
         "nix-command"
         "flakes"
