@@ -34,6 +34,6 @@ pkgs.stdenv.mkDerivation {
     ${git}/bin/git config include.path ~/.config/gitconfig/proxemy
 
     cp --recursive ${sourceInfo}/. $out
-    ${git}/bin/git add . # required, so nixos-install can access tracked files
+    ${git}/bin/git add -a # required, so nixos-install can access tracked files
   '';
 }

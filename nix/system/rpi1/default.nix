@@ -18,10 +18,7 @@
 
   boot.loader.raspberryPi.version = 4;
 
-  nixpkgs = {
-    buildPlatform = "x86_64-linux";
-    hostPlatform = "aarch64-linux";
-  };
+  nixpkgs.hostPlatform = "aarch64-linux";
 
   sdImage.compressImage = false;
 
