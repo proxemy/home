@@ -32,6 +32,9 @@
     };
   };
 
+  # TODO: maybe move all this into a xfce.nix file. Beware of home-manager modules
+  # import specialties, since this all all HM stuff !luckily disabled when no DM/WM is defined!
+  # see: <hostname>.config.home-manager.users.<username>.xfconf.settings
   xfconf = {
     enable = true;
     settings = {
