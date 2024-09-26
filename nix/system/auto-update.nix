@@ -28,6 +28,8 @@
     description = "Pull from remote and update lockfile. See HOMEDIR";
     requiredBy = [ "nixos-upgrade.service" ];
     serviceConfig = {
+      #User = "nixos";
+      Type = "oneshot";
       ExecStart =
         let
           git_args = "--work-tree=${cfg.homeDir} --git-dir=${cfg.homeDir}/.git";
