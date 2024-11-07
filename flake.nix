@@ -42,48 +42,41 @@
 
       secrets = import ./nix/secrets.nix { inherit nixpkgs; };
       hosts = secrets.hostNamesAliases;
+
+      mkNixosSys =
+        { alias, system, module ? ./nix/system/${alias} }:
+        inputs.nixpkgs.lib.nixosSystem {
+          inherit system;
+          specialArgs = {
+            inherit (self) sourceInfo;
+            inherit
+              cfg
+              secrets
+              dotfiles
+              home-manager
+              ;
+            hostName = hosts.${alias};
+          };
+          modules = [ module ];
+        };
     in
     {
       nixosConfigurations = {
-        ${hosts.laptop2} = inputs.nixpkgs.lib.nixosSystem {
-          inherit system;
-          specialArgs = {
-            inherit (self) sourceInfo;
-            inherit
-              cfg
-              secrets
-              dotfiles
-              home-manager
-              ;
-            hostName = hosts.laptop2;
-          };
-          modules = [ ./nix/system/laptop2 ];
+
+        ${hosts.laptop2} = mkNixosSys {
+          alias = "laptop2";
+          system = "x86_64-linux";
         };
 
-        "${hosts.laptop2}-installer" = inputs.nixpkgs.lib.nixosSystem {
-          inherit system;
-          # TODO: populate iso nix store with laptop2's build dependencies
-          specialArgs = {
-            inherit cfg secrets;
-            inherit (self) sourceInfo;
-            hostName = hosts.laptop2;
-          };
-          modules = [ ./nix/installer/laptop2 ];
+        "${hosts.laptop2}-installer" = mkNixosSys {
+          alias = "laptop2";
+          system = "x86_64-linux";
+          module = ./nix/installer/laptop2;
         };
 
-        ${hosts.rpi1} = inputs.nixpkgs.lib.nixosSystem {
-          inherit system;
-          specialArgs = {
-            inherit (self) sourceInfo;
-            inherit
-              cfg
-              secrets
-              dotfiles
-              home-manager
-              ;
-            hostName = hosts.rpi1;
-          };
-          modules = [ ./nix/system/rpi1 ];
+        ${hosts.rpi1} = mkNixosSys {
+          alias = "rpi1";
+          system = "aarch64-linux";
         };
       };
 
@@ -95,8 +88,6 @@
         modules = [ ./nix/home.nix ];
       };
 
-      # naive shell for quick progress
-      # TODO: make it 'system' aware
       devShells.${system}.default = nixpkgs.mkShell {
         buildInputs = with nixpkgs; [
           git
