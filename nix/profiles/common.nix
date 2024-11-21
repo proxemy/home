@@ -118,4 +118,8 @@
 
     pipewire.enable = false; # conflict with Pulseaudio
   };
+
+  zramSwap = {
+    enable = true;
+  };
 }
