@@ -1,7 +1,7 @@
 { ... }:
 {
   imports = [
-    ./../common.nix
+    ./../../profiles/common.nix
     ./../../programs/firefox.nix
   ];
 

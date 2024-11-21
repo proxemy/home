@@ -11,8 +11,8 @@
 }:
 {
   imports = [
-    "${modulesPath}/profiles/hardened.nix"
     secrets.module
+    ./hardened.nix
     ./auto-update.nix
 
     home-manager.nixosModule
