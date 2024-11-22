@@ -44,7 +44,11 @@
       hosts = secrets.hostNamesAliases;
 
       mkNixosSys =
-        { alias, system, module ? ./nix/system/${alias} }:
+        {
+          alias,
+          system,
+          module ? ./nix/system/${alias},
+        }:
         inputs.nixpkgs.lib.nixosSystem {
           inherit system;
           specialArgs = {
