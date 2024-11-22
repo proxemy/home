@@ -34,11 +34,11 @@
           git_args = "--work-tree=${cfg.homeDir} --git-dir=${cfg.homeDir}/.git";
         in
         ''
-          chown -R $USER ${cfg.homeDir}
-          chmod -R u+rwx,go-rwx ${cfg.homeDir}
-          ${pkgs.git}/bin ${git_args} fetch origin
-          ${pkgs.git}/bin ${git_args} reset --hard origin/main
-          ${pkgs.nix}/bin flake update ${cfg.homeDir}
+          chown -R $USER:$USER ${cfg.homeDir}
+          chmod -R u+rwx,go+r-wx ${cfg.homeDir}
+          ${pkgs.git}/bin/git ${git_args} fetch origin
+          ${pkgs.git}/bin/git ${git_args} reset --hard origin/main
+          ${pkgs.nix}/bin/nix flake update ${cfg.homeDir}
         '';
     };
   };
