@@ -1,7 +1,7 @@
 {
   pkgs,
   cfg,
-  hostName,
+  host_name,
   ...
 }:
 {
@@ -13,7 +13,7 @@
     shellAliases.home-install = "sudo -E bash /iso/install.sh ${cfg.homeDir}";
   };
 
-  networking.hostName = hostName;
+  networking.hostName = host_name;
 
   nix = {
     package = pkgs.nixVersions.latest;

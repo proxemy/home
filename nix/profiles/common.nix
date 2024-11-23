@@ -2,7 +2,7 @@
   pkgs,
   lib,
   modulesPath,
-  hostName,
+  host_name,
   cfg,
   secrets,
   home-manager,
@@ -20,12 +20,12 @@
       home-manager = {
         useGlobalPkgs = true;
         useUserPackages = true;
-        users.${secrets.userName} = import ./../home.nix { inherit cfg secrets dotfiles; };
+        users.${secrets.user_name} = import ./../home.nix { inherit cfg secrets dotfiles; };
       };
     }
   ];
 
-  networking.hostName = hostName;
+  networking.hostName = host_name;
 
   nix = {
     # https://www.tweag.io/blog/2020-07-31-nixos-flakes/
@@ -33,7 +33,7 @@
     package = pkgs.nixVersions.latest;
 
     settings = {
-      trusted-users = [ secrets.userName ];
+      trusted-users = [ secrets.user_name ];
       system-features = [
         "nix-command"
         "flakes"
