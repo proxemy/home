@@ -85,7 +85,7 @@
   };
 
   services = {
-    openssh = lib.mkForce {
+    openssh = {
       enable = true;
       settings = {
         PasswordAuthentication = false;
