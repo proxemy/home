@@ -23,7 +23,7 @@ in
   #};
 
   isoImage = {
-    edition = lib.mkForce "laptop2";
+    edition = "laptop2";
     isoBaseName = "laptop2-nixos";
     volumeID = "laptop2-nixos";
 
