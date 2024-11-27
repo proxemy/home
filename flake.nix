@@ -41,7 +41,7 @@
       nixpkgs = inputs.nixpkgs.legacyPackages.${system};
 
       secrets = import ./nix/secrets.nix { inherit nixpkgs; };
-      hosts = secrets.hostNamesAliases;
+      inherit (secrets) hostnames;
 
       mkNixosSys =
         {
@@ -59,7 +59,7 @@
               dotfiles
               home-manager
               ;
-            host_name = hosts.${alias};
+            host_name = hostnames.${alias};
           };
           modules = [ module ];
         };
@@ -67,18 +67,18 @@
     {
       nixosConfigurations = {
 
-        ${hosts.laptop2} = mkNixosSys {
+        ${hostnames.laptop2} = mkNixosSys {
           alias = "laptop2";
           system = "x86_64-linux";
         };
 
-        "${hosts.laptop2}-installer" = mkNixosSys {
+        "${hostnames.laptop2}-installer" = mkNixosSys {
           alias = "laptop2";
           system = "x86_64-linux";
           module = ./nix/installer/laptop2;
         };
 
-        ${hosts.rpi1} = mkNixosSys {
+        ${hostnames.rpi1} = mkNixosSys {
           alias = "rpi1";
           system = "aarch64-linux";
         };
@@ -106,12 +106,12 @@
         ];
         shellHook = ''
           echo -e "" \
-          "nixos-rebuild build --flake .#${hosts.laptop2}[-installer]\n" \
+          "nixos-rebuild build --flake .#${hostnames.laptop2}[-installer]\n" \
           "home-manager build --flake .#${secrets.user_name}\n" \
           "nix run .#dd-installer -- <hostname> [<block device>]\n" \
-          "nixos-generate --flake .#${hosts.rpi1} --format iso --out-link result\n" \
-          "nix build .#nixosConfigurations.${hosts.rpi1}.config.system.build.sdImage\n" \
-          "Hosts: ${builtins.toString secrets.hostNamesList}"
+          "nixos-generate --flake .#${hostnames.rpi1} --format iso --out-link result\n" \
+          "nix build .#nixosConfigurations.${hostnames.rpi1}.config.system.build.sdImage\n" \
+          "Hosts: ${builtins.toString secrets.list_of.hostnames}"
         '';
       };
 
