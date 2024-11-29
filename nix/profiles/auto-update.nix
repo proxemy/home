@@ -35,9 +35,9 @@
           git_args = "--work-tree=${cfg.homeDir} --git-dir=${cfg.homeDir}/.git";
         in
         ''
-          ${pkgs.git}/bin ${git_args} fetch origin
-          ${pkgs.git}/bin ${git_args} reset --hard origin/main
-          ${pkgs.nix}/bin flake update ${cfg.homeDir}
+          ${pkgs.git}/bin/git ${git_args} fetch origin
+          ${pkgs.git}/bin/git ${git_args} reset --hard origin/main
+          ${pkgs.nix}/bin/nix flake update ${cfg.homeDir}
         '';
     };
   };
