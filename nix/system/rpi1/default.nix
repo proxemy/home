@@ -5,6 +5,7 @@
     "${modulesPath}/system/boot/loader/raspberrypi/raspberrypi.nix"
     ./../../profiles/aarch64-cross-compilation-fixes.nix
     ./../../profiles/common.nix
+    ./../../profiles/nas_server.nix
   ]; # TODO exclude cross compilation fixes for native builds so native auto updates
 
   boot.loader.raspberryPi.version = 4;

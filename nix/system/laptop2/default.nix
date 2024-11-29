@@ -2,6 +2,7 @@
 {
   imports = [
     ./../../profiles/common.nix
+    ./../../profiles/nas_client.nix
     ./../../programs/firefox.nix
   ];
 
