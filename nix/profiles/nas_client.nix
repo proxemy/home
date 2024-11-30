@@ -1,12 +1,13 @@
 { secrets, ... }:
 {
-  fileSystems."/mnt/nas" = {
-    device = "brain:/"; # TODO: dynamic hostnamei + mount root. not hard coded
-    fsType = "nfs";
-    options = [
-      "nfsvers=4.2"
-      "x-systemd.automount"
-      "noauto"
-    ];
+  # TODO: import some cfg of NAS to replace hard coded pathes
+  fileSystems."/export" = {
+    device = "${secrets.hostnames.rpi1}:/export"; # TODO: dynamic hostname + mount root. not hard coded
+    fsType = "nfs4";
+    #options = [
+      #"nfsvers=4.2"
+      #"x-systemd.automount"
+      #"noauto"
+    #];
   };
 }
