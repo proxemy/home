@@ -5,7 +5,7 @@ in
 {
   # TODO: specify dedicated device (RAID) here
   system.activationScripts.make_export = ''
-    mkdir ${nas_cfg.root}
+    mkdir -p ${nas_cfg.root}
     chmod ugo+rwx ${nas_cfg.root}
   '';
   /*
