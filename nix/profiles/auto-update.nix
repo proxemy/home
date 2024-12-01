@@ -28,17 +28,20 @@
     description = "Pull from remote and update lockfile. See HOMEDIR";
     requiredBy = [ "nixos-upgrade.service" ];
     serviceConfig = {
-      #User = "nixos";
       Type = "oneshot";
+      WorkingDirectory = cfg.homeDir;
+      UMask="0077";
       ExecStart =
         let
-          git_args = "--work-tree=${cfg.homeDir} --git-dir=${cfg.homeDir}/.git";
+          #git_args = "--work-tree=${cfg.homeDir} --git-dir=${cfg.homeDir}/.git";
+          nix_args = "--extra-experimental-features nix-command";
         in
-        ''
-          ${pkgs.git}/bin/git ${git_args} fetch origin
-          ${pkgs.git}/bin/git ${git_args} reset --hard origin/main
-          ${pkgs.nix}/bin/nix flake update ${cfg.homeDir}
-        '';
+        with pkgs; [
+          "${git}/bin/git fetch origin"
+          "${git}/bin/git reset --hard origin/main"
+          "${git-crypt}/bin/git-crypt unlock ${cfg.homeDir}/.git/git-crypt/keys/default"
+          "${nix}/bin/nix ${nix_args} flake update"
+        ];
     };
   };
 
