@@ -1,16 +1,12 @@
 { secrets, ... }:
 let
-  nfs = {
-    ports = [ 2049 ]; # NFSv4 only, TODO: remove legacy 111
-    root = "/export"; # TODO: create dedicated and isolated share dir
-    options = "(rw,insecure,all_squash)"; # TODO: read only for now
-  };
+  nas_cfg = import ./nas_config.nix;
 in
 {
   # TODO: specify dedicated device (RAID) here
   system.activationScripts.make_export = ''
-    mkdir ${nfs.root}
-    chmod ugo+rwx ${nfs.root}
+    mkdir ${nas_cfg.root}
+    chmod ugo+rwx ${nas_cfg.root}
   '';
   /*
     fileSystems."/export" = {
@@ -22,12 +18,20 @@ in
 
   services.nfs.server = {
     enable = true;
+    extraNfsdConfig = ''
+      UDP=off
+      vers3=off
+      vers4.0=false
+      vers4.1=false
+      vers4.2=true
+      vers4=true
+    '';
     # TODO: make it host specific, not for all IPs
     # TODO: authentification/verificytion!
     exports = builtins.toString (
-      builtins.map (ip: nfs.root + " " + ip + nfs.options + "\n") secrets.list_of.ips
+      builtins.map (ip: nas_cfg.root + " " + ip + nas_cfg.options + "\n") secrets.list_of.ips
     );
   };
 
-  networking.firewall.allowedTCPPorts = nfs.ports;
+  networking.firewall.allowedTCPPorts = nas_cfg.ports;
 }
