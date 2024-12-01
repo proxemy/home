@@ -16,21 +16,23 @@ in
     };
   */
 
-  services.nfs.server = {
-    enable = true;
-    extraNfsdConfig = ''
-      UDP=off
-      vers3=off
-      vers4.0=false
-      vers4.1=false
-      vers4.2=true
-      vers4=true
-    '';
-    # TODO: make it host specific, not for all IPs
-    # TODO: authentification/verificytion!
-    exports = builtins.toString (
-      builtins.map (ip: nas_cfg.root + " " + ip + nas_cfg.options + "\n") secrets.list_of.ips
-    );
+  services.nfs = {
+    settings.nfsd = {
+      "UDP" = false;
+      "vers3" = false;
+      "vers4.0" = false;
+      "vers4.1" = false;
+      "vers4" = true;
+      "vers4.2" = true;
+    };
+    server = {
+      enable = true;
+      # TODO: make it host specific, not for all IPs
+      # TODO: authentification/verificytion!
+      exports = builtins.toString (
+        builtins.map (ip: nas_cfg.root + " " + ip + nas_cfg.options + "\n") secrets.list_of.ips
+      );
+    };
   };
 
   networking.firewall.allowedTCPPorts = nas_cfg.ports;
