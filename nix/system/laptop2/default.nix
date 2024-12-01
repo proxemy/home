@@ -1,12 +1,14 @@
-{ ... }:
+{ secrets, ... }:
 {
   imports = [
+    ./../../profiles/desktop.nix
     ./../../profiles/common.nix
     ./../../profiles/nas_client.nix
     ./../../programs/firefox.nix
   ];
 
-  nixpkgs.hostPlatform = "x86_64-linux";
+  # TODO: remove line below after testing
+  #nixpkgs.hostPlatform = "x86_64-linux";
 
   boot = {
     supportedFilesystems = [ "ext4" ];
@@ -25,12 +27,4 @@
   };
 
   swapDevices = [ { label = "swap"; } ];
-
-  services = {
-    xserver = {
-      enable = true;
-      desktopManager.xfce.enable = true;
-    };
-    displayManager.defaultSession = "xfce";
-  };
 }
