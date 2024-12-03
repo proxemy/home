@@ -1,17 +1,32 @@
 { secrets, ... }:
 let
   nas_cfg = import ./nas_config.nix;
+  mount = {
+    source = "${secrets.hostnames.rpi1}:${nas_cfg.root}";
+    target = "/import";
+    type = "nfs4";
+    options = [ "vers=4.2" "noatime" ]; # "noauto
+  };
 in
 {
-  # TODO: import some cfg of NAS to replace hard coded pathes
-  fileSystems."/import" = {
-    device = "${secrets.hostnames.rpi1}:${nas_cfg.root}"; # TODO: dynamic hostname + mount root. not hard coded
-    fsType = "nfs4";
-    #options = [
-    #"nfsvers=4.2"
-    #"x-systemd.automount"
-    #"noauto"
-    #"noatime"
-    #];
+  fileSystems."${mount.target}" = {
+    device = mount.source;
+    fsType = mount.type;
+    options = mount.options;
+  };
+
+  # enables systemd automount
+  systemd = {
+    mounts = [{
+      type = mount.type;
+      mountConfig.Options = mount.options;
+      what = mount.source;
+      where = mount.target;
+    }];
+    automounts = [{
+      wantedBy = [ "multi-user.target" ];
+      automountConfig.TimeoutIdleSec = "600";
+      where = mount.target;
+    }];
   };
 }
