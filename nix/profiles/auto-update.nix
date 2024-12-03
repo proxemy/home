@@ -35,9 +35,9 @@
       ExecStart =
         with pkgs;
         let
-          #git_args = "--work-tree=${cfg.homeDir} --git-dir=${cfg.homeDir}/.git";
-          #nix_args = "--extra-experimental-features nix-command --extra-experimental-features falkes";
         in
+        #git_args = "--work-tree=${cfg.homeDir} --git-dir=${cfg.homeDir}/.git";
+        #nix_args = "--extra-experimental-features nix-command --extra-experimental-features falkes";
         [
           "${git}/bin/git checkout main --quiet"
           "${git}/bin/git reset --hard --quiet"

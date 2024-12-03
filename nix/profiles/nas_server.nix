@@ -17,14 +17,14 @@ in
   */
 
   services.nfs = {
-    settings.nfsd = {
-      "UDP" = false;
-      "vers3" = false;
-      "vers4.0" = false;
-      "vers4.1" = false;
-      "vers4" = true;
-      "vers4.2" = true;
-    };
+    #settings.nfsd = {
+    #"UDP" = false;
+    #"vers3" = false;
+    #"vers4.0" = false;
+    #"vers4.1" = false;
+    #"vers4" = true;
+    #"vers4.2" = true;
+    #};
     server = {
       enable = true;
       # TODO: make it host specific, not for all IPs
