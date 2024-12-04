@@ -31,7 +31,7 @@
         homeDir = "/etc/nixos/home";
         supportedSystems = [
           "aarch64-linux"
-          "armv7l-linux"
+          #"armv7l-linux"
           "x86_64-linux"
         ];
       };
