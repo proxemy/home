@@ -5,7 +5,7 @@ let
     source = "${secrets.hostnames.rpi1}:${nas_cfg.root}";
     target = "/import";
     type = "nfs4";
-    options = [ "vers=4.2" "noatime" ]; # "noauto
+    options = [ "vers=4.2" "noatime" "nosuid" "nodev" "noexec" ];
   };
 in
 {

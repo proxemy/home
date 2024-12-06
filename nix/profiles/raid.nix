@@ -4,6 +4,13 @@ let
     #!{pkgs.bash}/bin/bash
     echo $* | systemd-cat --identifier=mdadm --priority=alert
   '';
+
+  mount = {
+    source = "/dev/md0";
+    target = "/mnt/raid";
+    type = "ext4";
+    options = [ "rw" "noatime" "nosuid" "nodev" "noexec" ];
+  };
 in
 {
   boot = {
@@ -18,4 +25,17 @@ in
 
     kernelModules = [ "md_mod" "raid1" ];
   };
+
+  systemd = {
+     mounts = [{
+       type = mount.type;
+       mountConfig.Options = mount.options;
+       what = mount.source;
+       where = mount.target;
+     }];
+     automounts = [{
+       wantedBy = [ "multi-user.target" ];
+       where = mount.target;
+     }];
+   };
 }
