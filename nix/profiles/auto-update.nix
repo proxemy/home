@@ -27,11 +27,11 @@
     description = "Pull from remote and update lockfile. See HOMEDIR";
     before = [ "nixos-upgrade.service" ];
     requiredBy = [ "nixos-upgrade.service" ];
+    path = [ pkgs.git-crypt ];
     serviceConfig = {
       Type = "oneshot";
       WorkingDirectory = cfg.homeDir;
       UMask = "0077";
-      Environment = "PATH=$PATH:${pkgs.git-crypt}/bin";
       ExecStart =
         with pkgs;
         let
