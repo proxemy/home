@@ -5,7 +5,13 @@ let
     source = "${secrets.hostnames.rpi1}:${nas_cfg.root}";
     target = "/import";
     type = "nfs4";
-    options = [ "vers=4.2" "noatime" ]; # "noauto
+    options = [
+      "vers=4.2"
+      "noatime"
+      "nosuid"
+      "nodev"
+      "noexec"
+    ];
   };
 in
 {
@@ -17,16 +23,20 @@ in
 
   # enables systemd automount
   systemd = {
-    mounts = [{
-      type = mount.type;
-      mountConfig.Options = mount.options;
-      what = mount.source;
-      where = mount.target;
-    }];
-    automounts = [{
-      wantedBy = [ "multi-user.target" ];
-      automountConfig.TimeoutIdleSec = "600";
-      where = mount.target;
-    }];
+    mounts = [
+      {
+        type = mount.type;
+        mountConfig.Options = mount.options;
+        what = mount.source;
+        where = mount.target;
+      }
+    ];
+    automounts = [
+      {
+        wantedBy = [ "multi-user.target" ];
+        automountConfig.TimeoutIdleSec = "600";
+        where = mount.target;
+      }
+    ];
   };
 }
