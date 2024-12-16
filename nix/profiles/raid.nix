@@ -17,14 +17,26 @@ let
       "noexec"
     ];
   };
+
 in
+# format:
+# cryptsetup luksFormat --debug --type luks2 --integrity hmac-sha256 /dev/sd-
+# open:
+# cryptsetup luksOpen /dev/sd- <mapped device name>
+# create:
+# mdadm --create --verbose --level 1 --raid-devices=4 /dev/md0 [/dev/mapper/<mapped devices> ]
+# partition & mound:
+# mkfs.ext4 -v /dev/md0 && mount /dev/md0 /mnt/raid
+# stop:
+# umount /dev/md0 && mdadm --stop /dev/md0
+# dump config for /etc/mdadm.conf:
+# mdadm --detail --scan --verbose
 {
   boot = {
     swraid = {
       enable = true;
       mdadmConf = ''
-        ARRAY /dev/md/0 level=raid1 num-devices=3 metadata=1.2 UUID=c07219cf:4e1bca0c:8d3e245f:204b8044
-        devices=/dev/sda,/dev/sdb,/dev/sdc
+        ARRAY /dev/md0 level=raid1 num-devices=4 metadata=1.2 UUID=bdc3d424:76660866:61370f67:d73e849a
         PROGRAM ${mdadm_event_handler}
       '';
     };
@@ -32,6 +44,9 @@ in
     kernelModules = [
       "md_mod"
       "raid1"
+      "dm_crypt"
+      "dm_integrity"
+      "dm_bufio"
     ];
   };
 
