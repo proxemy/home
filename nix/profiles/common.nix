@@ -1,7 +1,6 @@
 {
   pkgs,
   lib,
-  modulesPath,
   host_name,
   cfg,
   secrets,
@@ -14,6 +13,7 @@
     secrets.module
     ./hardened.nix
     ./auto-update.nix
+    ./cli_full.nix # TODO: remove cli tools completely once tinkering with life systems is over. Minimal device setups ftw.
 
     home-manager.nixosModule
     {
@@ -63,14 +63,12 @@
       mtr
       tree
       wget
+      htop
+      lsof
     ];
     variables = {
       HOMEDIR = cfg.homeDir;
     };
-  };
-
-  programs = lib.mkDefault {
-    neovim.enable = true;
   };
 
   boot.binfmt.emulatedSystems = lib.lists.remove pkgs.system cfg.supportedSystems;
