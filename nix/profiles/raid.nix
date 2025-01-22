@@ -1,15 +1,22 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 let
+  # TODO test and refine this maybe
   mdadm_event_handler = pkgs.writeShellScript "mdadm_event_handler.sh" ''
     #!{pkgs.bash}/bin/bash
     echo $* | systemd-cat --identifier=mdadm --priority=alert
   '';
 
-  raid-mount = "/mnt/raid";
+  raid = {
+    level = "raid1";
+    num-devices = "3";
+    metadata = "1.2";
+    UUID = "bdc3d424:76660866:61370f67:d73e849a";
+  };
+  raid_config_str = builtins.toString (lib.mapAttrsToList (n: v: n+"="+v) raid);
 
   mount = {
     source = "/dev/md0";
-    target = raid-mount;
+    target = "/mnt/raid";
     type = "ext4";
     options = [
       "rw"
@@ -20,7 +27,11 @@ let
     ];
   };
 
-  systemd-automout-service-name = builtins.replaceStrings [ "/" ] [ "-" ] (builtins.substring 1 99 raid-mount) + ".automout";
+  systemd_service_names = {
+    automout = builtins.replaceStrings [ "/" ] [ "-" ] (builtins.substring 1 99 mount.target) + ".automout";
+    nfs-server = "nfs-server.service";
+  };
+  systemd_service_names_list = builtins.attrValues systemd_service_names;
 in
 # format:
 # cryptsetup luksFormat --debug --type luks2 --integrity hmac-sha256 /dev/sd-
@@ -30,16 +41,12 @@ in
 # mdadm --create --verbose --level 1 --raid-devices=4 /dev/md0 [/dev/mapper/<mapped devices> ]
 # partition & mound:
 # mkfs.ext4 -v /dev/md0 && mount /dev/md0 /mnt/raid
-# stop:
-# umount /dev/md0 && mdadm --stop /dev/md0
-# dump config for /etc/mdadm.conf:
-# mdadm --detail --scan --verbose
 {
   boot = {
     swraid = {
       enable = true;
       mdadmConf = ''
-        ARRAY /dev/md0 level=raid1 num-devices=4 metadata=1.2 UUID=bdc3d424:76660866:61370f67:d73e849a
+        ARRAY ${mount.source} ${raid_config_str}
         PROGRAM ${mdadm_event_handler}
       '';
     };
@@ -78,24 +85,25 @@ in
       dmsetup ls
       echo "mdadm:"
       mdadm --monitor --verbose --scan
+      echo "mdadm config:"
+      mdadm --detail --scan --verbose
     '';
     # TODO maybe chain it together in systemd units and remove nfs stuff here
     raid-stop = ''
-      systemctl stop md* nfs* ${systemd-automout-service-name}
+      systemctl stop ${builtins.toString systemd_service_names_list}
       umount ${mount.source}
       mdadm --stop ${mount.source}
     '';
     raid-start = ''
       mdadm --start ${mount.source}
       umount ${mount.source}
-      systemctl start md* nfs* ${systemd-automout-service-name}
+      systemctl start ${builtins.toString systemd_service_names_list}
     '';
     raid-restart = "raid-stop; raid-start";
     raid-unlock = "
       cryptsetup luksOpen /dev/sda luks1
       cryptsetup luksOpen /dev/sdb luks2
       cryptsetup luksOpen /dev/sdc luks3
-      cryptsetup luksOpen /dev/sdd luks4
     ";
   };
 }
