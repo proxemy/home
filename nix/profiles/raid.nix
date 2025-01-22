@@ -100,10 +100,16 @@ in
       systemctl start ${builtins.toString systemd_service_names_list}
     '';
     raid-restart = "raid-stop; raid-start";
-    raid-unlock = "
+    raid-lock = ''
+      mdadm --stop ${mount.source}
+      cryptsetup luksClose luks1
+      cryptsetup luksClose luks2
+      cryptsetup luksClose luks3
+    '';
+    raid-unlock = ''
       cryptsetup luksOpen /dev/sda luks1
       cryptsetup luksOpen /dev/sdb luks2
       cryptsetup luksOpen /dev/sdc luks3
-    ";
+    '';
   };
 }
