@@ -5,9 +5,11 @@ let
     echo $* | systemd-cat --identifier=mdadm --priority=alert
   '';
 
+  raid-mount = "/mnt/raid";
+
   mount = {
     source = "/dev/md0";
-    target = "/mnt/raid";
+    target = raid-mount;
     type = "ext4";
     options = [
       "rw"
@@ -18,6 +20,7 @@ let
     ];
   };
 
+  systemd-automout-service-name = builtins.replaceStrings [ "/" ] [ "-" ] (builtins.substring 1 99 raid-mount) + ".automout";
 in
 # format:
 # cryptsetup luksFormat --debug --type luks2 --integrity hmac-sha256 /dev/sd-
@@ -65,5 +68,34 @@ in
         where = mount.target;
       }
     ];
+  };
+
+  environment.shellAliases = {
+    raid-status = ''
+      echo "lsblk:"
+      lsblk -fs
+      echo "cryptsetup:"
+      dmsetup ls
+      echo "mdadm:"
+      mdadm --monitor --verbose --scan
+    '';
+    # TODO maybe chain it together in systemd units and remove nfs stuff here
+    raid-stop = ''
+      systemctl stop md* nfs* ${systemd-automout-service-name}
+      umount ${mount.source}
+      mdadm --stop ${mount.source}
+    '';
+    raid-start = ''
+      mdadm --start ${mount.source}
+      umount ${mount.source}
+      systemctl start md* nfs* ${systemd-automout-service-name}
+    '';
+    raid-restart = "raid-stop; raid-start";
+    raid-unlock = "
+      cryptsetup luksOpen /dev/sda luks1
+      cryptsetup luksOpen /dev/sdb luks2
+      cryptsetup luksOpen /dev/sdc luks3
+      cryptsetup luksOpen /dev/sdd luks4
+    ";
   };
 }
