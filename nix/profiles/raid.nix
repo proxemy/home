@@ -9,9 +9,9 @@ let
   raid = rec {
     level = "raid1";
     num-devices = "3";
-    auto = "md${num-devices}";
+    auto = "no";
     metadata = "1.2";
-    UUID = "bdc3d424:76660866:61370f67:d73e849a";
+    UUID = "00bac42a:49843f7f:2933c7e8:84ace931";
   };
   raid_config_str = builtins.toString (lib.mapAttrsToList (n: v: n+"="+v) raid);
 
@@ -39,7 +39,7 @@ in
     swraid = {
       enable = true;
       mdadmConf = ''
-        ARRAY ${mount.source} ${raid_config_str}
+        ARRAY <ignore> ${raid_config_str}
         PROGRAM ${mdadm_event_handler}
       '';
     };
