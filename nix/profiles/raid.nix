@@ -85,16 +85,16 @@ in
     raid-stop = ''
       systemctl stop ${builtins.toString systemd_service_names_list}
       umount ${mount.source}
-      mdadm --stop ${mount.source}
+      mdadm --stop --verbose ${mount.source}
     '';
     raid-start = ''
-      mdadm --start ${mount.source}
-      umount ${mount.source}
+      mdadm --assemble --verbose ${mount.source} /dev/mapper/luks{1,2,3}
+      mount ${mount.source}
       systemctl start ${builtins.toString systemd_service_names_list}
     '';
     raid-restart = "raid-stop; raid-start";
     raid-lock = ''
-      mdadm --stop ${mount.source}
+      raid-stop
       cryptsetup luksClose luks1
       cryptsetup luksClose luks2
       cryptsetup luksClose luks3
