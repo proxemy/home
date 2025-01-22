@@ -34,14 +34,6 @@ let
   };
   systemd_service_names_list = builtins.attrValues systemd_service_names;
 in
-# format:
-# cryptsetup luksFormat --debug --type luks2 --integrity hmac-sha256 /dev/sd-
-# open:
-# cryptsetup luksOpen /dev/sd- <mapped device name>
-# create:
-# mdadm --create --verbose --level 1 --raid-devices=4 /dev/md0 [/dev/mapper/<mapped devices> ]
-# partition & mound:
-# mkfs.ext4 -v /dev/md0 && mount /dev/md0 /mnt/raid
 {
   boot = {
     swraid = {
@@ -111,6 +103,16 @@ in
       cryptsetup luksOpen /dev/sda luks1
       cryptsetup luksOpen /dev/sdb luks2
       cryptsetup luksOpen /dev/sdc luks3
+    '';
+    raid-help = ''
+      echo -e "" \
+      "--- format:\n" \
+      "cryptsetup luksFormat --debug --type luks2 --integrity hmac-sha256 /dev/sd-\n" \
+      "--- create:\n" \
+      "mdadm --create --verbose --level 1 --raid-devices=4 /dev/md0 [ /dev/mapper/luks1 <mapped devices> ]\n" \
+      "--- partition & mount:\n" \
+      "mkfs.ext4 -v /dev/md0 && mount /dev/md0 /mnt/raid\n" \
+      "--- TODO: how to integrate new devices
     '';
   };
 }
