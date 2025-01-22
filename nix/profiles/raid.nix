@@ -6,9 +6,10 @@ let
     echo $* | systemd-cat --identifier=mdadm --priority=alert
   '';
 
-  raid = {
+  raid = rec {
     level = "raid1";
     num-devices = "3";
+    auto = "md${num-devices}";
     metadata = "1.2";
     UUID = "bdc3d424:76660866:61370f67:d73e849a";
   };
