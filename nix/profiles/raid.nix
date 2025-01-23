@@ -29,7 +29,7 @@ let
   };
 
   systemd_service_names = {
-    automout = builtins.replaceStrings [ "/" ] [ "-" ] (builtins.substring 1 99 mount.target) + ".automout";
+    automout = builtins.replaceStrings [ "/" ] [ "-" ] (builtins.substring 1 99 mount.target) + ".automount";
     nfs-server = "nfs-server.service";
   };
   systemd_service_names_list = builtins.attrValues systemd_service_names;
