@@ -13,7 +13,7 @@ let
     metadata = "1.2";
     UUID = "00bac42a:49843f7f:2933c7e8:84ace931";
   };
-  raid_config_str = builtins.toString (lib.mapAttrsToList (n: v: n+"="+v) raid);
+  raid_config_str = builtins.toString (lib.mapAttrsToList (n: v: n + "=" + v) raid);
 
   mount = {
     source = "/dev/md0";
@@ -29,7 +29,8 @@ let
   };
 
   systemd_service_names = {
-    automout = builtins.replaceStrings [ "/" ] [ "-" ] (builtins.substring 1 99 mount.target) + ".automount";
+    automout =
+      builtins.replaceStrings [ "/" ] [ "-" ] (builtins.substring 1 99 mount.target) + ".automount";
     nfs-server = "nfs-server.service";
   };
   systemd_service_names_list = builtins.attrValues systemd_service_names;
