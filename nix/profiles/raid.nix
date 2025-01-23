@@ -93,7 +93,6 @@ in
       mount ${mount.source}
       systemctl start ${builtins.toString systemd_service_names_list}
     '';
-    raid-restart = "raid-stop; raid-start";
     raid-lock = ''
       raid-stop
       cryptsetup luksClose luks1
@@ -114,6 +113,14 @@ in
       "--- partition & mount:\n" \
       "mkfs.ext4 -v /dev/md0 && mount /dev/md0 /mnt/raid\n" \
       "--- TODO: how to integrate new devices
+    '';
+    raid-restart = ''
+      raid-stop
+      raid-start
+    '';
+    raid-init = ''
+      raid-unlock
+      raid-start
     '';
   };
 }
