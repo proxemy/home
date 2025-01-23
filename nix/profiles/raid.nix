@@ -90,7 +90,6 @@ in
     '';
     raid-start = ''
       mdadm --assemble --verbose ${mount.source} /dev/mapper/luks{1,2,3}
-      mount ${mount.source}
       systemctl start ${builtins.toString systemd_service_names_list}
     '';
     raid-lock = ''
