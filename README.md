@@ -15,5 +15,5 @@
 [] create cfg.debug bool and pass it down to crucial services: sshd, nfsd, systemd, auto-update
 [] Deprecate either 'output.homeConfigurations.${user_name}' or 'common.nix:imports.home-manager...'.
 [] Secrets string scanning in all but 'secrets.nix' nix files.
-[] Encrypt RAID drives.
+[x] Encrypt RAID drives.
 [] Collect dives SMART data and setup alerts and RAID scrub schedule.
