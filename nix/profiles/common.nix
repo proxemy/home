@@ -12,8 +12,8 @@
   imports = [
     secrets.module
     ./hardened.nix
-    ./auto-update.nix
     ./cli_full.nix # TODO: remove cli tools completely once tinkering with life systems is over. Minimal device setups ftw.
+    ../services/auto-update.nix
 
     home-manager.nixosModule
     {

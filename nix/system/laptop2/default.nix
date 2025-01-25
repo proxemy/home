@@ -3,7 +3,7 @@
   imports = [
     ./../../profiles/desktop.nix
     ./../../profiles/common.nix
-    ./../../profiles/nas_client.nix
+    ./../../services/nas_client.nix
     ./../../programs/firefox.nix
   ];
 
