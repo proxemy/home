@@ -40,7 +40,7 @@
       system = "x86_64-linux"; # builtins.currentSystem;
       nixpkgs = inputs.nixpkgs.legacyPackages.${system};
 
-      secrets = import ./nix/secrets.nix { inherit nixpkgs; };
+      secrets = import ./nix/secrets { inherit nixpkgs; };
       inherit (secrets) hostnames;
 
       mkNixosSys =
