@@ -79,10 +79,11 @@
 
   hardware = {
     bluetooth.enable = false;
-    pulseaudio.enable = true;
   };
 
   services = {
+    pulseaudio.enable = true;
+
     openssh = {
       enable = true;
       settings = {
