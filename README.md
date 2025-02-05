@@ -19,7 +19,7 @@ managed by nix and get copied blindly.
 - [ ] Network auditing, carnary.
 - [ ] IPsec for known services/hosts.
 - [x] Update flake.lock in auto-update.
-- [x] Create OMPL.
+- [x] Create OPML.
 - [x] Script to partition new RAID drives.
 - [ ] Health check: known IP/MAC assigned?
 - [ ] create cfg.debug bool and pass it down to crucial services: sshd, nfsd, systemd, auto-update
@@ -28,3 +28,9 @@ managed by nix and get copied blindly.
 - [x] Encrypt RAID drives.
 - [ ] Collect drives SMART data and setup alerts and RAID scrub schedule.
 - [ ] Media server/bridge on raspi.
+- [ ] Email/thunderbird setup.
+- [ ] IRC/weechat setup.
+- [ ] Hardened Systemd service template.
+- [ ] Parameterized/Automatic isolated NAS folder creation for every given service
+- [ ] Service to rsync a list of backup targets onto NAS.
+- [ ] Full vim IDE setup to replace current manual steps.
