@@ -5,6 +5,7 @@
     ./../../profiles/aarch64-cross-compilation-fixes.nix
     ./../../profiles/common.nix
     ./../../services/nas_server.nix
+    ./../../services/mpd_server.nix
     ./../../services/raid.nix
   ]; # TODO exclude cross compilation fixes for native builds so native auto updates
 

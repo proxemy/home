@@ -2,10 +2,11 @@
 {
   services.mpd = {
     enable = true;
+    startWhenNeeded = true;
+    #user = "mpd";
 
     network = {
       listenAddress = "any";
-      statWhenNeeded = true;
     };
 
     extraConfig = ''
