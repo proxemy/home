@@ -67,6 +67,11 @@
     {
       nixosConfigurations = {
 
+        ${hostnames.desktop1} = mkNixosSys {
+          alias = "desktop1";
+          system = "x86_64-linux";
+        };
+
         ${hostnames.laptop2} = mkNixosSys {
           alias = "laptop2";
           system = "x86_64-linux";
