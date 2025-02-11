@@ -67,10 +67,18 @@
     {
       nixosConfigurations = {
 
+        /* TODO
         ${hostnames.desktop1} = mkNixosSys {
           alias = "desktop1";
           system = "x86_64-linux";
         };
+
+        "${hostnames.desktop1}-installer" = mkNixosSys {
+          alias = "desktop1";
+          system = "x86_64-linux";
+          module = ./nix/installer/desktop1;
+        };
+        */
 
         ${hostnames.laptop2} = mkNixosSys {
           alias = "laptop2";
