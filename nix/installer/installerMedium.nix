@@ -8,6 +8,7 @@
 }:
 let
   home-git-repo = import ./../home-git-repo.nix { inherit pkgs secrets sourceInfo; };
+  install-script = ./${alias}/install.sh;
 in
 {
   imports = [
@@ -35,7 +36,7 @@ in
     contents = [
       # TODO once the shell scripts have been split up, rename target files
       {
-        source = sourceInfo + "/nix/installer/${alias}/install.sh";
+        source = install-script;
         target = "/install.sh";
       }
       {
