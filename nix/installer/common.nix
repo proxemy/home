@@ -5,6 +5,8 @@
   ...
 }:
 {
+  system.stateVersion = cfg.stateVersion;
+
   environment = {
     systemPackages = with pkgs; [
       git

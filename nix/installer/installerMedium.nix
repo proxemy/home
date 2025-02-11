@@ -7,7 +7,7 @@
   ...
 }:
 let
-  home-git-repo = import ./../home-git-repo.nix { inherit pkgs secrets sourceInfo; };
+  home-git-repo = import ./home-git-repo.nix { inherit pkgs secrets sourceInfo; };
   install-script = ./${alias}/install.sh;
 in
 {
@@ -25,7 +25,6 @@ in
 
   isoImage = {
     edition = alias;
-    isoBaseName = "${alias}-nixos";
     volumeID = "${alias}-nixos";
 
     # TODO: finalize a self contained/offline installer iso

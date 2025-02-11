@@ -34,3 +34,4 @@ managed by nix and get copied blindly.
 - [ ] Parameterized/Automatic isolated NAS folder creation for every given service
 - [ ] Service to rsync a list of backup targets onto NAS.
 - [ ] Full vim IDE setup to replace current manual steps.
+- [ ] Move `contents = [];` from `installerMedium.nix` to `common.nix`
