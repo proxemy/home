@@ -1,6 +1,6 @@
 { ... }:
 {
   imports = [
-    (import ./../installerMedium.nix { alias = "laptop1"; })
+    (import ./../installerMedium.nix { alias = "desktop1"; })
   ];
 }
