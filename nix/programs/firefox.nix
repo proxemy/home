@@ -160,7 +160,20 @@ let
     "webgl.disabled" = true;
     "widget.non-native-theme.enabled" = true;
   };
+  disable_telemetry = {
+    "app.update.enabled" = false;
+    "app.update.auto" = false;
+    "app.update.url.details" = "";
+    "app.update.url.manual" = "";
+    "browser.search.update" = false;
+    "extensions.update.enabled" = false;
+    "toolkit.telemetry.archive.enabled" = false;
+    "toolkit.telemetry.enabled" = false;
+    "toolkit.telemetry.server" = "";
+    "toolkit.telemetry.unified" = false;
+  };
   custom_settings = {
+    "browser.casting.enabled" = false;
     "browser.download.folderList" = 2;
     "browser.download.forbid_open_with" = true;
     "browser.translations.enable" = false;
@@ -174,6 +187,7 @@ let
     "extensions.formautofill.creditCards.enabled" = false;
     "keyword.enabled" = false;
     "layout.css.visited_links_enabled" = false;
+    "media.gmp-gmpopenh264.enabled" = false;
     "media.gmp-provider.enabled" = false;
     "media.peerconnection.ice.no_host" = true;
     "network.proxy.allow_bypass" = false;
@@ -183,6 +197,9 @@ let
     "permissions.default.shortcuts" = 2;
     "places.history.enabled" = false;
     "privacy.fingerprintingProtection.remoteOverrides.enabled" = false;
+    "privacy.resistFingerprinting.randomization.daily_reset.enabled" = true;
+    "privacy.resistFingerprinting.randomization.daily_reset.private.enabled" = true;
+    "privacy.trackingprotection.enabled" = true;
     "security.mixed_content.block_display_content" = true;
     "signon.rememberSignons" = false;
 
@@ -198,7 +215,7 @@ in
 {
   programs.firefox = {
     enable = true;
-    preferences = arkenfox_default // custom_settings;
+    preferences = arkenfox_default // disable_telemetry // custom_settings;
 
     policies.ExtensionSettings = {
       # blocks all addons except the ones specified below
