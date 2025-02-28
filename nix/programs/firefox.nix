@@ -160,6 +160,7 @@ let
     "webgl.disabled" = true;
     "widget.non-native-theme.enabled" = true;
   };
+  # see 'https://wiki.debian.org/Firefox#Disabling_automatic_connections'
   disable_telemetry = {
     "app.update.enabled" = false;
     "app.update.auto" = false;
@@ -211,6 +212,8 @@ let
     # https://www.theregister.com/2024/06/18/mozilla_buys_anonym_betting_privacy/
     "dom.private-attribution.submission.enabled" = "false";
   };
+
+  #TODO: incorporate https://github.com/pyllyukko/user.js
 in
 {
   programs.firefox = {
