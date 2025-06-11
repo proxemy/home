@@ -38,9 +38,9 @@
 
       forSystems = nixpkgs.lib.genAttrs cfg.supportedSystems;
       system = "x86_64-linux"; # builtins.currentSystem;
-      nixpkgs = inputs.nixpkgs.legacyPackages.${system};
+      pkgs = inputs.nixpkgs.legacyPackages.${system};
 
-      secrets = import ./nix/secrets { inherit nixpkgs; };
+      secrets = import ./nix/secrets { inherit pkgs; };
       inherit (secrets) hostnames;
 
       mkNixosSys =
@@ -103,8 +103,8 @@
         modules = [ ./nix/home.nix ];
       };
 
-      devShells.${system}.default = nixpkgs.mkShell {
-        buildInputs = with nixpkgs; [
+      devShells.${system}.default = pkgs.mkShell {
+        buildInputs = with pkgs; [
           git
           git-crypt
           nixos-generators
@@ -113,7 +113,7 @@
           nixos-shell
           nixos-rebuild
           nixos-container
-          nixpkgs.home-manager # input arg 'home-manager' would be taken otherwise
+          pkgs.home-manager # input arg 'home-manager' would be taken otherwise
         ];
         shellHook = ''
           echo -e "" \
@@ -128,9 +128,9 @@
 
       apps.${system}.dd-installer = {
         type = "app";
-        program = ./scripts/build-dd-installer.sh;
+        program = "./scripts/build-dd-installer.sh";
       };
 
-      formatter.${system} = nixpkgs.nixfmt-rfc-style;
+      formatter.${system} = pkgs.nixfmt-rfc-style;
     };
 }
