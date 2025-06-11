@@ -192,6 +192,7 @@ let
     "media.gmp-provider.enabled" = false;
     "media.peerconnection.ice.no_host" = true;
     "network.proxy.allow_bypass" = false;
+    "etwork.http.sendRefererHeader" = 0;
     "network.trr.custom_uri" = "https://dns.quad9.net/dns-query";
     "network.trr.mode" = 3;
     "network.trr.uri" = "https://dns.quad9.net/dns-query";
@@ -213,8 +214,8 @@ let
     "dom.private-attribution.submission.enabled" = "false";
   };
 
-  #TODO: incorporate https://github.com/pyllyukko/user.js
 in
+#TODO: incorporate https://github.com/pyllyukko/user.js
 {
   programs.firefox = {
     enable = true;
