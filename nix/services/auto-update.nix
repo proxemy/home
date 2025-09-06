@@ -38,8 +38,7 @@
         "${git}/bin/git pull origin main --quiet"
         "${git}/bin/git branch --verbose"
         "${git-crypt}/bin/git-crypt unlock .git/git-crypt/keys/default"
-        # TODO enable flake.lock upgrade after some testing of failure conditions
-        #"${nix}/bin/nix ${nix_args} flake update"
+        "${nix}/bin/nix --extra-experimental-features nix-command --extra-experimental-features flakes flake update"
       ];
     };
   };
