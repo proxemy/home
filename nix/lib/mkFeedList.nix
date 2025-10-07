@@ -3,19 +3,20 @@
   feeds ? { },
 }:
 let
+  escape_xml = pkgs.lib.strings.escapeXML;
   unpack_map = set: f: pkgs.lib.attrsets.mapAttrsToList (k: v: (f k v)) set;
   unpack_map_str = set: f: pkgs.lib.lists.fold (tally: e: tally + e) "" (unpack_map set f);
 in
 {
-  OPMLtree =
+  OPML =
     let
       mk_parent_node = name: children: ''
-        <outline title="${name} type="folder"">\n
-          ${unpack_map_str children mk_entry_node}
-        </outline>
+        <outline title="${escape_xml name}" type="folder">
+        ${unpack_map_str children mk_entry_node}
+        </outline>''\n
       '';
       mk_entry_node = title: url: ''
-        <outline title="${title}" xmlUrl="${url}">}\n
+      ''\t<outline title="${escape_xml title}" xmlUrl="${escape_xml url}"/>
       '';
     in
     ''
@@ -25,7 +26,8 @@ in
         <title>OPML Feed List</title>
       </head>
       <body>
-        ${unpack_map_str feeds mk_parent_node}
+      ${unpack_map_str feeds mk_parent_node}
       </body>
+      </opml>
     '';
 }
