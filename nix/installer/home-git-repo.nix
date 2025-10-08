@@ -33,6 +33,7 @@ pkgs.stdenv.mkDerivation {
     # TODO proxemy config path is impure, needs to refer to dotfiles repo OR fake name/email for adding below
     ${git}/bin/git config include.path ~/.config/gitconfig/proxemy
 
+    # Copy the flakes/git content
     cp --recursive ${sourceInfo}/. $out
     ${git}/bin/git add --all # required, so nixos-install can access tracked files
   '';
