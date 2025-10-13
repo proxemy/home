@@ -43,26 +43,7 @@
       secrets = import ./nix/secrets { inherit pkgs; };
       inherit (secrets) hostnames;
 
-      mkNixosSys =
-        {
-          alias,
-          system,
-          module ? ./nix/system/${alias},
-        }:
-        inputs.nixpkgs.lib.nixosSystem {
-          inherit system;
-          specialArgs = {
-            inherit (self) sourceInfo;
-            inherit
-              cfg
-              secrets
-              dotfiles
-              home-manager
-              ;
-            host_name = hostnames.${alias};
-          };
-          modules = [ module ];
-        };
+      mkNixosSys = import ./nix/lib/mkNixosSys.nix;
     in
     {
       nixosConfigurations = {
