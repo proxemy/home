@@ -12,7 +12,7 @@ fi
 set -euo pipefail
 
 host_name="${1:-$ARG1_host_name}"
-target_device="${2:-""}"
+target_device="${2:-$ARG2_target_device}"
 
 if [[ -z "$target_device" ]] || ! [[ -b "$target_device" ]]; then
 	echo "Target block device '$target_device' not found."
