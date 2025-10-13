@@ -4,7 +4,6 @@
     ./../../profiles/desktop.nix
     ./../../profiles/common.nix
     ./../../services/nas_client.nix
-    ./../../programs/firefox.nix
   ];
 
   boot = {

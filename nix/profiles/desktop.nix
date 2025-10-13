@@ -1,5 +1,9 @@
 { secrets, ... }:
 {
+  imports = [
+    ../programs/firefox.nix
+  ];
+
   services = {
     xserver = {
       enable = true;
