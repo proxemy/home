@@ -13,7 +13,7 @@ managed by nix and get copied blindly.
 ## TODO
 
 - [x] Pin down MACs/IPs for all devices.
-- [ ] Salt script.
+- [x] Salt script.
 - [ ] ACLs for NFS share, services and blob. Maybe Apparmor profiles.
 - [ ] nix tests before update appliance.
 - [ ] Network auditing, carnary.
@@ -35,3 +35,6 @@ managed by nix and get copied blindly.
 - [ ] Service to rsync a list of backup targets onto NAS.
 - [ ] Full vim IDE setup to replace current manual steps.
 - [ ] Move `contents = [];` from `installerMedium.nix` to `common.nix`
+- [ ] Move all nix/installer/* into corresponding nix/system/*.
+- [ ] Populate the intaller mediums /nix/store with all packages required by target nixos/host to make offline intalls possible
+- [ ] Offline installs from installer mediums, see list item above.
