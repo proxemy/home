@@ -67,11 +67,11 @@
       lsof
     ];
     variables = {
-      HOMEDIR = cfg.homeDir;
+      HOMEDIR = cfg.home_git_dir;
     };
   };
 
-  boot.binfmt.emulatedSystems = lib.lists.remove pkgs.system cfg.supportedSystems;
+  boot.binfmt.emulatedSystems = lib.lists.remove pkgs.system cfg.supported_systems;
 
   system = {
     inherit (cfg) stateVersion;

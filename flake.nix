@@ -28,49 +28,63 @@
     let
       cfg = {
         stateVersion = "24.11";
-        homeDir = "/etc/nixos/home";
-        supportedSystems = [
+        home_git_dir = "/etc/nixos/home";
+        supported_systems = [
           "aarch64-linux"
           #"armv7l-linux"
           "x86_64-linux"
         ];
       };
+      secrets = import ./nix/secrets { inherit pkgs; };
+      inherit (secrets) hostnames;
 
       forSystems = nixpkgs.lib.genAttrs cfg.supportedSystems;
       system = "x86_64-linux"; # builtins.currentSystem;
       pkgs = inputs.nixpkgs.legacyPackages.${system};
 
-      secrets = import ./nix/secrets { inherit pkgs; };
-      inherit (secrets) hostnames;
-
-      mkNixosSys = import ./nix/lib/mkNixosSys.nix;
+      inherit (import ./nix/lib/mkNixos.nix {
+        inherit
+          inputs
+          self
+          cfg
+          secrets
+          ;
+      }) mkNixos mkInstaller;
     in
     {
       nixosConfigurations = {
 
-        ${hostnames.desktop1} = mkNixosSys {
+        ${hostnames.desktop1} = mkNixos {
           alias = "desktop1";
           system = "x86_64-linux";
         };
 
-        "${hostnames.desktop1}-installer" = mkNixosSys {
+        "${hostnames.desktop1}-installer" = mkInstaller {
           alias = "desktop1";
           system = "x86_64-linux";
-          module = ./nix/installer/desktop1;
         };
 
-        ${hostnames.laptop2} = mkNixosSys {
+        ${hostnames.laptop1} = mkNixos {
+          alias = "laptop1";
+          system = "x86_64-linux";
+        };
+
+        "${hostnames.laptop1}-installer" = mkInstaller {
+          alias = "laptop1";
+          system = "x86_64-linux";
+        };
+
+        ${hostnames.laptop2} = mkNixos {
           alias = "laptop2";
           system = "x86_64-linux";
         };
 
-        "${hostnames.laptop2}-installer" = mkNixosSys {
+        "${hostnames.laptop2}-installer" = mkInstaller {
           alias = "laptop2";
           system = "x86_64-linux";
-          module = ./nix/installer/laptop2;
         };
 
-        ${hostnames.rpi1} = mkNixosSys {
+        ${hostnames.rpi1} = mkNixos {
           alias = "rpi1";
           system = "aarch64-linux";
         };
@@ -109,7 +123,7 @@
 
       apps.${system}.dd-installer = {
         type = "app";
-        program = "./scripts/build-dd-installer.sh";
+        program = "${./scripts/build-dd-installer.sh}";
       };
 
       formatter.${system} = pkgs.nixfmt-rfc-style;

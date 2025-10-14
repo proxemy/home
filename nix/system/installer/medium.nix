@@ -2,20 +2,41 @@
 {
   pkgs,
   modulesPath,
-  secrets,
   sourceInfo,
+  cfg,
+  secrets,
   ...
 }:
 let
+  host = secrets.hosts.${alias};
+  host_name = secrets.hostnames.${alias};
   home-git-repo = import ./home-git-repo.nix { inherit pkgs secrets sourceInfo; };
-  install-script = ./${alias}/install.sh;
+  install-script = import ./script.nix { inherit pkgs cfg host; };
 in
 {
   imports = [
     "${modulesPath}/installer/cd-dvd/installation-cd-minimal-new-kernel-no-zfs.nix"
-    ./common.nix
   ];
 
+  system.stateVersion = cfg.stateVersion;
+
+  environment = {
+    shellAliases.install = "sudo -E bash /iso/install.sh ${cfg.home_git_dir}";
+  };
+
+  networking.hostName = host_name;
+
+  nix = {
+    package = pkgs.nixVersions.latest;
+    settings.system-features = [
+      "nix-command"
+      "flakes"
+      "big-parallel"
+      "kvm"
+    ];
+  };
+
+  #isoImage.storeContents = [ sourceInfo ];
   #installer.cloneConfigIncludes = [ "./common.nix" ];
   #nix.nixPath = [ "nixos-config=github:proxemy/home" ];
   #system = {
@@ -25,7 +46,7 @@ in
 
   isoImage = {
     edition = alias;
-    volumeID = "${alias}-nixos";
+    volumeID = "${host_name}-nixos-installer";
 
     # TODO: finalize a self contained/offline installer iso
     # the 2 options might be a lead. 'includeSystemBuildDeps' bloats the
@@ -33,7 +54,6 @@ in
     #includeSystemBuildDependencies = true;
 
     contents = [
-      # TODO once the shell scripts have been split up, rename target files
       {
         source = install-script;
         target = "/install.sh";

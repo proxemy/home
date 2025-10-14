@@ -5,12 +5,15 @@
   sourceInfo,
   ...
 }:
+let
+  inherit (cfg) home_git_dir;
+in
 {
   system.autoUpgrade = {
     enable = true;
     allowReboot = true;
     dates = "03:00";
-    flake = cfg.homeDir;
+    flake = home_git_dir;
     flags = [
       "--print-build-logs"
       # "--verbose"
@@ -30,7 +33,7 @@
     path = [ pkgs.git-crypt ];
     serviceConfig = {
       Type = "oneshot";
-      WorkingDirectory = cfg.homeDir;
+      WorkingDirectory = home_git_dir;
       UMask = "0077";
       ExecStart = with pkgs; [
         "${git}/bin/git checkout main --quiet"
@@ -46,14 +49,14 @@
   system.activationScripts = {
     init-home-git-repo =
       let
-        home-git-repo = import ./../installer/home-git-repo.nix { inherit pkgs secrets sourceInfo; };
+        home-git-repo = import ./../system/installer/home-git-repo.nix { inherit pkgs secrets sourceInfo; };
       in
       {
         deps = [ "etc" ];
         supportsDryActivation = false;
         text = ''
-          mkdir -p ${cfg.homeDir}
-          cp -r ${home-git-repo}/. ${cfg.homeDir}
+          mkdir -p ${home_git_dir}
+          cp -r ${home-git-repo}/. ${home_git_dir}
         '';
       };
   };

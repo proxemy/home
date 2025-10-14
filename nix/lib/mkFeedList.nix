@@ -16,7 +16,7 @@ in
         </outline>''\n
       '';
       mk_entry_node = title: url: ''
-      ''\t<outline title="${escape_xml title}" xmlUrl="${escape_xml url}"/>
+        ''\t<outline title="${escape_xml title}" xmlUrl="${escape_xml url}"/>
       '';
     in
     ''

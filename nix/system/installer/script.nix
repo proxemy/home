@@ -3,6 +3,9 @@
   host,
   cfg,
 }:
+let
+  inherit (cfg) home_git_dir;
+in
 pkgs.writeShellScript "install.sh" ''
   set -euo pipefail
 
@@ -26,11 +29,11 @@ pkgs.writeShellScript "install.sh" ''
   ${pkgs.util-linux.bin}/bin/mount /dev/disk/by-label/nixos /mnt
   ${pkgs.util-linux.bin}/bin/swapon /dev/disk/by-label/swap
 
-  mkdir -p "${cfg.home_dir}"
-  cp -r /iso/home-git/. "${cfg.home_dir}"
+  mkdir -p "\mnt\${home_git_dir}"
+  cp -r /iso/home-git/. "\mnt\${home_git_dir}"
 
   nixos-install \
-  --flake "${cfg.home_dir}"#$(${host.hostname}) \
+  --flake "\mnt\${home_git_dir}"#${host.hostname} \
   --root /mnt \
   --no-root-passwd \
   --verbose \
