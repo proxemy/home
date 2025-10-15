@@ -5,7 +5,7 @@
   secrets,
 }:
 rec {
-  mkNixos =
+  mk_nixos =
     {
       alias,
       system,
@@ -24,9 +24,9 @@ rec {
       };
     };
 
-  mkInstaller =
+  mk_installer =
     { alias, system }:
-    mkNixos {
+    mk_nixos {
       inherit alias system;
       modules = [
         (import ../system/installer/medium.nix { inherit alias; })

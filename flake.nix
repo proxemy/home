@@ -42,49 +42,49 @@
       system = "x86_64-linux"; # builtins.currentSystem;
       pkgs = inputs.nixpkgs.legacyPackages.${system};
 
-      inherit (import ./nix/lib/mkNixos.nix {
+      inherit (import ./nix/lib/mk_nixos.nix {
         inherit
           inputs
           self
           cfg
           secrets
           ;
-      }) mkNixos mkInstaller;
+      }) mk_nixos mk_installer;
     in
     {
       nixosConfigurations = {
 
-        ${hostnames.desktop1} = mkNixos {
+        ${hostnames.desktop1} = mk_nixos {
           alias = "desktop1";
           system = "x86_64-linux";
         };
 
-        "${hostnames.desktop1}-installer" = mkInstaller {
+        "${hostnames.desktop1}-installer" = mk_installer {
           alias = "desktop1";
           system = "x86_64-linux";
         };
 
-        ${hostnames.laptop1} = mkNixos {
+        ${hostnames.laptop1} = mk_nixos {
           alias = "laptop1";
           system = "x86_64-linux";
         };
 
-        "${hostnames.laptop1}-installer" = mkInstaller {
+        "${hostnames.laptop1}-installer" = mk_installer {
           alias = "laptop1";
           system = "x86_64-linux";
         };
 
-        ${hostnames.laptop2} = mkNixos {
+        ${hostnames.laptop2} = mk_nixos {
           alias = "laptop2";
           system = "x86_64-linux";
         };
 
-        "${hostnames.laptop2}-installer" = mkInstaller {
+        "${hostnames.laptop2}-installer" = mk_installer {
           alias = "laptop2";
           system = "x86_64-linux";
         };
 
-        ${hostnames.rpi1} = mkNixos {
+        ${hostnames.rpi1} = mk_nixos {
           alias = "rpi1";
           system = "aarch64-linux";
         };
