@@ -13,7 +13,6 @@ let
   mkswap = "${pkgs.util-linux}/bin/mkswap";
 
   test_confirm_wipe = device: ''
-    sudo -s
     test -b "${device}" || { echo Target device "${device}" is no block device; exit 1; }
     ${partx} --show ${device}
     echo All data will be lost!
@@ -45,6 +44,8 @@ let
 in
 pkgs.writeShellScript "install.sh" ''
   set -xeuo pipefail
+
+  sudo -s <<EOF
 
   ${mk_primary host.partitions.primary}
 

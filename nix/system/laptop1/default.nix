@@ -12,7 +12,7 @@
   boot = {
     supportedFilesystems = [ "ext4" ];
     loader.grub = {
-      device = "/dev/sda";
+      device = "/dev/sdb";
       enable = true;
     };
   };
