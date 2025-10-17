@@ -107,12 +107,6 @@
       '';
     };
 
-    xserver.xkb = lib.mkDefault {
-      layout = "de";
-      variant = "deadacute";
-      options = "terminate:ctrl_alt_del";
-    };
-
     pipewire.enable = false; # conflict with Pulseaudio
   };
 

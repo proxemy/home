@@ -1,6 +1,7 @@
 { alias }:
 {
   pkgs,
+  lib,
   modulesPath,
   sourceInfo,
   cfg,
@@ -21,10 +22,15 @@ in
   system.stateVersion = cfg.stateVersion;
 
   environment = {
-    shellAliases.install = "sudo -E bash /iso/install.sh ${cfg.home_git_dir}";
+    # install.sh is copied in isoImage.contens[0]
+    shellAliases.install = "sudo -E bash /iso/install.sh";
   };
 
   networking.hostName = host_name;
+
+  services.xserver.xkb = (secrets.module {}).services.xserver.xkb;
+
+  time = (secrets.module {}).time;
 
   nix = {
     package = pkgs.nixVersions.latest;
