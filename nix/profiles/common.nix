@@ -71,7 +71,10 @@
     };
   };
 
-  boot.binfmt.emulatedSystems = lib.lists.remove pkgs.system cfg.supported_systems;
+  boot = {
+    binfmt.emulatedSystems = lib.lists.remove pkgs.system cfg.supported_systems;
+    loader.timeout = 0;
+  };
 
   system = {
     inherit (cfg) stateVersion;
