@@ -11,13 +11,14 @@ let
   parted = "${pkgs.parted}/bin/parted";
   mkfs = "${pkgs.util-linux}/bin/mkfs";
   mkswap = "${pkgs.util-linux}/bin/mkswap";
+  cryptsetup = "${pkgs.cryptsetup}/bin/cryptsetup";
 
   test_confirm_wipe = device: ''
     test -b "${device}" || { echo Target device "${device}" is no block device; exit 1; }
     ${partx} --show ${device}
     echo All data will be lost!
     [[ $(read -p "Proceed? [y|N]:"; echo $REPLY) =~ y|Y ]] || exit 0
-    ${wipefs} -a "${device}"
+    ${wipefs} --all "${device}"
   '';
 
   mk_primary = partition:
@@ -26,10 +27,14 @@ let
   in
   ''
     ${test_confirm_wipe device}
-    ${parted} -s "${device}" mklabel ${partition.label}
+    ${parted} -s "${device}" mklabel ${partition.table}
     ${parted} -s "${device}" -- mkpart primary 1MB -${partition.swap_size}GB
     ${parted} -s "${device}" -- set 1 boot on
     ${parted} -s "${device}" -- mkpart primary linux-swap -${partition.swap_size}GB 100%
+    ${if partition.encrypt then ''
+      ${cryptsetup} luksFormat ${device}-part1
+      ${cryptsetup} luksOpen ${device}-part1
+    '' else ""}
     ${mkfs} -t ${partition.fs} -L nixos "${device}-part1"
     ${mkswap} -L swap "${device}-part2"
   '';
