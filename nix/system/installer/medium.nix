@@ -30,6 +30,11 @@ in
 
   services.xserver.xkb = (secrets.module {}).services.xserver.xkb;
 
+  console = {
+    useXkbConfig = true;
+    font = "ter-c32b";
+  };
+
   time = (secrets.module {}).time;
 
   nix = {
