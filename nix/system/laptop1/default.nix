@@ -11,13 +11,30 @@
 
   boot = {
     supportedFilesystems = [ "ext4" ];
-    loader.grub = {
-      device = "/dev/sdb";
-      enable = true;
+    loader = {
+      efi = {
+        efiSysMountPoint = "/boot";
+        canTouchEfiVariables = true;
+      };
+      grub = {
+        device = "nodev";
+        enable = true;
+        efiSupport = true;
+      };
+    };
+    initrd = { 
+      luks.devices.cryptroot.device = "/dev/disk/by-partlabel/nixos";
+      kernelModules = [ "cryptd" "dm-snapshot" ];
     };
   };
 
   fileSystems = {
+    "/boot" = {
+      device = "/dev/disk/by-label/boot";
+      fsType = "vfat";
+      neededForBoot = true;
+
+    };
     "/" = {
       device = "/dev/disk/by-label/nixos";
       fsType = "ext4";
@@ -25,5 +42,5 @@
     };
   };
 
-  swapDevices = [ { label = "swap"; } ];
+  swapDevices = [ { device = "/dev/disk/by-label/swap"; } ];
 }
