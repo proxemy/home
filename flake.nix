@@ -121,6 +121,7 @@
           "nix run .#dd-installer -- <hostname> [<block device>]\n" \
           "nixos-generate --flake .#${hostnames.rpi1} --format iso --out-link result\n" \
           "nix build .#nixosConfigurations.${hostnames.rpi1}.config.system.build.sdImage\n" \
+          "find . -iname '*.nix' -exec nix fmt {} \;\n" \
           "Hosts: ${builtins.toString secrets.list_of.hostnames}"
         '';
       };
