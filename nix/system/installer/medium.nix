@@ -28,14 +28,14 @@ in
 
   networking.hostName = host_name;
 
-  services.xserver.xkb = (secrets.module {}).services.xserver.xkb;
+  services.xserver.xkb = (secrets.module { }).services.xserver.xkb;
 
   console = {
     useXkbConfig = true;
     font = "ter-c32b";
   };
 
-  time = (secrets.module {}).time;
+  time = (secrets.module { }).time;
 
   nix = {
     package = pkgs.nixVersions.latest;

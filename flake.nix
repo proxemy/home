@@ -42,14 +42,18 @@
       system = "x86_64-linux"; # builtins.currentSystem;
       pkgs = inputs.nixpkgs.legacyPackages.${system};
 
-      inherit (import ./nix/lib/mk_nixos.nix {
-        inherit
-          inputs
-          self
-          cfg
-          secrets
-          ;
-      }) mk_nixos mk_installer;
+      inherit
+        (import ./nix/lib/mk_nixos.nix {
+          inherit
+            inputs
+            self
+            cfg
+            secrets
+            ;
+        })
+        mk_nixos
+        mk_installer
+        ;
     in
     {
       nixosConfigurations = {

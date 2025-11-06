@@ -22,9 +22,12 @@
         efiSupport = true;
       };
     };
-    initrd = { 
+    initrd = {
       luks.devices.cryptroot.device = "/dev/disk/by-partlabel/nixos";
-      kernelModules = [ "cryptd" "dm-snapshot" ];
+      kernelModules = [
+        "cryptd"
+        "dm-snapshot"
+      ];
     };
   };
 
