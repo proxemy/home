@@ -1,4 +1,4 @@
-{ secrets, ... }:
+{ lib, secrets, ... }:
 {
   imports = [
     ./../../profiles/desktop.nix
@@ -24,10 +24,7 @@
     };
     initrd = {
       luks.devices.cryptroot.device = "/dev/disk/by-partlabel/nixos";
-      kernelModules = [
-        "cryptd"
-        "dm-snapshot"
-      ];
+      kernelModules = [ "cryptd" ];
     };
   };
 
@@ -36,7 +33,6 @@
       device = "/dev/disk/by-label/boot";
       fsType = "vfat";
       neededForBoot = true;
-
     };
     "/" = {
       device = "/dev/disk/by-label/nixos";
@@ -45,5 +41,10 @@
     };
   };
 
-  swapDevices = [ { device = "/dev/disk/by-label/swap"; } ];
+  swapDevices = [
+    {
+      device = lib.mkForce "/.swapfile";
+      label = "swap";
+    }
+  ];
 }

@@ -1,7 +1,6 @@
 { alias }:
 {
   pkgs,
-  lib,
   modulesPath,
   sourceInfo,
   cfg,
