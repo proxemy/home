@@ -73,7 +73,7 @@
 
   boot = {
     binfmt.emulatedSystems = lib.lists.remove pkgs.system cfg.supported_systems;
-    loader.timeout = 0;
+    loader.timeout = lib.mkDefault 0;
   };
 
   system = {
