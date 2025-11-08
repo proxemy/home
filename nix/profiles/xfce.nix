@@ -1,7 +1,20 @@
 { secrets, ... }:
+let
+  gtk_theme = "Adwaita-dark";
+in
 {
   services = {
-    xserver.desktopManager.xfce.enable = true;
+    xserver = {
+      desktopManager.xfce.enable = true;
+      displayManager.lightdm = {
+        enable = true;
+        greeters.gtk = {
+          enable = true;
+          # enable global color theme. before login, user config is not loaded
+          theme.name = gtk_theme;
+        };
+      };
+    };
     displayManager.defaultSession = "xfce";
   };
 
@@ -38,7 +51,7 @@
           "panels/dark-mode" = true;
         };
         xsettings = {
-          "Net/ThemeName" = "Adwaita-dark";
+          "Net/ThemeName" = gtk_theme;
         };
       };
     };
