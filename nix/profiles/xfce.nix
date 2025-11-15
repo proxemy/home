@@ -1,6 +1,6 @@
 { secrets, ... }:
 let
-  gtk_theme = "Adwaita-dark";
+  gtk_color_theme = "Adwaita-dark";
 in
 {
   services = {
@@ -10,13 +10,19 @@ in
         enable = true;
         greeters.gtk = {
           enable = true;
-          # enable global color theme. before login, user config is not loaded
-          theme.name = gtk_theme;
+          # greeter color theme. before login, user config is not loaded
+          theme.name = gtk_color_theme;
         };
       };
     };
     displayManager.defaultSession = "xfce";
   };
+
+  #
+  # XFCE config files are stored in ~/.config/xfce4/xfconf
+  # xfconf-query -c CHANNEL (-l) -p PROPERTY
+  # xfconf-query -c xfce4-desktop -p "/last/window-height"
+  #
 
   home-manager.users.${secrets.user_name} = {
     xfconf = {
@@ -51,7 +57,11 @@ in
           "panels/dark-mode" = true;
         };
         xsettings = {
-          "Net/ThemeName" = gtk_theme;
+          "Net/ThemeName" = gtk_color_theme;
+        };
+        xfwm4 = {
+          # window decorations theme
+          "general/theme" = "BBS";
         };
       };
     };
