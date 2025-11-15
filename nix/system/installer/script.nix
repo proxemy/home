@@ -71,13 +71,27 @@ let
     partition:
     let
       device = "/dev/disk/by-id/${partition.id}";
+      label = "data";
     in
     ''
       # MK_SECONDARY
 
       ${test_confirm_wipe device}
 
-      sudo mkfs -t ${partition.fs} -L "data" "${device}"
+      sudo ${parted} -s "${device}" -- mkpart ${label} ${partition.fs} 1MB 100%
+
+      ${
+        if partition.encrypt then
+          ''
+            sudo ${cryptsetup} luksFormat --label=crypt${label} /dev/disk/by-partlabel/${label}
+            sudo ${cryptsetup} luksOpen /dev/disk/by-partlabel/${label} crypt${label}
+            sudo mkfs -t ${partition.fs} -L ${label} /dev/mapper/crypt${label}
+          ''
+        else
+          ''
+            sudo mkfs -t ${partition.fs} -L ${label} "${device}"
+          ''
+      }
     '';
 
   mk_home_git_dir = ''
