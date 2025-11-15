@@ -6,8 +6,10 @@
     ./../../services/nas_client.nix
   ];
 
-  # TODO: remove line below after testing
-  #nixpkgs.hostPlatform = "x86_64-linux";
+  # window manager upscaling by x1.25
+  home-manager.users.${secrets.user_name}.xfconf.settings.displays = {
+    "Default/eDP-1/Scale" = 0.79998779296875;
+  };
 
   boot = {
     supportedFilesystems = [ "ext4" ];
