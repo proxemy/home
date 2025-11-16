@@ -25,7 +25,7 @@
       };
     };
     initrd = {
-      luks.devices.cryptroot.device = "/dev/disk/by-partlabel/nixos";
+      luks.devices.cryptroot.device = "/dev/disk/by-partlabel/root";
       kernelModules = [ "cryptd" ];
     };
   };
@@ -37,7 +37,7 @@
       neededForBoot = true;
     };
     "/" = {
-      device = "/dev/disk/by-label/nixos";
+      device = "/dev/disk/by-label/root";
       fsType = "ext4";
       options = [ "noatime" ];
     };
