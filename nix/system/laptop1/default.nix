@@ -6,11 +6,6 @@
     ./../../services/nas_client.nix
   ];
 
-  # window manager upscaling by x1.25
-  home-manager.users.${secrets.user_name}.xfconf.settings.displays = {
-    "Default/eDP-1/Scale" = 0.79998779296875;
-  };
-
   boot = {
     supportedFilesystems = [ "ext4" ];
     loader = {
