@@ -7,6 +7,8 @@
 }:
 let
   inherit (cfg) home_git_dir;
+  git = "${pkgs.git}/bin/git";
+  git-crypt = "${pkgs.git-crypt}/bin/git-crypt";
 in
 {
   system.autoUpgrade = {
@@ -35,13 +37,12 @@ in
       Type = "oneshot";
       WorkingDirectory = home_git_dir;
       UMask = "0077";
-      ExecStart = with pkgs; [
-        "${git}/bin/git checkout main --quiet"
-        "${git}/bin/git reset --hard --quiet"
-        "${git}/bin/git pull origin main --quiet"
-        "${git}/bin/git branch --verbose"
-        "${git-crypt}/bin/git-crypt unlock .git/git-crypt/keys/default"
-        "${nix}/bin/nix --extra-experimental-features nix-command --extra-experimental-features flakes flake update"
+      ExecStart = [
+        "${git} fetch origin"
+        "${git} reset --hard origin/main"
+        "${git-crypt} unlock .git/git-crypt/keys/default"
+        # nix update execution is done by 'nixos-upgrade.service', see 'system.autoUpgrade' above
+        #"${nix}/bin/nix --extra-experimental-features nix-command --extra-experimental-features flakes flake update"
       ];
     };
   };
