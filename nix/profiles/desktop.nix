@@ -3,6 +3,7 @@
   imports = [
     ../profiles/xfce.nix
     ../programs/firefox.nix
+    ../programs/keepassxc.nix
   ];
 
   users.users.${secrets.user_name}.packages = [
