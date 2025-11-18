@@ -1,8 +1,12 @@
-{ secrets, ... }:
+{ secrets, pkgs, ... }:
 {
   imports = [
     ../profiles/xfce.nix
     ../programs/firefox.nix
+  ];
+
+  users.users.${secrets.user_name}.packages = [
+    pkgs.vlc
   ];
 
   # hardened allocator (scudo/graphene-hardened) often fail with desktop apps eg.firefox
