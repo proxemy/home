@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ secrets, ... }:
 let
   arkenfox_default = {
     "app.normandy.api_url" = "";
@@ -213,29 +213,81 @@ let
     # https://www.theregister.com/2024/06/18/mozilla_buys_anonym_betting_privacy/
     "dom.private-attribution.submission.enabled" = "false";
   };
-
 in
 #TODO: incorporate https://github.com/pyllyukko/user.js
 {
-  programs.firefox = {
+  home-manager.users.${secrets.user_name}.programs.firefox = {
     enable = true;
-    preferences = arkenfox_default // disable_telemetry // custom_settings;
 
-    policies.ExtensionSettings = {
-      # blocks all addons except the ones specified below
-      "*".installation_mode = "blocked";
+    profiles.default = {
+      id = 0;
+      name = "default";
+      isDefault = true;
+      settings = arkenfox_default // disable_telemetry // custom_settings;
 
-      # uMatrix:
-      "uMatrix@raymondhill.net" = {
-        install_url = "https://addons.mozilla.org/firefox/downloads/latest/uMatrix/latest.xpi";
-        installation_mode = "force_installed";
+      search = {
+        force = true;
+        default = "ddg";
+        order = [ "ddg" "google" ];
+      };
+    };
+
+    policies = {
+      # From: https://wiki.nixos.org/wiki/Firefox
+      # Updates & Background Services
+      AppAutoUpdate                 = false;
+      BackgroundAppUpdate           = false;
+
+      # Feature Disabling
+      #DisableBuiltinPDFViewer       = true;
+      DisableFirefoxStudies         = true;
+      DisableFirefoxAccounts        = true;
+      #DisableFirefoxScreenshots     = true;
+      #DisableForgetButton           = true;
+      DisableMasterPasswordCreation = true;
+      DisableProfileImport          = true;
+      DisableProfileRefresh         = true;
+      DisableSetDesktopBackground   = true;
+      DisablePocket                 = true;
+      DisableTelemetry              = true;
+      DisableFormHistory            = true;
+      DisablePasswordReveal         = true;
+
+      # Access Restrictions
+      BlockAboutConfig              = false;
+      BlockAboutProfiles            = true;
+      BlockAboutSupport             = true;
+
+      # UI and Behavior
+      DisplayMenuBar                = "never";
+      DontCheckDefaultBrowser       = true;
+      #HardwareAcceleration          = false;
+      OfferToSaveLogins             = false;
+      #DefaultDownloadDirectory      = "${home}/Downloads";
+      NoDefaultBookmarks            = true;
+
+      # Extension
+      ExtensionSettings = let
+        mozilla = addon: "https://addons.mozilla.org/firefox/downloads/latest/${addon}/latest.xpi";
+      in
+      {
+        # blocks all addons except the ones specified below
+        "*".installation_mode = "blocked";
+
+        "uMatrix@raymondhill.net" = {
+          install_url = mozilla "uMatrix";
+          installation_mode = "force_installed";
+        };
+
+        "jid1-MnnxcxisBPnSXQ@jetpack" = {
+          install_url = mozilla "privacy-badger17";
+          installation_mode = "force_installed";
+        };
       };
 
-      # Privacy Badger:
-      "jid1-MnnxcxisBPnSXQ@jetpack" = {
-        install_url = "https://addons.mozilla.org/firefox/downloads/latest/privacy-badger17/latest.xpi";
-        installation_mode = "force_installed";
-      };
+      # Bookmarks
+      DisplayBookmarksToolbar = "newtab";
+      ManagedBookmarks = secrets.bookmarks.firefox;
     };
   };
 }
