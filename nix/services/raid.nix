@@ -73,14 +73,10 @@ in
 
   environment.shellAliases = {
     raid-status = ''
-      echo "--- lsblk:"
-      lsblk -fs ${mount.source}
-      echo "--- dmsetup:"
       dmsetup ls --tree -o blkdevname,uuid
-      echo "--- mdadm status:"
+      lsblk -s ${mount.source} -o NAME,SIZE,FSTYPE,FSVER,LABEL,FSAVAIL,FSUSED,MOUNTPOINTS
       mdadm --detail ${mount.source}
-      echo "--- mdadm config:"
-      mdadm --monitor --verbose --scan
+      cat /proc/mdstat
     '';
     # TODO maybe chain it together in systemd units and remove nfs stuff here
     raid-stop = ''
