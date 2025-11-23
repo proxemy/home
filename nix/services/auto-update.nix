@@ -9,7 +9,9 @@ let
   inherit (cfg) home_git_dir;
   git = "${pkgs.git}/bin/git";
   git-crypt = "${pkgs.git-crypt}/bin/git-crypt";
+  nix = "${nix}/bin/nix --extra-experimental-features nix-command --extra-experimental-features flakes";
 in
+
 {
   system.autoUpgrade = {
     enable = true;
@@ -41,8 +43,7 @@ in
         "${git} fetch origin"
         "${git} reset --hard origin/main"
         "${git-crypt} unlock .git/git-crypt/keys/default"
-        # nix update execution is done by 'nixos-upgrade.service', see 'system.autoUpgrade' above
-        #"${nix}/bin/nix --extra-experimental-features nix-command --extra-experimental-features flakes flake update"
+        "${nix} flake update"
       ];
     };
   };
