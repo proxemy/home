@@ -9,7 +9,7 @@ let
   inherit (cfg) home_git_dir;
   git = "${pkgs.git}/bin/git";
   git-crypt = "${pkgs.git-crypt}/bin/git-crypt";
-  nix = "${nix}/bin/nix --extra-experimental-features nix-command --extra-experimental-features flakes";
+  nix = "${pkgs.nix}/bin/nix --extra-experimental-features nix-command --extra-experimental-features flakes";
 in
 
 {
