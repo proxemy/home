@@ -228,66 +228,104 @@ in
       search = {
         force = true;
         default = "ddg";
-        order = [ "ddg" "google" ];
+        order = [
+          "ddg"
+          "google"
+        ];
       };
     };
 
     policies = {
       # From: https://wiki.nixos.org/wiki/Firefox
       # Updates & Background Services
-      AppAutoUpdate                 = false;
-      BackgroundAppUpdate           = false;
+      AppAutoUpdate = false;
+      BackgroundAppUpdate = false;
+
+      Cookies = "AllowSession";
+      NetworkPrediction = false;
+
+      EnableTrackingProtection = {
+        Value = true;
+        Locked = true;
+        Cryptomining = true;
+        Fingerprinting = true;
+      };
+
+      SanitizeOnShutdown = {
+        Cache = true;
+        Cookies = true;
+        Downloads = true;
+        FormData = true;
+        History = true;
+        Sessions = true;
+        SiteSettings = true;
+        OfflineApps = true;
+        Locked = true;
+      };
 
       # Feature Disabling
       #DisableBuiltinPDFViewer       = true;
-      DisableFirefoxStudies         = true;
-      DisableFirefoxAccounts        = true;
+      DisableFirefoxStudies = true;
+      DisableFirefoxAccounts = true;
       #DisableFirefoxScreenshots     = true;
       #DisableForgetButton           = true;
       DisableMasterPasswordCreation = true;
-      DisableProfileImport          = true;
-      DisableProfileRefresh         = true;
-      DisableSetDesktopBackground   = true;
-      DisablePocket                 = true;
-      DisableTelemetry              = true;
-      DisableFormHistory            = true;
-      DisablePasswordReveal         = true;
+      DisableProfileImport = true;
+      DisableProfileRefresh = true;
+      DisableSetDesktopBackground = true;
+      DisablePocket = true;
+      DisableTelemetry = true;
+      DisableFormHistory = true;
+      DisablePasswordReveal = true;
 
       # Access Restrictions
-      BlockAboutConfig              = false;
-      BlockAboutProfiles            = true;
-      BlockAboutSupport             = true;
+      BlockAboutConfig = false;
+      BlockAboutProfiles = true;
+      BlockAboutSupport = true;
 
       # UI and Behavior
-      DisplayMenuBar                = "never";
-      DontCheckDefaultBrowser       = true;
+      DisplayMenuBar = "never";
+      DontCheckDefaultBrowser = true;
       #HardwareAcceleration          = false;
-      OfferToSaveLogins             = false;
+      OfferToSaveLogins = false;
+      PasswordManagerEnabled = false;
       #DefaultDownloadDirectory      = "${home}/Downloads";
-      NoDefaultBookmarks            = true;
-
-      # Extension
-      ExtensionSettings = let
-        mozilla = addon: "https://addons.mozilla.org/firefox/downloads/latest/${addon}/latest.xpi";
-      in
-      {
-        # blocks all addons except the ones specified below
-        "*".installation_mode = "blocked";
-
-        "uMatrix@raymondhill.net" = {
-          install_url = mozilla "uMatrix";
-          installation_mode = "force_installed";
-        };
-
-        "jid1-MnnxcxisBPnSXQ@jetpack" = {
-          install_url = mozilla "privacy-badger17";
-          installation_mode = "force_installed";
-        };
-      };
+      NoDefaultBookmarks = true;
 
       # Bookmarks
       DisplayBookmarksToolbar = "newtab";
       ManagedBookmarks = secrets.bookmarks.firefox;
+
+      # Extension
+      ExtensionSettings =
+        let
+          mozilla = addon: "https://addons.mozilla.org/firefox/downloads/latest/${addon}/latest.xpi";
+        in
+        {
+          # blocks all addons except the ones specified below
+          "*".installation_mode = "blocked";
+
+          "uMatrix@raymondhill.net" = {
+            install_url = mozilla "uMatrix";
+            installation_mode = "force_installed";
+            default_area = "navbar";
+            private_browsing = true;
+            updates_disabled = true;
+          };
+
+          "jid1-MnnxcxisBPnSXQ@jetpack" = {
+            install_url = mozilla "privacy-badger17";
+            installation_mode = "force_installed";
+            private_browsing = true;
+            updates_disabled = true;
+          };
+        };
+
+      "3rdparty".Extensions = {
+        "uMatrix@raymondhill.net" = {
+          # TODO: import uMatrix filter rules
+        };
+      };
     };
   };
 }
