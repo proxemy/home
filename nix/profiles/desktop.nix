@@ -1,4 +1,4 @@
-{ secrets, pkgs, ... }:
+{ secrets, pkgs, host, ... }:
 {
   imports = [
     ../profiles/xfce.nix
@@ -17,5 +17,10 @@
   services = {
     pulseaudio.enable = true;
     xserver.enable = true;
+
+    displayManager.autoLogin = if host.partitions.primary.encrypt then {
+      enable = true;
+      user = secrets.user_name;
+    } else {};
   };
 }
