@@ -1,4 +1,4 @@
-{ alias }:
+{ host }:
 {
   pkgs,
   modulesPath,
@@ -8,8 +8,6 @@
   ...
 }:
 let
-  host = secrets.hosts.${alias};
-  host_name = secrets.hostnames.${alias};
   home-git-repo = import ./home-git-repo.nix { inherit pkgs secrets sourceInfo; };
   install-script = import ./script.nix { inherit pkgs cfg host; };
 in
@@ -25,7 +23,7 @@ in
     shellAliases.install = "sudo -E bash /iso/install.sh";
   };
 
-  networking.hostName = host_name;
+  networking.hostName = host.hostname;
 
   services.xserver.xkb = (secrets.module { }).services.xserver.xkb;
 
@@ -55,8 +53,8 @@ in
   #};
 
   isoImage = {
-    edition = alias;
-    volumeID = "${host_name}-nixos-installer";
+    edition = host.alias;
+    volumeID = "${host.hostname}-nixos-installer";
 
     # TODO: finalize a self contained/offline installer iso
     # the 2 options might be a lead. 'includeSystemBuildDeps' bloats the

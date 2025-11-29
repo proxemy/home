@@ -1,7 +1,7 @@
 {
   pkgs,
   lib,
-  host_name,
+  host,
   cfg,
   secrets,
   home-manager,
@@ -25,7 +25,7 @@
     }
   ];
 
-  networking.hostName = host_name;
+  networking.hostName = host.hostname;
 
   nix = {
     # https://www.tweag.io/blog/2020-07-31-nixos-flakes/

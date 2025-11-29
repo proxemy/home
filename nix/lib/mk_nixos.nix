@@ -7,9 +7,9 @@
 rec {
   mk_nixos =
     {
-      alias,
+      host,
       system,
-      modules ? [ ./../system/${alias} ],
+      modules ? [ ./../system/${host.alias} ],
     }:
     inputs.nixpkgs.lib.nixosSystem {
       inherit system modules;
@@ -19,17 +19,18 @@ rec {
         inherit
           cfg
           secrets
+          host
           ;
-        host_name = secrets.hostnames.${alias};
+        host_name = secrets.hostnames.${host.alias};
       };
     };
 
   mk_installer =
-    { alias, system }:
+    { host, system }:
     mk_nixos {
-      inherit alias system;
+      inherit host system;
       modules = [
-        (import ../system/installer/medium.nix { inherit alias; })
+        (import ../system/installer/medium.nix { inherit host; })
       ];
     };
 }

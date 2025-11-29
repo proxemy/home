@@ -59,37 +59,37 @@
       nixosConfigurations = {
 
         ${hostnames.desktop1} = mk_nixos {
-          alias = "desktop1";
+          host = secrets.hosts.desktop1;
           system = "x86_64-linux";
         };
 
         "${hostnames.desktop1}-installer" = mk_installer {
-          alias = "desktop1";
+          host = secrets.hosts.desktop1;
           system = "x86_64-linux";
         };
 
         ${hostnames.laptop1} = mk_nixos {
-          alias = "laptop1";
+          host = secrets.hosts.laptop1;
           system = "x86_64-linux";
         };
 
         "${hostnames.laptop1}-installer" = mk_installer {
-          alias = "laptop1";
+          host = secrets.hosts.laptop1;
           system = "x86_64-linux";
         };
 
         ${hostnames.laptop2} = mk_nixos {
-          alias = "laptop2";
+          host = secrets.hosts.laptop2;
           system = "x86_64-linux";
         };
 
         "${hostnames.laptop2}-installer" = mk_installer {
-          alias = "laptop2";
+          host = secrets.hosts.laptop2;
           system = "x86_64-linux";
         };
 
         ${hostnames.rpi1} = mk_nixos {
-          alias = "rpi1";
+          host = secrets.hosts.rpi1;
           system = "aarch64-linux";
         };
       };
