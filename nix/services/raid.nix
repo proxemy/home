@@ -72,8 +72,8 @@ in
   };
 
   environment.shellAliases = {
+    #dmsetup ls --tree -o blkdevname,uuid
     raid-status = ''
-      dmsetup ls --tree -o blkdevname,uuid
       lsblk -s ${mount.source} -o NAME,SIZE,FSTYPE,FSVER,LABEL,FSAVAIL,FSUSED,MOUNTPOINTS
       mdadm --detail ${mount.source}
       cat /proc/mdstat

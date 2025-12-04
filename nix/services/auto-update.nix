@@ -34,10 +34,11 @@ in
     description = "Pull from remote and update lockfile. See HOMEDIR";
     before = [ "nixos-upgrade.service" ];
     requiredBy = [ "nixos-upgrade.service" ];
-    path = [ # required! otherwise indirect invocations fail
+    path = [
+      # required! otherwise indirect invocations fail
       pkgs.git
       pkgs.git-crypt
-    ]; 
+    ];
     serviceConfig = {
       Type = "oneshot";
       WorkingDirectory = home_git_dir;
