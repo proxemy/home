@@ -22,7 +22,7 @@ in
       "vers3" = false;
       "vers4.0" = false;
       "vers4.1" = false;
-      "vers4" = true;
+      "vers4" = false;
       "vers4.2" = true;
     };
     server = {
@@ -36,4 +36,10 @@ in
   };
 
   networking.firewall.allowedTCPPorts = nas_cfg.ports;
+
+  environment.shellAliases = {
+    nfs-monitor = ''
+      watch --difference --interval 1 nfsstat --server
+    '';
+  };
 }
