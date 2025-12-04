@@ -3,6 +3,7 @@
   imports = [
     "${modulesPath}/installer/sd-card/sd-image-aarch64-new-kernel.nix"
     ./../../profiles/aarch64-cross-compilation-fixes.nix
+    ./../../profiles/headless.nix
     ./../../profiles/common.nix
     ./../../services/nas_server.nix
     ./../../services/mpd_server.nix

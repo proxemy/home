@@ -1,0 +1,4 @@
+{ ... }:
+{
+  console.enable = false;
+}
