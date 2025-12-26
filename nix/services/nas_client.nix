@@ -15,6 +15,9 @@ let
   };
 in
 {
+  # to manually mount the nfs share, use:
+  # mount.nfs4 <mount.source> <mount.target>
+
   fileSystems."${mount.target}" = {
     device = mount.source;
     fsType = mount.type;
