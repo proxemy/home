@@ -72,46 +72,57 @@ in
   };
 
   environment.shellAliases = {
+
     #dmsetup ls --tree -o blkdevname,uuid
     raid-status = ''
       lsblk -s ${mount.source} -o NAME,SIZE,FSTYPE,FSVER,LABEL,FSAVAIL,FSUSED,MOUNTPOINTS
       mdadm --detail ${mount.source}
       cat /proc/mdstat
     '';
+
     # TODO maybe chain it together in systemd units and remove nfs stuff here
     raid-stop = ''
       systemctl stop ${builtins.toString systemd_service_names_list}
       umount ${mount.source}
       mdadm --stop --verbose ${mount.source}
     '';
+
     raid-start = ''
       mdadm --assemble --verbose ${mount.source} /dev/mapper/luks{1,2,3}
       systemctl start ${builtins.toString systemd_service_names_list}
     '';
+
     raid-lock = ''
       cryptsetup luksClose luks1
       cryptsetup luksClose luks2
       cryptsetup luksClose luks3
     '';
+
     raid-unlock = ''
       cryptsetup luksOpen /dev/sda luks1
       cryptsetup luksOpen /dev/sdb luks2
       cryptsetup luksOpen /dev/sdc luks3
     '';
+
     raid-help = ''
-      echo -e "" \
-      "--- format:\n" \
-      "cryptsetup luksFormat --debug --type luks2 --integrity hmac-sha256 /dev/sd-\n" \
-      "--- create:\n" \
-      "mdadm --create --verbose --level 1 --raid-devices=4 /dev/md0 [ /dev/mapper/luks1 <mapped devices> ]\n" \
-      "--- partition & mount:\n" \
-      "mkfs.ext4 -v /dev/md0 && mount /dev/md0 /mnt/raid\n" \
-      "--- TODO: how to integrate new devices
+      echo -e " \
+      --- format:
+      cryptsetup luksFormat --debug --type luks2 --integrity hmac-sha256 /dev/sd-
+      --- create:
+      mdadm --create --verbose --level 1 --raid-devices=4 /dev/md0 [ /dev/mapper/luks1 <mapped devices> ]
+      --- partition & mount:
+      mkfs.ext4 -v /dev/md0 && mount /dev/md0 /mnt/raid
+      --- Re-add missing drives:
+      mdadm --re-add /dev/md0 /dev/mapper/luks1
+      --- TODO: how to integrate new devices
+      "
     '';
+
     raid-up = ''
       raid-unlock
       raid-start
     '';
+
     raid-down = ''
       raid-stop
       raid-lock
