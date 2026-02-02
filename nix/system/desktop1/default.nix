@@ -1,7 +1,8 @@
 { lib, secrets, ... }:
 {
   imports = [
-    ./../../profiles/desktop.nix
+    #./../../profiles/desktop.nix
+    ./../../profiles/xfce.nix
     ./../../profiles/common.nix
     ./../../services/nas_client.nix
   ];
