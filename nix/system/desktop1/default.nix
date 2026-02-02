@@ -7,6 +7,8 @@
     ./../../services/nas_client.nix
   ];
 
+  #TMP
+  services.xserver.enable = true;
 
   boot = {
     supportedFilesystems = [ "ext4" ];

@@ -9,11 +9,11 @@
       listenAddress = "any";
     };
 
-    extraConfig = ''
+    /*extraConfig = ''
       audio_output {
         type "pulse"
         name "PA MPD"
       }
-    '';
+    '';*/
   };
 }
