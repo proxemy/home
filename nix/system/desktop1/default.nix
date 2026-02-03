@@ -1,21 +1,22 @@
 { lib, secrets, ... }:
 {
   imports = [
-    #./../../profiles/desktop.nix
-    ./../../profiles/xfce.nix
+    ./../../profiles/desktop.nix
     ./../../profiles/common.nix
     ./../../services/nas_client.nix
   ];
 
-  #TMP
-  services.xserver.enable = true;
+  nixpkgs.config.allowUnfree = true;
+  hardware.graphics.enable = true;
+  services.xserver.videoDrivers = [ "nvidia" ];
+  hardware.nvidia.open = true;
 
   boot = {
     supportedFilesystems = [ "ext4" ];
     loader = {
       efi = {
         efiSysMountPoint = "/boot";
-        canTouchEfiVariables = false;
+        canTouchEfiVariables = true;
       };
       grub = {
         device = "nodev";
