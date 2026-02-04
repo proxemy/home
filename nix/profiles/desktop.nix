@@ -1,6 +1,7 @@
 {
-  secrets,
   pkgs,
+  lib,
+  secrets,
   host,
   ...
 }:
@@ -10,6 +11,8 @@
     ../programs/firefox.nix
     ../programs/keepassxc.nix
   ];
+
+  hardware.graphics.enable = lib.mkDefault true;
 
   users.users.${secrets.user_name}.packages = [
     # TODO: Maybe turn vlc into its own programs/vlc.nix
