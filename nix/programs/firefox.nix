@@ -294,7 +294,8 @@ in
 
       # Bookmarks
       DisplayBookmarksToolbar = "newtab";
-      ManagedBookmarks = secrets.bookmarks.firefox;
+      # TODO: fix malformed bookmarks
+      #ManagedBookmarks = secrets.bookmarks.firefox;
 
       # Extension
       ExtensionSettings =
