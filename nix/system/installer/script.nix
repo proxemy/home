@@ -50,9 +50,9 @@ let
       mk_efi = ''
         # MK_EFI
         sudo ${parted} -s "${device}" -- mklabel gpt
-        sudo ${parted} -s "${device}" -- mkpart "boot" fat32 1MB 100MB
+        sudo ${parted} -s "${device}" -- mkpart "boot" fat32 1MB 2GB
         sudo ${parted} -s "${device}" -- set 1 esp on
-        sudo ${parted} -s "${device}" -- mkpart ${label} ${partition.fs} 100MB 100%
+        sudo ${parted} -s "${device}" -- mkpart ${label} ${partition.fs} 2GB 100%
         sudo ${mkfs} -t fat -F 32 -n boot /dev/disk/by-partlabel/boot
         sudo ${mkfs} -t ${partition.fs} -L nixos /dev/disk/by-partlabel/${label}
       '';
