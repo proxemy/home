@@ -20,6 +20,7 @@
   environment.memoryAllocator.provider = "libc";
 
   services = {
+    devmon.enable = true;
     pulseaudio.enable = true;
     xserver.enable = true;
 
