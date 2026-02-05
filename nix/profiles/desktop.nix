@@ -14,9 +14,10 @@
 
   hardware.graphics.enable = lib.mkDefault true;
 
-  users.users.${secrets.user_name}.packages = [
+  users.users.${secrets.user_name}.packages = with pkgs; [
     # TODO: Maybe turn vlc into its own programs/vlc.nix
-    pkgs.vlc
+    vlc
+    tor-browser
   ];
 
   # hardened allocator (scudo/graphene-hardened) often fail with desktop apps eg.firefox
