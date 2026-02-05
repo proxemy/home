@@ -13,6 +13,7 @@ rec {
     }:
     inputs.nixpkgs.lib.nixosSystem {
       inherit system modules;
+      #nixpkgs.hostPlatform = system;
       specialArgs = {
         inherit (self) sourceInfo;
         inherit (inputs) dotfiles home-manager;
@@ -21,6 +22,7 @@ rec {
           secrets
           host
           ;
+        # TODO: remove the host_name arg, its contained in 'host' already
         host_name = secrets.hostnames.${host.alias};
       };
     };
