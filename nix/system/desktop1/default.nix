@@ -1,4 +1,4 @@
-{ lib, secrets, ... }:
+{ config, pkgs, lib, secrets, ... }:
 {
   imports = [
     ./../../profiles/desktop.nix
@@ -8,7 +8,25 @@
 
   nixpkgs.config.allowUnfree = true;
   services.xserver.videoDrivers = [ "nvidia" ];
-  hardware.nvidia.open = true;
+
+  hardware = {
+    enableRedistributableFirmware = true;
+    nvidia = {
+      open = true;
+      gsp.enable = true;
+      dynamicBoost.enable = true;
+      package = config.boot.kernelPackages.nvidiaPackages.latest;
+    };
+    cpu.amd = {
+      updateMicrocode = true;
+      ryzen-smu.enable = false;
+    };
+  };
+
+  # TMP
+  environment.systemPackages = with pkgs; [
+    nvtopPackages.nvidia
+  ];
 
   boot = {
     supportedFilesystems = [ "ext4" ];
