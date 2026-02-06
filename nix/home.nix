@@ -11,10 +11,13 @@
     username = secrets.user_name;
     homeDirectory = "/home/${username}";
 
-    file."dotfiles" = {
+    file.".dotfiles_copy" = {
       source = dotfiles;
-      target = "fakedir/.."; # ugly trick to link files directly into $HOME
-      recursive = true;
+      onChange = ''
+        # workaround for missing feature: https://github.com/nix-community/home-manager/issues/3090
+        cp --recursive "${dotfiles}"/. ~
+      '';
+      force = true;
     };
   };
 
