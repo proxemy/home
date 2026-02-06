@@ -22,10 +22,6 @@
   };
 
   programs = {
-    git = {
-      enable = true;
-      #extraConfig.include = { path = "~/.config/gitconfig/proxemy" };
-    };
     bash = {
       enable = true;
       #.bash_aliases lives in dotfiles
