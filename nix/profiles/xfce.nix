@@ -89,7 +89,7 @@ in
 
           "general/workspace_count" = 1;
           "general/scroll_workspaces" = false;
-          "general/prevent_focus_stealing" = true;
+          "general/prevent_focus_stealing" = false;
           "general/urgent_blink" = true;
           "general/repeat_urgent_blink" = true;
         };
