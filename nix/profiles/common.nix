@@ -25,6 +25,8 @@
     }
   ];
 
+  nixpkgs.hostPlatform = host.platform;
+
   networking.hostName = host.hostname;
 
   nix = {

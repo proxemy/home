@@ -16,6 +16,8 @@ in
     "${modulesPath}/installer/cd-dvd/installation-cd-minimal-new-kernel-no-zfs.nix"
   ];
 
+  nixpkgs.hostPlatform = host.platform;
+
   system.stateVersion = cfg.stateVersion;
 
   environment = {

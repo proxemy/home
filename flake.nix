@@ -60,37 +60,30 @@
 
         ${hostnames.desktop1} = mk_nixos {
           host = secrets.hosts.desktop1;
-          system = "x86_64-linux";
         };
 
         "${hostnames.desktop1}-installer" = mk_installer {
           host = secrets.hosts.desktop1;
-          system = "x86_64-linux";
         };
 
         ${hostnames.laptop1} = mk_nixos {
           host = secrets.hosts.laptop1;
-          system = "x86_64-linux";
         };
 
         "${hostnames.laptop1}-installer" = mk_installer {
           host = secrets.hosts.laptop1;
-          system = "x86_64-linux";
         };
 
         ${hostnames.laptop2} = mk_nixos {
           host = secrets.hosts.laptop2;
-          system = "x86_64-linux";
         };
 
         "${hostnames.laptop2}-installer" = mk_installer {
           host = secrets.hosts.laptop2;
-          system = "x86_64-linux";
         };
 
         ${hostnames.rpi1} = mk_nixos {
           host = secrets.hosts.rpi1;
-          system = "aarch64-linux";
         };
       };
 
