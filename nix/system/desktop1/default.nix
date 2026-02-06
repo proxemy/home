@@ -9,31 +9,14 @@
   imports = [
     ./../../profiles/desktop.nix
     ./../../profiles/common.nix
+    ./../../profiles/nvidia_gpu.nix
     ./../../services/nas_client.nix
   ];
 
-  nixpkgs.config.allowUnfree = true;
-  services.xserver.videoDrivers = [ "nvidia" ];
-
-  hardware = {
-    enableRedistributableFirmware = true;
-    nvidia = {
-      enabled = true;
-      open = true;
-      gsp.enable = true;
-      dynamicBoost.enable = true;
-      package = config.boot.kernelPackages.nvidiaPackages.latest;
-    };
-    cpu.amd = {
-      updateMicrocode = true;
-      ryzen-smu.enable = false;
-    };
+  hardware.cpu.amd = {
+    updateMicrocode = true;
+    ryzen-smu.enable = false;
   };
-
-  # TMP
-  environment.systemPackages = with pkgs; [
-    nvtopPackages.nvidia
-  ];
 
   boot = {
     supportedFilesystems = [ "ext4" ];
