@@ -1,4 +1,10 @@
-{ config, pkgs, lib, secrets, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  secrets,
+  ...
+}:
 {
   imports = [
     ./../../profiles/desktop.nix
@@ -12,6 +18,7 @@
   hardware = {
     enableRedistributableFirmware = true;
     nvidia = {
+      enabled = true;
       open = true;
       gsp.enable = true;
       dynamicBoost.enable = true;

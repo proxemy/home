@@ -1,4 +1,4 @@
-{ secrets, ... }:
+{ secrets, config, ... }:
 let
   gtk_color_theme = "Adwaita-dark";
 in
@@ -62,6 +62,9 @@ in
         xfwm4 = {
           # window decorations theme
           "general/theme" = "BBS";
+
+          # Disable compositor as a workaround for latest nvidia driver flickering
+          "general/use_compositing" = if config.hardware.nvidia.enabled then false else true;
         };
       };
     };
