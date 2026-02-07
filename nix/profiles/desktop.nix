@@ -16,7 +16,10 @@
 
   users.users.${secrets.user_name}.packages = with pkgs; [
     # TODO: Maybe turn vlc into its own programs/vlc.nix
+    ffmpeg
+    yt-dlp
     vlc
+    torsocks
     tor-browser
   ];
 
