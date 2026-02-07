@@ -82,7 +82,7 @@ in
 
         xfwm4 = {
           # window decorations theme
-          "general/theme" = "BBS";
+          "general/theme" = "Tgc";
 
           # Disable compositor as a workaround for latest nvidia driver flickering
           "general/use_compositing" = if config.hardware.nvidia.enabled then false else true;
