@@ -13,8 +13,9 @@
 
     file.".dotfiles_copy" = {
       source = dotfiles;
+      # workaround for missing feature: https://github.com/nix-community/home-manager/issues/3090
       onChange = ''
-        # workaround for missing feature: https://github.com/nix-community/home-manager/issues/3090
+        umask 0077
         cp --recursive "${dotfiles}"/. ~
       '';
       force = true;
