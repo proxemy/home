@@ -62,12 +62,19 @@ in
 
           "xfwm4/custom/override" = true;
           "xfwm4/custom/<Alt>Tab" = "cycle_windows_key";
+          "xfwm4/custom/<Alt><Shift>Tab" = "cycle_reverse_windows_key";
+
           "xfwm4/custom/<Super>Up" = "maximize_window_key";
           "xfwm4/custom/<Super>Down" = "hide_window_key";
-          "xfwm4/custom/<Super>Left" = "move_window_left_key";
-          "xfwm4/custom/<Super>Right" = "move_window_right_key";
-          "xfwm4/custom/<Super><Shift>End" = "move_window_next_workspace_key";
-          "xfwm4/custom/<Super><Shift>Home" = "move_window_prev_workspace_key";
+          "xfwm4/custom/<Super>Left" = "tile_left_key";
+          "xfwm4/custom/<Super>Right" = "tile_right_key";
+          "xfwm4/custom/<Super><Shift>Left" = "move_window_to_monitor_left_key";
+          "xfwm4/custom/<Super><Shift>Right" = "move_window_to_monitor_right_key";
+
+          "xfwm4/custom/<Super>d" = "show_desktop_key";
+          "xfwm4/custom/<Alt>F4" = "cloe_window_key";
+          "xfwm4/custom/Escape" = "cancel_key";
+          "xfwm4/custom/F11" = "fullscreen_key";
         };
 
         xfce4-panel = {
