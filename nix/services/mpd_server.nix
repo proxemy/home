@@ -5,9 +5,8 @@
     startWhenNeeded = true;
     #user = "mpd";
 
-    network = {
-      listenAddress = "any";
-    };
+    openFirewall = false;
+    settings.bind_to_address = "any";
 
     /*
       extraConfig = ''
