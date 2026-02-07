@@ -18,6 +18,11 @@ in
   # to manually mount the nfs share, use:
   # mount.nfs4 <mount.source> <mount.target>
 
+  # xfce thunar bookmark. maybe older gtk versions are used ...
+  home-manager.users.ddder.gtk.gtk3.bookmarks = [
+    "file://${mount.target}"
+  ];
+
   fileSystems."${mount.target}" = {
     device = mount.source;
     fsType = mount.type;
