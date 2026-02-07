@@ -225,6 +225,12 @@ in
       isDefault = true;
       settings = arkenfox_default // disable_telemetry // custom_settings;
 
+      bookmarks = {
+        enable = true;
+        force = true;
+        settings = secrets.bookmarks.to_name_url_list secrets.bookmarks.firefox;
+      };
+
       search = {
         force = true;
         default = "ddg";
@@ -290,7 +296,7 @@ in
       OfferToSaveLogins = false;
       PasswordManagerEnabled = false;
       #DefaultDownloadDirectory      = "${home}/Downloads";
-      NoDefaultBookmarks = true;
+      #NoDefaultBookmarks = true;
 
       # Bookmarks
       DisplayBookmarksToolbar = "newtab";
