@@ -5,7 +5,7 @@
   ...
 }:
 let
-  gtk_color_theme = "Adwaita-dark";
+  gtk_theme = "Adwaita-dark";
 in
 {
   services = {
@@ -16,7 +16,7 @@ in
         greeters.gtk = {
           enable = true;
           # greeter color theme. before login, user config is not loaded
-          theme.name = gtk_color_theme;
+          theme.name = gtk_theme;
         };
       };
     };
@@ -33,6 +33,8 @@ in
       [ ];
 
   home-manager.users.${secrets.user_name} = {
+    gtk.colorScheme = "dark";
+
     #
     # XFCE config files are stored in ~/.config/xfce4/xfconf
     # xfconf-query -c CHANNEL (-l) -p PROPERTY
@@ -84,7 +86,7 @@ in
         };
 
         xsettings = {
-          "Net/ThemeName" = gtk_color_theme;
+          "Net/ThemeName" = gtk_theme;
         };
 
         xfwm4 = {
