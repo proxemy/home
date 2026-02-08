@@ -36,7 +36,7 @@ let
     "browser.safebrowsing.downloads.remote.enabled" = false;
     "browser.search.separatePrivateDefault" = true;
     "browser.search.separatePrivateDefault.ui.enabled" = true;
-    "browser.search.suggest.enabled" = true; # TMP: test whether search suggestions allow auto search in url bars
+    "browser.search.suggest.enabled" = false;
     "browser.sessionstore.privacy_level" = 2;
     "browser.shell.shortcutFavicons" = false;
     "browser.shopping.experience2023.enabled" = false;
@@ -177,6 +177,7 @@ let
     "browser.casting.enabled" = false;
     "browser.download.folderList" = 2;
     "browser.download.forbid_open_with" = true;
+    "browser.fixup.alternate.enabled" = false; # Dont fix typed URLs with eg 'www' prefix. for urlbar search keys
     "browser.translations.enable" = false;
     "browser.uitour.url" = "";
     "browser.urlbar.suggest.history" = false;
@@ -186,7 +187,7 @@ let
     "extensions.autoDisableScopes" = 15;
     "extensions.formautofill.addresses.enabled" = false;
     "extensions.formautofill.creditCards.enabled" = false;
-    "keyword.enabled" = false;
+    "keyword.enabled" = true; # Enable keyword search in the urlbar.
     "layout.css.visited_links_enabled" = false;
     "media.gmp-gmpopenh264.enabled" = false;
     "media.gmp-provider.enabled" = false;
@@ -295,7 +296,7 @@ in
       #HardwareAcceleration          = false;
       OfferToSaveLogins = false;
       PasswordManagerEnabled = false;
-      #DefaultDownloadDirectory      = "${home}/Downloads";
+      DefaultDownloadDirectory = "~/Downloads";
       #NoDefaultBookmarks = true;
 
       # Bookmarks
