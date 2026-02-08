@@ -19,9 +19,17 @@ in
   # mount.nfs4 <mount.source> <mount.target>
 
   # xfce thunar bookmark. maybe older gtk versions are used ...
-  home-manager.users.ddder.gtk.gtk3.bookmarks = [
-    "file://${mount.target}"
-  ];
+  home-manager.users.ddder =
+    let
+      file_url = "file://${mount.target}";
+    in
+    {
+      gtk.gtk3.bookmarks = [ file_url ];
+      # TMP: manual workaround for disrespected gtk setting above
+      xdg.configFile."gtk-3.0/bookmarks" = {
+        text = file_url;
+      };
+    };
 
   fileSystems."${mount.target}" = {
     device = mount.source;
