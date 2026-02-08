@@ -9,6 +9,7 @@
   imports = [
     ../profiles/xfce.nix
     ../programs/firefox.nix
+    ../programs/feedreaders.nix
     ../programs/keepassxc.nix
   ];
 
