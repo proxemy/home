@@ -36,7 +36,7 @@ let
     "browser.safebrowsing.downloads.remote.enabled" = false;
     "browser.search.separatePrivateDefault" = true;
     "browser.search.separatePrivateDefault.ui.enabled" = true;
-    "browser.search.suggest.enabled" = false;
+    "browser.search.suggest.enabled" = true; # TMP: test whether search suggestions allow auto search in url bars
     "browser.sessionstore.privacy_level" = 2;
     "browser.shell.shortcutFavicons" = false;
     "browser.shopping.experience2023.enabled" = false;
@@ -228,7 +228,7 @@ in
       bookmarks = {
         enable = true;
         force = true;
-        settings = secrets.bookmarks.to_name_url_list secrets.bookmarks.firefox;
+        settings = with secrets.bookmarks; to_name_url_list firefox;
       };
 
       search = {
