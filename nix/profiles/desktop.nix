@@ -11,11 +11,12 @@
     ../programs/firefox.nix
     ../programs/feedreaders.nix
     ../programs/keepassxc.nix
+    ../programs/office_package.nix
   ];
 
   hardware.graphics.enable = lib.mkDefault true;
 
-  users.users.${secrets.user_name}.packages = with pkgs; [
+  users.users.${secrets.username}.packages = with pkgs; [
     # TODO: Maybe turn vlc into its own programs/vlc.nix
     ffmpeg
     yt-dlp
@@ -36,7 +37,7 @@
       if host.partitions.primary.encrypt then
         {
           enable = true;
-          user = secrets.user_name;
+          user = secrets.username;
         }
       else
         { };

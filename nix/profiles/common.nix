@@ -20,7 +20,7 @@
       home-manager = {
         useGlobalPkgs = true;
         useUserPackages = true;
-        users.${secrets.user_name} = import ./../home.nix { inherit cfg secrets dotfiles; };
+        users.${secrets.username} = import ./../home.nix { inherit cfg secrets dotfiles; };
       };
     }
   ];
@@ -35,7 +35,7 @@
     package = pkgs.nixVersions.latest;
 
     settings = {
-      trusted-users = [ secrets.user_name ];
+      trusted-users = [ secrets.username ];
       system-features = [
         "nix-command"
         "flakes"

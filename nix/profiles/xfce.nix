@@ -32,7 +32,7 @@ in
     else
       [ ];
 
-  home-manager.users.${secrets.user_name} = {
+  home-manager.users.${secrets.username} = {
     gtk.colorScheme = "dark";
 
     #

@@ -87,7 +87,7 @@
         };
       };
 
-      homeConfigurations.${secrets.user_name} = home-manager.lib.homeManagerConfiguration {
+      homeConfigurations.${secrets.username} = home-manager.lib.homeManagerConfiguration {
         pkgs = nixpkgs;
         extraSpecialArgs = {
           inherit cfg secrets dotfiles;
@@ -110,7 +110,7 @@
         shellHook = ''
           echo -e "" \
           "nixos-rebuild build --flake .#${hostnames.laptop2}[-installer]\n" \
-          "home-manager build --flake .#${secrets.user_name}\n" \
+          "home-manager build --flake .#${secrets.username}\n" \
           "nix run .#dd-installer -- <hostname> [<block device>]\n" \
           "nixos-generate --flake .#${hostnames.rpi1} --format iso --out-link result\n" \
           "nix build .#nixosConfigurations.${hostnames.rpi1}.config.system.build.sdImage\n" \

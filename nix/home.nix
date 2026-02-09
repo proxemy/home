@@ -8,7 +8,7 @@
   home = rec {
     inherit (cfg) stateVersion;
 
-    username = secrets.user_name;
+    username = secrets.username;
     homeDirectory = "/home/${username}";
 
     file.".dotfiles_copy" = {

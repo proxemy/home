@@ -217,7 +217,7 @@ let
 in
 #TODO: incorporate https://github.com/pyllyukko/user.js
 {
-  home-manager.users.${secrets.user_name}.programs.firefox = {
+  home-manager.users.${secrets.username}.programs.firefox = {
     enable = true;
 
     profiles.default = {

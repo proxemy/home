@@ -1,6 +1,6 @@
 { secrets, pkgs, ... }:
 {
-  users.users.${secrets.user_name}.packages = [
+  users.users.${secrets.username}.packages = [
     pkgs.keepassxc
   ];
 

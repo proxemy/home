@@ -5,7 +5,7 @@
   ...
 }:
 {
-  home-manager.users.${secrets.user_name}.home.packages = [
+  home-manager.users.${secrets.username}.home.packages = [
     pkgs.newsboat
   ]
   ++ (
