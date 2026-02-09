@@ -35,4 +35,15 @@ in
       </body>
       </opml>
     '';
+
+  newsboat_url_list =
+    let
+      mk_named_tagged_urls =
+        tag: name_urls:
+        builtins.toString (lib.attrsets.mapAttrsToList (name: url: (mk_entry tag name url)) name_urls);
+      mk_entry = tag: name: url: ''
+        ${url} "~${name}" "${tag}"
+      '';
+    in
+    unpack_map_str feeds mk_named_tagged_urls;
 }
