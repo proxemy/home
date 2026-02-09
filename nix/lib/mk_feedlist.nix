@@ -1,22 +1,27 @@
 {
-  pkgs,
-  feeds ? { },
+  lib,
+  feeds ? {
+    category1 = {
+      feed1_name = "feed1_url";
+      feed2_name = "feed2_url";
+    };
+  },
 }:
 let
-  escape_xml = pkgs.lib.strings.escapeXML;
-  unpack_map = set: f: pkgs.lib.attrsets.mapAttrsToList (k: v: (f k v)) set;
-  unpack_map_str = set: f: pkgs.lib.lists.fold (tally: e: tally + e) "" (unpack_map set f);
+  unpack_map = set: f: lib.attrsets.mapAttrsToList (k: v: (f k v)) set;
+  unpack_map_str = set: f: lib.lists.fold (tally: e: tally + e) "" (unpack_map set f);
 in
 {
   OPML =
     let
+      inherit (lib.strings) escapeXML;
       mk_parent_node = name: children: ''
-        <outline title="${escape_xml name}" type="folder">
+        <outline title="${escapeXML name}" type="folder">
         ${unpack_map_str children mk_entry_node}
         </outline>''\n
       '';
       mk_entry_node = title: url: ''
-        ''\t<outline title="${escape_xml title}" xmlUrl="${escape_xml url}"/>
+        ''\t<outline title="${escapeXML title}" xmlUrl="${escapeXML url}"/>
       '';
     in
     ''
