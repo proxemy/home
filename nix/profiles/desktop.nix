@@ -8,8 +8,8 @@
 {
   imports = [
     ../profiles/xfce.nix
+    ../profiles/feedreaders.nix
     ../programs/firefox.nix
-    ../programs/feedreaders.nix
     ../programs/keepassxc.nix
     ../programs/office_package.nix
   ];
