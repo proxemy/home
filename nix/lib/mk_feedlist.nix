@@ -9,7 +9,7 @@
 }:
 let
   unpack_map = set: f: lib.attrsets.mapAttrsToList (k: v: (f k v)) set;
-  unpack_map_str = set: f: lib.lists.fold (tally: e: tally + e) "" (unpack_map set f);
+  unpack_map_str = set: f: lib.lists.foldr (tally: e: tally + e) "" (unpack_map set f);
 in
 {
   OPML =
