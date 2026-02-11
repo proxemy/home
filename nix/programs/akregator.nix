@@ -8,25 +8,31 @@
   home-manager.users.${secrets.username} =
     if config.hardware.graphics.enable then
       {
-        home = {
-          packages = [
-            pkgs.kdePackages.akregator
-          ];
+        home =
+          let
+            local_dir = ".local/share/akregator/";
+          in
+          {
+            packages = [
+              pkgs.kdePackages.akregator
+            ];
 
-          file.akregator_feeds =
-            let
-              source = builtins.toFile "feeds.opml" secrets.feeds.OPML;
-              target_dir = ".local/share/akregator/data/feeds.opml";
-            in
-            {
-              # akregator writes to the feeds.opml, copying it then.
-              inherit source;
-              onChange = ''
-                chmod 0077
-                cp ${source} ~/${target_dir}
-              '';
-            };
-        };
+            file."${local_dir}/feeds.link" =
+              let
+                source_opml = builtins.toFile "feeds.opml" secrets.feeds.OPML;
+                target_opml = "${local_dir}/data/feeds.opml";
+              in
+              {
+                # akregator writes to the feeds.opml, copying it then.
+                source = source_opml;
+                #target = target_opml;
+                force = true;
+                onChange = ''
+                  cp --force ${source_opml} ${target_opml}
+                  chmod a=,u+rwx ${target_opml}
+                '';
+              };
+          };
 
         xdg.configFile."akregatorrc" = {
           force = true;
