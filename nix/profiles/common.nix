@@ -21,6 +21,7 @@
         useGlobalPkgs = true;
         useUserPackages = true;
         users.${secrets.username} = import ./../home.nix { inherit cfg secrets dotfiles; };
+        backupFileExtension = ".bak";
       };
     }
   ];
