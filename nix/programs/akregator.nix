@@ -28,6 +28,7 @@
                 #target = target_opml;
                 force = true;
                 onChange = ''
+                  rm --force ${local_dir}/Archive/*
                   cp --force ${source_opml} ${target_opml}
                   chmod a=,u+rwx ${target_opml}
                 '';
