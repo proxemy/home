@@ -330,7 +330,13 @@ in
         };
 
       "3rdparty".Extensions = {
-        "uMatrix@raymondhill.net" = {
+        "uMatrix@raymondhill.net".adminSettings = {
+          userSettings = {
+            uiTheme = "dark";
+            autoUpdate = false;
+            cloudStorageEnabled = false;
+            externalList = secrets.umatrix_rules;
+          };
           # TODO: import uMatrix filter rules
         };
       };
