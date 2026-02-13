@@ -12,7 +12,7 @@
   imports = [
     secrets.module
     ./hardened.nix
-    ./cli_full.nix # TODO: remove cli tools completely once tinkering with life systems is over. Minimal device setups ftw.
+    ./cli_minimal.nix
     ../services/auto-update.nix
 
     home-manager.nixosModules.home-manager
@@ -58,21 +58,7 @@
     };
   };
 
-  environment = {
-    systemPackages = with pkgs; [
-      git
-      git-crypt
-      tmux
-      mtr
-      tree
-      wget
-      htop
-      lsof
-    ];
-    variables = {
-      HOMEDIR = cfg.home_git_dir;
-    };
-  };
+  environment.variables.HOMEDIR = cfg.home_git_dir;
 
   boot = {
     binfmt.emulatedSystems = lib.lists.remove host.platform cfg.supported_systems;

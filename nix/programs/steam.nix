@@ -1,7 +1,7 @@
 { ... }:
 {
   # https://nixos.wiki/wiki/Steam
-  programs.steam.enable =  true;
+  programs.steam.enable = true;
 
   nixpkgs.config.allowUnfree = true;
 }
