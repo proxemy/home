@@ -11,6 +11,7 @@
     ./../../profiles/common.nix
     ./../../profiles/nvidia_gpu.nix
     ./../../services/nas_client.nix
+    ./../../programs/steam.nix
   ];
 
   hardware.cpu.amd = {
