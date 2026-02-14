@@ -38,10 +38,8 @@
   };
 
   # dependencies
-  environment = {
-    systemPackages = with pkgs; [
-      gcc
-      python3
-    ];
-  };
+  environment.systemPackages = with pkgs; [
+    gcc
+    python3
+  ];
 }
