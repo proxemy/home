@@ -9,9 +9,10 @@
 
   environment.systemPackages = with pkgs; [
     file
+    git-crypt
     htop
     lsof
     tree
-    git-crypt
+    wget
   ];
 }
