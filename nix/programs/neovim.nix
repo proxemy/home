@@ -1,5 +1,10 @@
 { pkgs, secrets, ... }:
 {
+  imports = [
+    # TODO: maybe split neovim/dev profiles into minimum/full
+    ../profiles/rust_dev.nix
+  ];
+
   home-manager.users.${secrets.username}.programs.neovim = {
     enable = true;
     defaultEditor = true;
@@ -9,6 +14,9 @@
       [
         syntastic
         nvim-treesitter
+        nvim-treesitter-endwise
+        nvim-treesitter-context
+        rustaceanvim
         YouCompleteMe
       ]
       ++ (with pkgs.vimPlugins.nvim-treesitter-parsers; [
