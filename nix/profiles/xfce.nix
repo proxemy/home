@@ -83,6 +83,14 @@ in
           "panels/dark-mode" = true;
           # Disable bottom panel by any means
           "panels/panel-2/autohide-behavior" = 2;
+
+          # Experimental xpath config
+          #"//*[@name='digital-date-format']" = "%Y-%m-%d";
+          #"//*[@name='digital-time-format']" = "%a, %R";
+          "panels/panel-8/digital-date-format" = "%Y-%m-%d";
+          "panels/panel-8/digital-time-format" = "%a, %R";
+          # TODO: fixed counters (panel-8) are bad, might break in the future.
+          #"panels/*/digital-time-format" = "%a, %R";
         };
 
         xsettings = {
