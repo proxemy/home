@@ -333,11 +333,10 @@ in
         "uMatrix@raymondhill.net".adminSettings = {
           userSettings = {
             uiTheme = "dark";
-            autoUpdate = false;
+            autoUpdate = true;
             cloudStorageEnabled = false;
             externalList = secrets.umatrix_rules;
           };
-          # TODO: import uMatrix filter rules
         };
       };
     };
