@@ -87,8 +87,8 @@ in
           # Experimental xpath config
           #"//*[@name='digital-date-format']" = "%Y-%m-%d";
           #"//*[@name='digital-time-format']" = "%a, %R";
-          "panels/panel-8/digital-date-format" = "%Y-%m-%d";
-          "panels/panel-8/digital-time-format" = "%a, %R";
+          "plugins/plugin-8/digital-date-format" = "%Y-%m-%d";
+          "plugins/plugin-8/digital-time-format" = "%a, %R";
           # TODO: fixed counters (panel-8) are bad, might break in the future.
           #"panels/*/digital-time-format" = "%a, %R";
         };
