@@ -77,12 +77,17 @@
     openssh = {
       enable = true;
       settings = {
+        AllowedUsers = secrets.username;
         PasswordAuthentication = false;
         KbdInteractiveAuthentication = false;
         PermitRootLogin = "no";
         UseDns = false;
         X11Forwarding = false;
       };
+
+      #generateHostKeys = false;
+      #hostKeys = lib.mkForce [];
+
       extraConfig = ''
         Banner none
         LoginGraceTime 10
