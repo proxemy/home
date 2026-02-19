@@ -9,6 +9,6 @@
     hyphenDicts.${secrets.locale}
 
     # PDF viewer
-    mate.atril
+    atril
   ];
 }
