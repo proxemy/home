@@ -58,8 +58,6 @@
     };
   };
 
-  environment.variables.HOMEDIR = cfg.home_git_dir;
-
   boot = {
     binfmt.emulatedSystems = lib.lists.remove host.platform cfg.supported_systems;
     loader.timeout = lib.mkDefault 2;

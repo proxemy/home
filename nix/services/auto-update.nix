@@ -13,6 +13,8 @@ let
 in
 
 {
+  environment.variables.HOMEDIR = home_git_dir;
+
   system.autoUpgrade = {
     enable = true;
     allowReboot = true;
