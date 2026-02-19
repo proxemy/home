@@ -14,6 +14,7 @@
     ./hardened.nix
     ./cli_minimal.nix
     ../services/auto-update.nix
+    ../services/sshd.nix
 
     home-manager.nixosModules.home-manager
     {
@@ -67,45 +68,9 @@
     inherit (cfg) stateVersion;
   };
 
-  hardware = {
-    bluetooth.enable = false;
-  };
+  hardware.bluetooth.enable = false;
 
-  services = {
-    openssh = {
-      enable = true;
-      settings = {
-        AllowedUsers = secrets.username;
-        PasswordAuthentication = false;
-        KbdInteractiveAuthentication = false;
-        PermitRootLogin = "no";
-        UseDns = false;
-        X11Forwarding = false;
-      };
+  services.pipewire.enable = false; # conflict with Pulseaudio
 
-      #generateHostKeys = false;
-      #hostKeys = lib.mkForce [];
-
-      extraConfig = ''
-        Banner none
-        LoginGraceTime 10
-        ChallengeResponseAuthentication no
-        KerberosAuthentication no
-        GSSAPIAuthentication no
-        AllowAgentForwarding no
-        AllowTcpForwarding no
-        PermitTunnel no
-        PermitUserEnvironment no
-
-        # TODO migrate to/create ssh client config
-        #UseRoaming no # <- client config
-      '';
-    };
-
-    pipewire.enable = false; # conflict with Pulseaudio
-  };
-
-  zramSwap = {
-    enable = true;
-  };
+  zramSwap.enable = true;
 }
