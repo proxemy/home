@@ -16,6 +16,8 @@
   environment = {
     systemPackages = with pkgs; [
       exiftool
+      dig
+      jq
     ];
   };
 
