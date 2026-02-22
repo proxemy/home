@@ -1,8 +1,5 @@
 {
-  description = "TODO";
-
   inputs = {
-
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
 
     home-manager = {
