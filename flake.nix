@@ -88,7 +88,7 @@
       };
 
       homeConfigurations.${secrets.username} = home-manager.lib.homeManagerConfiguration {
-        pkgs = nixpkgs;
+        inherit pkgs;
         extraSpecialArgs = {
           inherit cfg secrets dotfiles;
         };
