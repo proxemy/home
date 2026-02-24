@@ -8,6 +8,7 @@
   home-manager.users.${secrets.username}.programs.neovim = {
     enable = true;
     defaultEditor = true;
+    withPython3 = true; # required by YouCompleteMe
 
     plugins =
       with pkgs.vimPlugins;
@@ -19,6 +20,7 @@
         rustaceanvim
         YouCompleteMe
       ]
+
       ++ (with pkgs.vimPlugins.nvim-treesitter-parsers; [
         bash
         c
