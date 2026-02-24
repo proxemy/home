@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, secrets, ... }:
 {
   imports = [
     ./cli_minimal.nix
@@ -13,12 +13,10 @@
     sedutil.enable = true;
   };
 
-  environment = {
-    systemPackages = with pkgs; [
-      exiftool
-      dig
-      jq
-    ];
-  };
-
+  users.users.${secrets.username}.packages = with pkgs; [
+    exiftool
+    dig
+    jq
+    gnupg
+  ];
 }
