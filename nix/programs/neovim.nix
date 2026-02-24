@@ -48,7 +48,7 @@
   };
 
   # dependencies
-  environment.systemPackages = with pkgs; [
+  users.users.${secrets.username}.packages = with pkgs; [
     gcc
     python3
   ];

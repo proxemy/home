@@ -24,7 +24,7 @@ in
   };
 
   # TODO: maybe move this to a dedicated profile/sound.nix
-  environment.systemPackages =
+  users.users.${secrets.username}.packages =
     if config.services.pulseaudio.enable then
       [
         pkgs.xfce4-pulseaudio-plugin

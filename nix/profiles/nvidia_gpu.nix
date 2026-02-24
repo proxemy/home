@@ -1,4 +1,9 @@
-{ config, pkgs, ... }:
+{
+  config,
+  pkgs,
+  secrets,
+  ...
+}:
 {
   nixpkgs.config.allowUnfree = true;
 
@@ -17,7 +22,7 @@
   };
 
   # TMP
-  environment.systemPackages = with pkgs; [
+  users.users.${secrets.username}.packages = with pkgs; [
     nvtopPackages.nvidia
   ];
 }

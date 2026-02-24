@@ -1,6 +1,6 @@
-{ pkgs, ... }:
+{ pkgs, secrets, ... }:
 {
-  environment.systemPackages = with pkgs; [
+  users.users.${secrets.username}.packages = with pkgs; [
     cargo
     rustc
     rust-analyzer

@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, secrets, ... }:
 {
   programs = {
     neovim.enable = true;
@@ -8,8 +8,11 @@
   };
 
   environment.systemPackages = with pkgs; [
-    file
     git-crypt
+  ];
+
+  users.users.${secrets.username}.packages = with pkgs; [
+    file
     htop
     lsof
     tree
