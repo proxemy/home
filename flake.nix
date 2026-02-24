@@ -37,7 +37,7 @@
 
       forSystems = nixpkgs.lib.genAttrs cfg.supportedSystems;
       system = "x86_64-linux"; # builtins.currentSystem;
-      pkgs = inputs.nixpkgs.legacyPackages.${system};
+      pkgs = inputs.nixpkgs.legacyPackages.${system}; # TODO .pkgsExtraHardening;
 
       inherit
         (import ./nix/lib/mk_nixos.nix {
@@ -89,7 +89,11 @@
         extraSpecialArgs = {
           inherit cfg secrets dotfiles;
         };
-        modules = [ ./nix/home.nix ];
+        # TODO try harder to build an isolated hm-home via 'home-manager build'
+        modules = [
+          ./nix/home.nix
+          #self.outputs.nixosConfigurations.${hostnames.desktop1}.config.home-manager.users.${secrets.username}
+        ];
       };
 
       devShells.${system}.default = pkgs.mkShell {
