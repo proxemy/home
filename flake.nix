@@ -82,6 +82,10 @@
         ${hostnames.rpi1} = mk_nixos {
           host = secrets.hosts.rpi1;
         };
+
+        ${hostnames.rpi2} = mk_nixos {
+          host = secrets.hosts.rpi2;
+        };
       };
 
       homeConfigurations.${secrets.username} = home-manager.lib.homeManagerConfiguration {
