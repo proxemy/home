@@ -14,9 +14,10 @@
   };
 
   users.users.${secrets.username}.packages = with pkgs; [
-    exiftool
     dig
-    jq
+    exiftool
     gnupg
+    jq
+    usbutils
   ];
 }
