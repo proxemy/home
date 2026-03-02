@@ -9,6 +9,7 @@
   imports = [
     ./../../profiles/desktop.nix
     ./../../profiles/common.nix
+    ./../../profiles/dev.nix
     ./../../profiles/nvidia_gpu.nix
     ./../../services/nas_client.nix
     ./../../programs/steam.nix

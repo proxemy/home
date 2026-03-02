@@ -1,10 +1,5 @@
 { pkgs, secrets, ... }:
 {
-  imports = [
-    # TODO: maybe split neovim/dev profiles into minimum/full
-    ../profiles/rust_dev.nix
-  ];
-
   home-manager.users.${secrets.username}.programs.neovim = {
     enable = true;
     defaultEditor = true;
