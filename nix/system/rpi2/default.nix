@@ -5,7 +5,8 @@
     ./../../profiles/aarch64-cross-compilation-fixes.nix
     ./../../profiles/headless.nix
     ./../../profiles/common.nix
-  ]; # TODO exclude cross compilation fixes for native builds so native auto updates
+    ./../../services/tor.nix
+  ];
 
   sdImage.compressImage = false;
 
