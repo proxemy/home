@@ -1,6 +1,7 @@
 {
   config,
   pkgs,
+  lib,
   secrets,
   ...
 }:
@@ -24,13 +25,10 @@ in
   };
 
   # TODO: maybe move this to a dedicated profile/sound.nix
-  users.users.${secrets.username}.packages =
-    if config.services.pulseaudio.enable then
-      [
-        pkgs.xfce4-pulseaudio-plugin
-      ]
-    else
-      [ ];
+  users.users.${secrets.username}.packages = [
+    pkgs.thunar-volman
+  ]
+  ++ lib.optional config.services.pulseaudio.enable pkgs.xfce4-pulseaudio-plugin;
 
   home-manager.users.${secrets.username} = {
     gtk.colorScheme = "dark";
@@ -89,7 +87,7 @@ in
           #"//*[@name='digital-time-format']" = "%a, %R";
           "plugins/plugin-8/digital-date-format" = "%Y-%m-%d";
           "plugins/plugin-8/digital-time-format" = "%a, %R";
-          # TODO: fixed counters (panel-8) are bad, might break in the future.
+          # TODO: fixed indexes (panel-8) are bad, might break in the future.
           #"panels/*/digital-time-format" = "%a, %R";
         };
 

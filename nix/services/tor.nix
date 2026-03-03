@@ -3,6 +3,9 @@
   services.tor = {
     enable = true;
 
-    relay.role = [ "bridge" "relay" ];
+    relay.role = [
+      "bridge"
+      "relay"
+    ];
   };
 }

@@ -17,6 +17,8 @@
 
   hardware.graphics.enable = lib.mkDefault true;
 
+  boot.kernelModules = [ "usb-storage" ];
+
   users.users.${secrets.username}.packages = with pkgs; [
     # TODO: Maybe turn vlc into its own programs/vlc.nix
     ffmpeg
