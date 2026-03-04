@@ -28,7 +28,7 @@
         home_git_dir = "/etc/nixos/home";
         supported_systems = [
           "aarch64-linux"
-          #"armv7l-linux"
+          "armv7l-linux"
           "x86_64-linux"
         ];
       };

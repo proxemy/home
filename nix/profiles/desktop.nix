@@ -3,6 +3,7 @@
   lib,
   secrets,
   host,
+  cfg,
   ...
 }:
 {
@@ -30,6 +31,8 @@
 
   # hardened allocator (scudo/graphene-hardened) often fail with desktop apps eg.firefox
   environment.memoryAllocator.provider = "libc";
+
+  boot.binfmt.emulatedSystems = lib.lists.remove host.platform cfg.supported_systems;
 
   services = {
     devmon.enable = true;
