@@ -16,9 +16,18 @@
     ../programs/office_package.nix
   ];
 
-  hardware.graphics.enable = lib.mkDefault true;
+  hardware = {
+    graphics.enable = lib.mkDefault true;
+    #enableAllHardware = true;
+    #enableAllFirmware = true;
+  };
 
-  boot.kernelModules = [ "usb-storage" ];
+  boot.kernelModules = [
+    "usb-storage"
+    "uas"
+  ];
+
+  home-manager.users.${secrets.username}.services.udiskie.enable = true;
 
   users.users.${secrets.username}.packages = with pkgs; [
     # TODO: Maybe turn vlc into its own programs/vlc.nix
@@ -28,6 +37,7 @@
     torsocks
     tor-browser
   ];
+
 
   # hardened allocator (scudo/graphene-hardened) often fail with desktop apps eg.firefox
   environment.memoryAllocator.provider = "libc";
