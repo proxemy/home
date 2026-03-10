@@ -25,6 +25,7 @@
   boot.kernelModules = [
     "usb-storage"
     "uas"
+    "iso9660"
   ];
 
   home-manager.users.${secrets.username}.services.udiskie.enable = true;
