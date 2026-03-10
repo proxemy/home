@@ -39,7 +39,6 @@
     tor-browser
   ];
 
-
   # hardened allocator (scudo/graphene-hardened) often fail with desktop apps eg.firefox
   environment.memoryAllocator.provider = "libc";
 
