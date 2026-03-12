@@ -5,6 +5,7 @@
     ./../../profiles/headless.nix
     ./../../profiles/common.nix
     ./../../services/tor.nix
+    ./../../services/i2p.nix
   ];
 
   sdImage.compressImage = false;
