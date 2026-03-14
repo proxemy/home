@@ -18,6 +18,12 @@
     exiftool
     gnupg
     jq
+    ripgrep
     usbutils
+  ];
+
+  environment.systemPackages = with pkgs; [
+    #man-pages
+    #man-pages-posix
   ];
 }
