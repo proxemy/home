@@ -10,8 +10,8 @@
       [
         syntastic
         nvim-treesitter
-        nvim-treesitter-endwise
         nvim-treesitter-context
+        nvim-treesitter-endwise
         rustaceanvim
         YouCompleteMe
       ]
@@ -44,7 +44,8 @@
 
   # dependencies
   users.users.${secrets.username}.packages = with pkgs; [
-    gcc
-    python3
+    #gcc
+    #python3
+    #tree-sitter
   ];
 }
