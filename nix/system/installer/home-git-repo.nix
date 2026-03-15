@@ -16,7 +16,7 @@ pkgs.stdenv.mkDerivation {
 
   buildPhase =
     with pkgs.pkgsBuildBuild;
-    with secrets.git_crypt;
+    with (secrets.git_crypt pkgs);
     ''
       ${git}/bin/git init --initial-branch=main "$out"
       cd "$out"

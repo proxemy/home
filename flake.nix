@@ -32,7 +32,7 @@
           "x86_64-linux"
         ];
       };
-      secrets = import ./nix/secrets { inherit pkgs; };
+      secrets = import ./nix/secrets { inherit (pkgs) lib; };
       inherit (secrets) hostnames;
 
       forSystems = nixpkgs.lib.genAttrs cfg.supportedSystems;
