@@ -73,6 +73,7 @@ in
 
   environment = {
     systemPackages = with pkgs; [
+      cryptsetup
       hdparm
       pciutils
       sdparm
