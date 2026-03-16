@@ -17,11 +17,14 @@
     settings = rec {
       BandWidthRate = "1 MBytes";
       RelayBandwidthRate = BandWidthRate;
-      ORPort = [ 9050 ];
+      ExitRelay = false;
+      ContanctInfo = "nobody@example.com";
+      ORPort = [ 9001 ]; # Onion Routing Port for data
+      DirPort = [ 9030 ]; # Directory Port for node organisation
       #ConnLimit = 200;
-      #ExtraInfo = "1";
+      #ExtraInfo = true;
       ConnDirectionStatistics = true;
-      Sandbox = true;
+      #Sandbox = true;
     };
   };
 
