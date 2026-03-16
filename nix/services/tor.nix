@@ -17,9 +17,11 @@
     settings = rec {
       BandWidthRate = "1 MBytes";
       RelayBandwidthRate = BandWidthRate;
+      ORPort = [ 9050 ];
       #ConnLimit = 200;
       #ExtraInfo = "1";
       ConnDirectionStatistics = true;
+      Sandbox = true;
     };
   };
 
@@ -29,6 +31,5 @@
       #cat /var/lib/tor/fingerprint
       #cat /var/lib/tor/stats/*
     '';
-
   };
 }
