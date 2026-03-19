@@ -18,9 +18,9 @@
       BandWidthRate = "1 MBytes";
       RelayBandwidthRate = BandWidthRate;
       ExitRelay = false;
-      ContanctInfo = "nobody@example.com";
+      ContactInfo = "nobody@example.com";
       ORPort = [ 9001 ]; # Onion Routing Port for data
-      DirPort = [ 9030 ]; # Directory Port for node organisation
+      #DirPort = [ 9030 ]; # Directory Port for node organisation # not for bridge relays
       #ConnLimit = 200;
       #ExtraInfo = true;
       ConnDirectionStatistics = true;
