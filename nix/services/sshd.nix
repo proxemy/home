@@ -13,9 +13,10 @@ in
 
     settings = {
       AllowUsers = [ secrets.username ];
-      PasswordAuthentication = false;
       KbdInteractiveAuthentication = false;
+      PasswordAuthentication = false;
       PermitRootLogin = "no";
+      StrictModes = true;
       UseDns = false;
       X11Forwarding = false;
     };
