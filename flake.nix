@@ -32,7 +32,10 @@
           "x86_64-linux"
         ];
       };
-      secrets = import ./secrets { inherit (pkgs) lib; };
+      secrets = import ./secrets {
+        inherit (pkgs) lib;
+        inherit self;
+      };
       inherit (secrets) hostnames;
 
       forSystems = nixpkgs.lib.genAttrs cfg.supportedSystems;
@@ -51,6 +54,7 @@
         mk_nixos
         mk_installer
         ;
+
     in
     {
       nixosConfigurations = {
