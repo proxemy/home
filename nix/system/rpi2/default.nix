@@ -1,4 +1,4 @@
-{ modulesPath, ... }:
+{ pkgs, modulesPath, ... }:
 {
   imports = [
     "${modulesPath}/installer/sd-card/sd-image-aarch64-new-kernel.nix"
@@ -6,6 +6,10 @@
     ./../../profiles/common.nix
     ./../../services/tor.nix
     ./../../services/i2p.nix
+  ];
+
+  environment.systemPackages = with pkgs; [
+    iftop
   ];
 
   sdImage.compressImage = false;

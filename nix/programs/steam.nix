@@ -4,4 +4,7 @@
   programs.steam.enable = true;
 
   nixpkgs.config.allowUnfree = true;
+
+  # disabled by hardening profile but steam relies on it
+  boot.kernel.sysctl."kernel.unprivileged_userns_clone" = 1;
 }

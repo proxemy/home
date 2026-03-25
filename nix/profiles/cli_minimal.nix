@@ -14,6 +14,7 @@
   users.users.${secrets.username}.packages = with pkgs; [
     file
     htop
+    iftop
     killall
     lsof
     tree
