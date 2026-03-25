@@ -8,14 +8,14 @@ rec {
   mk_nixos =
     {
       host,
-      modules ? [ ./../system/${host.alias} ],
+      modules ? [ "${self}/systems/${host.alias}" ],
     }:
     inputs.nixpkgs.lib.nixosSystem {
       inherit modules;
       specialArgs = {
-        inherit (self) sourceInfo;
         inherit (inputs) dotfiles home-manager;
         inherit
+          self
           cfg
           secrets
           host
@@ -30,7 +30,7 @@ rec {
     mk_nixos {
       inherit host;
       modules = [
-        (import ../system/installer/medium.nix { inherit host; })
+        (import "${self}/systems/installer/medium.nix" { inherit host; })
       ];
     };
 }

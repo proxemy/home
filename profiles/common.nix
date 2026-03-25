@@ -1,6 +1,7 @@
 {
   pkgs,
   lib,
+  self,
   host,
   cfg,
   secrets,
@@ -11,17 +12,17 @@
 {
   imports = [
     secrets.module
-    ./hardened.nix
-    ./cli_minimal.nix
-    ../services/auto-update.nix
-    ../services/sshd.nix
+    "${self}/profiles/hardened.nix"
+    "${self}/profiles/cli_minimal.nix"
+    "${self}/services/auto-update.nix"
+    "${self}/services/sshd.nix"
 
-    home-manager.nixosModules.home-manager
+  home-manager.nixosModules.home-manager
     {
       home-manager = {
         useGlobalPkgs = true;
         useUserPackages = true;
-        users.${secrets.username} = import ./../home.nix { inherit cfg secrets dotfiles; };
+        users.${secrets.username} = import "${self}/profiles/home.nix" { inherit cfg secrets dotfiles; };
         backupFileExtension = ".bak";
       };
     }

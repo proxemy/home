@@ -1,11 +1,11 @@
-{ pkgs, modulesPath, ... }:
+{ pkgs, modulesPath, self, ... }:
 {
   imports = [
     "${modulesPath}/installer/sd-card/sd-image-aarch64-new-kernel.nix"
-    ./../../profiles/headless.nix
-    ./../../profiles/common.nix
-    ./../../services/tor.nix
-    ./../../services/i2p.nix
+    "${self}/profiles/headless.nix"
+    "${self}/profiles/common.nix"
+    "${self}/services/tor.nix"
+    "${self}/services/i2p.nix"
   ];
 
   environment.systemPackages = with pkgs; [

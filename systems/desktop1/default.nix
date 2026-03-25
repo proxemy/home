@@ -1,10 +1,25 @@
-{ lib, secrets, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  self,
+  secrets,
+  ...
+}:
 {
   imports = [
-    ./../../profiles/desktop.nix
-    ./../../profiles/common.nix
-    ./../../services/nas_client.nix
+    "${self}/profiles/desktop.nix"
+    "${self}/profiles/common.nix"
+    "${self}/profiles/dev.nix"
+    "${self}/profiles/nvidia_gpu.nix"
+    "${self}/services/nas_client.nix"
+    "${self}/programs/steam.nix"
   ];
+
+  hardware.cpu.amd = {
+    updateMicrocode = true;
+    ryzen-smu.enable = false;
+  };
 
   boot = {
     supportedFilesystems = [ "ext4" ];

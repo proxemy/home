@@ -2,7 +2,7 @@
   pkgs,
   cfg,
   secrets,
-  sourceInfo,
+  self,
   ...
 }:
 let
@@ -57,7 +57,7 @@ in
   system.activationScripts = {
     init-home-git-repo =
       let
-        home-git-repo = import ./../system/installer/home-git-repo.nix { inherit pkgs secrets sourceInfo; };
+        home-git-repo = import "${self}/systems/installer/home-git-repo.nix" { inherit pkgs secrets self; };
       in
       {
         deps = [ "etc" ];

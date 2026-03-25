@@ -1,7 +1,7 @@
-{ sourceInfo, ... }:
+{ self, ... }:
 {
   imports = [
-    "${sourceInfo}/nix/secrets/tor.nix"
+    "${self}/secrets/tor.nix"
   ];
 
   services.tor = {

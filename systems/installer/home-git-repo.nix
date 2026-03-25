@@ -1,7 +1,7 @@
 {
   pkgs,
   secrets,
-  sourceInfo,
+  self,
 }:
 pkgs.stdenv.mkDerivation {
   name = "initial-home-git";
@@ -37,7 +37,7 @@ pkgs.stdenv.mkDerivation {
       ${git}/bin/git config include.path ~/.config/gitconfig/proxemy
 
       # Copy the flakes/git content
-      cp --recursive ${sourceInfo}/. $out
+      cp --recursive ${self}/. $out
       ${git}/bin/git add --all # required, so nixos-install can access tracked files
     '';
 }

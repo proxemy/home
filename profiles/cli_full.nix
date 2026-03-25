@@ -1,8 +1,8 @@
-{ pkgs, secrets, ... }:
+{ pkgs, self, secrets, ... }:
 {
   imports = [
     ./cli_minimal.nix
-    ./../programs/neovim.nix
+    "${self}/programs/neovim.nix"
   ];
 
   # TODO: segregate stull into cli_minimal/full. Its all in one for now here

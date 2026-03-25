@@ -1,6 +1,7 @@
 {
   pkgs,
   lib,
+  self,
   secrets,
   host,
   cfg,
@@ -8,12 +9,12 @@
 }:
 {
   imports = [
-    ../profiles/xfce.nix
-    ../profiles/cli_full.nix
-    ../profiles/feedreaders.nix
-    ../programs/firefox.nix
-    ../programs/keepassxc.nix
-    ../programs/office_package.nix
+    "${self}/profiles/xfce.nix"
+    "${self}/profiles/cli_full.nix"
+    "${self}/profiles/feedreaders.nix"
+    "${self}/programs/firefox.nix"
+    "${self}/programs/keepassxc.nix"
+    "${self}/programs/office_package.nix"
   ];
 
   hardware = {

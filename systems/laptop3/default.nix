@@ -1,9 +1,9 @@
-{ secrets, ... }:
+{ self, secrets, ... }:
 {
   imports = [
-    ./../../profiles/desktop.nix
-    ./../../profiles/common.nix
-    ./../../services/nas_client.nix
+    "${self}/profiles/desktop.nix"
+    "${self}/profiles/common.nix"
+    "${self}/services/nas_client.nix"
   ];
 
   # TODO: remove line below after testing

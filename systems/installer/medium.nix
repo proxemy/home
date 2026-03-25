@@ -2,13 +2,13 @@
 {
   pkgs,
   modulesPath,
-  sourceInfo,
+  self,
   cfg,
   secrets,
   ...
 }:
 let
-  home-git-repo = import ./home-git-repo.nix { inherit pkgs secrets sourceInfo; };
+  home-git-repo = import ./home-git-repo.nix { inherit pkgs secrets self; };
   install-script = import ./script.nix { inherit pkgs cfg host; };
 in
 {
@@ -46,7 +46,7 @@ in
     ];
   };
 
-  #isoImage.storeContents = [ sourceInfo ];
+  #isoImage.storeContents = [ self ];
   #installer.cloneConfigIncludes = [ "./common.nix" ];
   #nix.nixPath = [ "nixos-config=github:proxemy/home" ];
   #system = {

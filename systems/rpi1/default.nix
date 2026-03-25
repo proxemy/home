@@ -1,13 +1,13 @@
-{ modulesPath, ... }:
+{ modulesPath, self, ... }:
 {
   imports = [
     "${modulesPath}/installer/sd-card/sd-image-aarch64-new-kernel.nix"
-    ./../../profiles/aarch64-cross-compilation-fixes.nix
-    ./../../profiles/headless.nix
-    ./../../profiles/common.nix
-    ./../../services/nas_server.nix
-    ./../../services/mpd_server.nix
-    ./../../services/raid.nix
+    "${self}/profiles/aarch64-cross-compilation-fixes.nix"
+    "${self}/profiles/headless.nix"
+    "${self}/profiles/common.nix"
+    "${self}/services/nas_server.nix"
+    "${self}/services/mpd_server.nix"
+    "${self}/services/raid.nix"
   ]; # TODO exclude cross compilation fixes for native builds so native auto updates
 
   sdImage.compressImage = false;

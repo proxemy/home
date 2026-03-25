@@ -32,7 +32,7 @@
           "x86_64-linux"
         ];
       };
-      secrets = import ./nix/secrets { inherit (pkgs) lib; };
+      secrets = import ./secrets { inherit (pkgs) lib; };
       inherit (secrets) hostnames;
 
       forSystems = nixpkgs.lib.genAttrs cfg.supportedSystems;
@@ -40,7 +40,7 @@
       pkgs = inputs.nixpkgs.legacyPackages.${system}; # TODO .pkgsExtraHardening;
 
       inherit
-        (import ./nix/lib/mk_nixos.nix {
+        (import ./lib/mk_nixos.nix {
           inherit
             inputs
             self
@@ -95,7 +95,7 @@
         };
         # TODO try harder to build an isolated hm-home via 'home-manager build'
         modules = [
-          ./nix/home.nix
+          ./profiles/home.nix
           #self.outputs.nixosConfigurations.${hostnames.desktop1}.config.home-manager.users.${secrets.username}
         ];
       };
