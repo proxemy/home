@@ -1,4 +1,9 @@
-{ lib, self, secrets, ... }:
+{
+  lib,
+  self,
+  secrets,
+  ...
+}:
 {
   imports = [
     "${self}/profiles/desktop.nix"

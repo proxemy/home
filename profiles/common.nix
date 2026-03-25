@@ -17,7 +17,7 @@
     "${self}/services/auto-update.nix"
     "${self}/services/sshd.nix"
 
-  home-manager.nixosModules.home-manager
+    home-manager.nixosModules.home-manager
     {
       home-manager = {
         useGlobalPkgs = true;

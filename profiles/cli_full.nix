@@ -1,4 +1,9 @@
-{ pkgs, self, secrets, ... }:
+{
+  pkgs,
+  self,
+  secrets,
+  ...
+}:
 {
   imports = [
     ./cli_minimal.nix

@@ -1,4 +1,9 @@
-{ pkgs, self, secrets, ... }:
+{
+  pkgs,
+  self,
+  secrets,
+  ...
+}:
 {
   imports = [
     "${self}/programs/neovim.nix"
