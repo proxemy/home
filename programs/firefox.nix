@@ -1,5 +1,30 @@
-{ secrets, ... }:
+{
+  pkgs,
+  lib,
+  secrets,
+  ...
+}:
 let
+  arkenfox = rec {
+    userjs = builtins.readFile "${pkgs.arkenfox-userjs}/user.js";
+    split = builtins.split "\nuser_pref\\(([^)]+)" userjs;
+    flatten = lib.lists.flatten (builtins.filter builtins.isList split);
+    filter = builtins.filter (line: !lib.strings.hasPrefix "\"_user.js" line) flatten;
+    attrs =
+      let
+        split_pair = line: builtins.split ",[[:space:]]+" line;
+        remove_quotes = str: lib.strings.replaceString "\"" "" str;
+        attr_name = line: (remove_quotes (lib.lists.head (split_pair line)));
+        attr_value = line: (remove_quotes (lib.lists.last (split_pair line)));
+      in
+      lib.attrsets.genAttrs' filter (line: lib.nameValuePair (attr_name line) (attr_value line));
+  };
+
+  arkenfox_overrides = {
+    "security.OCSP.enabled" = 0;
+    "security.OCSP.require" = false;
+  };
+
   arkenfox_default = {
     "app.normandy.api_url" = "";
     "app.normandy.enabled" = false;
@@ -224,7 +249,11 @@ in
       id = 0;
       name = "default";
       isDefault = true;
-      settings = arkenfox_default // disable_telemetry // custom_settings;
+      settings =
+        arkenfox.attrs # arkenfox_default
+        // arkenfox_overrides
+        // disable_telemetry
+        // custom_settings;
 
       bookmarks = {
         enable = true;
