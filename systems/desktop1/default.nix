@@ -13,6 +13,7 @@
     "${self}/profiles/dev.nix"
     "${self}/profiles/nvidia_gpu.nix"
     "${self}/services/nas_client.nix"
+    "${self}/services/ollama.nix"
     "${self}/programs/steam.nix"
   ];
 
