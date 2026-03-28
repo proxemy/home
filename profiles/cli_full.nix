@@ -7,7 +7,7 @@
 {
   imports = [
     ./cli_minimal.nix
-    "${self}/programs/neovim.nix"
+    "${self}/programs/neovim/"
   ];
 
   # TODO: segregate stull into cli_minimal/full. Its all in one for now here

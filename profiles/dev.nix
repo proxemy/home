@@ -6,7 +6,7 @@
 }:
 {
   imports = [
-    "${self}/programs/neovim.nix"
+    "${self}/programs/neovim/"
   ];
 
   users.users.${secrets.username}.packages = with pkgs; [
