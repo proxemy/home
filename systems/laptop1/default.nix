@@ -11,6 +11,10 @@
     "${self}/services/nas_client.nix"
   ];
 
+  home-manager.users.${secrets.username}.xfconf.settings = {
+    displays."Default/eDP-1/Scale" = 0.79998779296875; # Scale factor 1.25
+  };
+
   boot = {
     supportedFilesystems = [ "ext4" ];
     loader = {
