@@ -4,18 +4,24 @@
   secrets,
   ...
 }:
+
+let
+  rust_tools = with pkgs; [
+    cargo
+    rust-analyzer
+    rustc
+    rustfmt
+  ];
+in
+
 {
   imports = [
     "${self}/programs/neovim/"
   ];
 
   users.users.${secrets.username}.packages = with pkgs; [
-    cargo
     gcc
-    rust-analyzer
-    rustc
-    rustfmt
     rustup
     vscodium
-  ];
+  ]; # ++ rust_tools;
 }
