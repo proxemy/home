@@ -10,10 +10,12 @@
   ];
 
   users.users.${secrets.username}.packages = with pkgs; [
-    vscodium
     cargo
-    rustc
+    gcc
     rust-analyzer
+    rustc
     rustfmt
+    rustup
+    vscodium
   ];
 }
