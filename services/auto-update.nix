@@ -1,5 +1,7 @@
 {
   pkgs,
+  lib,
+  config,
   cfg,
   secrets,
   self,
@@ -10,11 +12,10 @@ let
   git = "${pkgs.git}/bin/git";
   git-crypt = "${pkgs.git-crypt}/bin/git-crypt";
   nix = "${pkgs.nix}/bin/nix --extra-experimental-features nix-command --extra-experimental-features flakes";
+  upgrade_cmd = "${lib.getBin pkgs.systemd}/bin/systemctl start ${config.systemd.services.nixos-upgrade.name} --verbose";
 in
 
 {
-  environment.variables.HOMEDIR = home_git_dir;
-
   system.autoUpgrade = {
     enable = true;
     allowReboot = true;
@@ -57,15 +58,34 @@ in
   system.activationScripts = {
     init-home-git-repo =
       let
-        home-git-repo = import "${self}/systems/installer/home-git-repo.nix" { inherit pkgs secrets self; };
+        home_git_repo = import "${self}/systems/installer/home_git_repo.nix" { inherit pkgs secrets self; };
       in
       {
         deps = [ "etc" ];
         supportsDryActivation = false;
         text = ''
           mkdir -p ${home_git_dir}
-          cp -r ${home-git-repo}/. ${home_git_dir}
+          cp -r ${home_git_repo}/. ${home_git_dir}
         '';
       };
   };
+
+  environment = {
+    shellAliases = {
+      "home-goto" = "cd ${home_git_dir}";
+      "home-upgrade" = "sudo ${upgrade_cmd}";
+    };
+  };
+
+  security.sudo.extraRules = [
+    {
+      users = [ secrets.username ];
+      commands = [
+        {
+          command = upgrade_cmd;
+          options = [ "NOPASSWD" ];
+        }
+      ];
+    }
+  ];
 }
