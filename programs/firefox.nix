@@ -42,7 +42,8 @@ let
   custom_settings =
     let
       #dns_server = "ns.quad9.net/dns-query";
-      dns_server = "https://doh.securedns.eu/dns-query";
+      #dns_server = "https://doh.securedns.eu/dns-query";
+      dns_server = "https://doh.ffmuc.net/dns-query";
     in
     {
       "browser.casting.enabled" = false;
