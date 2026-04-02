@@ -10,6 +10,12 @@ in
     inherit user;
     group = user;
     package = pkg;
+
+    loadModels = [
+      "gemma3:27b"
+      "deepseek-v3"
+      "codellama:70b"
+    ];
   };
 
   systemd.services.ollama = {
