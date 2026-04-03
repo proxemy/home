@@ -82,7 +82,7 @@ let
       # dark theme
       "ui.systemUsesDarkTheme" = 1;
       "layout.css.prefers-color-scheme.content-override" = 0;
-      "extensions.activeThemeID" = "default-theme@mozilla.org";
+      "extensions.activeThemeID" = "firefox-compact-dark@mozilla.org";
 
       # https://www.theregister.com/2024/06/18/mozilla_buys_anonym_betting_privacy/
       "dom.private-attribution.submission.enabled" = "false";
