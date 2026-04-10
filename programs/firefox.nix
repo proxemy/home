@@ -23,20 +23,7 @@ let
   arkenfox_overrides = {
     "security.OCSP.enabled" = 0;
     "security.OCSP.require" = false;
-  };
-
-  # see 'https://wiki.debian.org/Firefox#Disabling_automatic_connections'
-  disable_telemetry = {
-    "app.update.enabled" = false;
-    "app.update.auto" = false;
-    "app.update.url.details" = "";
-    "app.update.url.manual" = "";
-    "browser.search.update" = false;
-    "extensions.update.enabled" = false;
-    "toolkit.telemetry.archive.enabled" = false;
-    "toolkit.telemetry.enabled" = false;
-    "toolkit.telemetry.server" = "";
-    "toolkit.telemetry.unified" = false;
+    "privacy.resistFingerprinting.letterboxing" = false;
   };
 
   custom_settings =
@@ -46,6 +33,19 @@ let
       dns_server = "https://doh.ffmuc.net/dns-query";
     in
     {
+      # Disable telemetry
+      # see 'https://wiki.debian.org/Firefox#Disabling_automatic_connections'
+      "app.update.enabled" = false;
+      "app.update.auto" = false;
+      "app.update.url.details" = "";
+      "app.update.url.manual" = "";
+      "browser.search.update" = false;
+      "extensions.update.enabled" = false;
+      "toolkit.telemetry.archive.enabled" = false;
+      "toolkit.telemetry.enabled" = false;
+      "toolkit.telemetry.server" = "";
+      "toolkit.telemetry.unified" = false;
+
       "browser.casting.enabled" = false;
       "browser.download.folderList" = 2;
       "browser.download.forbid_open_with" = true;
@@ -83,6 +83,7 @@ let
       "ui.systemUsesDarkTheme" = 1;
       "layout.css.prefers-color-scheme.content-override" = 0;
       "extensions.activeThemeID" = "firefox-compact-dark@mozilla.org";
+      "privacy.resistFingerprinting" = false; # sadly, this need to be, otherwise prefers-color-scheme is inaccessible for websites
 
       # https://www.theregister.com/2024/06/18/mozilla_buys_anonym_betting_privacy/
       "dom.private-attribution.submission.enabled" = "false";
@@ -97,7 +98,7 @@ in
       id = 0;
       name = "default";
       isDefault = true;
-      settings = arkenfox.attrs // arkenfox_overrides // disable_telemetry // custom_settings;
+      settings = arkenfox.attrs // arkenfox_overrides // custom_settings;
 
       bookmarks = {
         enable = true;
