@@ -34,6 +34,7 @@
         sql
         vim
         vimdoc
+        xml
       ]);
 
     initLua = ''

@@ -10,17 +10,17 @@
       coc-clangd
       coc-cmake
       coc-git
-      coc-html
-      coc-java
+      #coc-html
+      #coc-java
       coc-json
       coc-markdownlint
       coc-nvim
       coc-pyright
       coc-rust-analyzer
       coc-sh
-      coc-toml
-      coc-vimlsp
-      coc-vimtex
+      #coc-toml
+      #coc-vimlsp
+      #coc-vimtex
     ];
 
     # set <cr> to pick selected completion

@@ -23,6 +23,7 @@
     exiftool
     gnupg
     jq
+    libxml2
     python3
     ripgrep
     usbutils
