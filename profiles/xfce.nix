@@ -80,7 +80,8 @@ in
         xfce4-panel = {
           "panels/dark-mode" = true;
           # Disable bottom panel by any means
-          "panels/panel-2/autohide-behavior" = 2;
+          "panels/panel-2" = null;
+          #"panels/panel-2/autohide-behavior" = 2;
 
           # Experimental xpath config
           #"//*[@name='digital-date-format']" = "%Y-%m-%d";
