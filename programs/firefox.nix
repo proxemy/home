@@ -84,6 +84,8 @@ let
       "layout.css.prefers-color-scheme.content-override" = 0;
       "extensions.activeThemeID" = "firefox-compact-dark@mozilla.org";
       "privacy.resistFingerprinting" = false; # sadly, this need to be, otherwise prefers-color-scheme is inaccessible for websites
+      # https://superuser.com/questions/1610744/how-do-i-get-around-resistfingerprinting-setting-my-preferred-firefox-theme-to-l
+      "privacy.fingerprintingProtection.overrides" = "+AllTargets,-CSSPrefersColorScheme";
 
       # https://www.theregister.com/2024/06/18/mozilla_buys_anonym_betting_privacy/
       "dom.private-attribution.submission.enabled" = "false";
