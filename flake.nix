@@ -24,7 +24,7 @@
     }@inputs:
     let
       cfg = {
-        stateVersion = "24.11";
+        stateVersion = "26.05";
         home_git_dir = "/etc/nixos/home";
         supported_systems = [
           "aarch64-linux"

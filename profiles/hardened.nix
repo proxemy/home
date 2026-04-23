@@ -4,12 +4,12 @@
 }:
 {
   imports = [
-    "${modulesPath}/profiles/hardened.nix"
+    #"${modulesPath}/profiles/hardened.nix"
   ];
 
   security = {
     #auditd.enable = true;
-    apparmor.enable = true;
+    #apparmor.enable = true;
   };
 
   # TMP: workaround for logrotate, a common dependency, failing to build
