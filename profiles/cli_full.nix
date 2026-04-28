@@ -19,6 +19,7 @@
   };
 
   users.users.${secrets.username}.packages = with pkgs; [
+    bc
     dig
     exiftool
     gnupg

@@ -7,6 +7,7 @@
     hyphenDicts.en_US
     hunspellDicts.${secrets.locale}
     hyphenDicts.${secrets.locale}
+    galculator
 
     # PDF viewer
     atril

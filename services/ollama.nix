@@ -16,7 +16,7 @@ in
       #"codellama:70b"
       #"deepseek-v3"
       "gemma4:31b"
-      "qwen3.6:35n"
+      "qwen3.6:35b"
     ];
   };
 
