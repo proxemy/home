@@ -15,6 +15,7 @@
     "${self}/services/nas_client.nix"
     "${self}/services/ollama.nix"
     "${self}/programs/steam.nix"
+    "${self}/programs/chromium.nix"
   ];
 
   hardware.cpu.amd = {

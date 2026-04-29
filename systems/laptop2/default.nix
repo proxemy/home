@@ -9,6 +9,7 @@
     "${self}/profiles/desktop.nix"
     "${self}/profiles/common.nix"
     "${self}/services/nas_client.nix"
+    "${self}/programs/chromium.nix"
   ];
 
   boot = {
