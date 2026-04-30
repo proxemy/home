@@ -8,8 +8,8 @@
   ...
 }:
 let
-  home-git-repo = import ./home-git-repo.nix { inherit pkgs secrets self; };
-  install-script = import ./script.nix { inherit pkgs cfg host; };
+  home_git_repo = import ./home_git_repo.nix { inherit pkgs secrets self; };
+  install_script = import ./script.nix { inherit pkgs cfg host; };
 in
 {
   imports = [
@@ -46,30 +46,27 @@ in
     ];
   };
 
-  #isoImage.storeContents = [ self ];
-  #installer.cloneConfigIncludes = [ "./common.nix" ];
-  #nix.nixPath = [ "nixos-config=github:proxemy/home" ];
-  #system = {
-  #copySystemConfiguration = true;
-  #nixos-generate-config.configuration = "asd wert";
-  #};
-
   isoImage = {
     edition = host.alias;
     volumeID = "${host.hostname}-nixos-installer";
 
-    # TODO: finalize a self contained/offline installer iso
-    # the 2 options might be a lead. 'includeSystemBuildDeps' bloats the
-    # nix/store extremly and storeContents expects JSON as input.
-    #includeSystemBuildDependencies = true;
+    includeSystemBuildDependencies = true;
+    storeContents =
+      let
+        nixosCfg = self.outputs.nixosConfigurations.${host.hostname}.config;
+      in
+      [
+        nixosCfg.environment.systemPackages
+        nixosCfg.home-manager.users.${secrets.username}.home.packages
+      ];
 
     contents = [
       {
-        source = install-script;
+        source = install_script;
         target = "/install.sh";
       }
       {
-        source = home-git-repo;
+        source = home_git_repo;
         target = "/home-git";
       }
     ];
