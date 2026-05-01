@@ -23,6 +23,7 @@ in
   environment = {
     # install.sh is copied in isoImage.contens[0]
     shellAliases.install = "sudo -E bash /iso/install.sh";
+    systemPackages = [ pkgs.e2fsprogs ];
   };
 
   networking.hostName = host.hostname;
