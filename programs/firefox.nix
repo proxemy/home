@@ -90,6 +90,9 @@ let
       # https://www.theregister.com/2024/06/18/mozilla_buys_anonym_betting_privacy/
       "dom.private-attribution.submission.enabled" = "false";
     };
+
+  mozilla_addon = addon: "https://addons.mozilla.org/firefox/downloads/latest/${addon}/latest.xpi";
+
 in
 #TODO: incorporate https://github.com/pyllyukko/user.js
 {
@@ -115,6 +118,51 @@ in
           "ddg"
           "google"
         ];
+      };
+
+      extensions = {
+        packages = [
+          (pkgs.fetchFirefoxAddon rec {
+            name = "uMatrix";
+            url = mozilla_addon name;
+            hash = "sha256-HeFysdgt4owzSDT3sOrs4LUD9Z5iz8DM8jIiuPLLiOU=";
+          })
+          (pkgs.fetchFirefoxAddon rec {
+            name = "privacy-badger17";
+            url = mozilla_addon name;
+            hash = "sha256-HeFysdgt4owzSDT3sOrs4LUD9Z5iz8DM8jIiuPLLiOU=";
+          })
+        ];
+
+        settings = {
+          # blocks all addons except the ones specified below
+          #"*".installation_mode = "blocked";
+
+          /*
+            "uMatrix@raymondhill.net" = {
+              install_url = mozilla_addon "uMatrix";
+              installation_mode = "force_installed";
+              default_area = "navbar";
+              private_browsing = true;
+              updates_disabled = true;
+              adminSettings = {
+                userSettings = {
+                  uiTheme = "dark";
+                  autoUpdate = true;
+                  cloudStorageEnabled = false;
+                  externalList = secrets.umatrix_rules;
+                };
+              };
+            };
+
+            "jid1-MnnxcxisBPnSXQ@jetpack" = {
+              install_url = mozilla_addon "privacy-badger17";
+              installation_mode = "force_installed";
+              private_browsing = true;
+              updates_disabled = true;
+            };
+          */
+        };
       };
     };
 
@@ -179,42 +227,6 @@ in
       DisplayBookmarksToolbar = "newtab";
       # TODO: fix malformed bookmarks
       #ManagedBookmarks = secrets.bookmarks.firefox;
-
-      # Extension
-      ExtensionSettings =
-        let
-          mozilla = addon: "https://addons.mozilla.org/firefox/downloads/latest/${addon}/latest.xpi";
-        in
-        {
-          # blocks all addons except the ones specified below
-          "*".installation_mode = "blocked";
-
-          "uMatrix@raymondhill.net" = {
-            install_url = mozilla "uMatrix";
-            installation_mode = "force_installed";
-            default_area = "navbar";
-            private_browsing = true;
-            updates_disabled = true;
-          };
-
-          "jid1-MnnxcxisBPnSXQ@jetpack" = {
-            install_url = mozilla "privacy-badger17";
-            installation_mode = "force_installed";
-            private_browsing = true;
-            updates_disabled = true;
-          };
-        };
-
-      "3rdparty".Extensions = {
-        "uMatrix@raymondhill.net".adminSettings = {
-          userSettings = {
-            uiTheme = "dark";
-            autoUpdate = true;
-            cloudStorageEnabled = false;
-            externalList = secrets.umatrix_rules;
-          };
-        };
-      };
     };
   };
 }
