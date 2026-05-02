@@ -130,7 +130,7 @@ in
           (pkgs.fetchFirefoxAddon rec {
             name = "privacy-badger17";
             url = mozilla_addon name;
-            hash = "sha256-HeFysdgt4owzSDT3sOrs4LUD9Z5iz8DM8jIiuPLLiOU=";
+            hash = "sha256-7qSfFGHeXrAOsXsisoZLVbVKy1d7A2BodGD+mCYz+9Y=";
           })
         ];
 
