@@ -56,7 +56,7 @@ let
       "browser.urlbar.suggest.openpage" = false;
       "browser.urlbar.suggest.topsites" = false;
       "dom.popup_allowed_events" = "click dblclick mousedown pointerdown";
-      "extensions.autoDisableScopes" = 15;
+      #"extensions.autoDisableScopes" = 15;
       "extensions.formautofill.addresses.enabled" = false;
       "extensions.formautofill.creditCards.enabled" = false;
       "keyword.enabled" = true; # Enable keyword search in the urlbar.
@@ -89,6 +89,8 @@ let
 
       # https://www.theregister.com/2024/06/18/mozilla_buys_anonym_betting_privacy/
       "dom.private-attribution.submission.enabled" = "false";
+
+      "extensions.autoDisableScopes" = 0; # auto-enables all installed extensions
     };
 
   mozilla_addon = addon: "https://addons.mozilla.org/firefox/downloads/latest/${addon}/latest.xpi";
@@ -121,6 +123,8 @@ in
       };
 
       extensions = {
+        force = true;
+
         packages = [
           (pkgs.fetchFirefoxAddon rec {
             name = "uMatrix";
