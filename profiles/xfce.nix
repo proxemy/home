@@ -25,10 +25,10 @@ in
   };
 
   # TODO: maybe move this to a dedicated profile/sound.nix
-  users.users.${secrets.username}.packages = [
-    pkgs.thunar-volman
-  ]
-  ++ lib.optional config.services.pulseaudio.enable pkgs.xfce4-pulseaudio-plugin;
+  users.users.${secrets.username}.packages = with pkgs;[
+    thunar-volman
+    xfce4-pulseaudio-plugin
+  ];
 
   home-manager.users.${secrets.username} = {
     gtk.colorScheme = "dark";
@@ -41,28 +41,26 @@ in
     xfconf = {
       enable = true;
       settings = {
-
-        xfce4-desktop = {
-          # Disable all but workplace0
-          "backdrop/screen0/monitorsLVDS-1/workplace0/color-style" = 0;
-          "backdrop/screen0/monitorsLVDS-1/workplace0/image-style" = 0;
-          "backdrop/screen0/monitorsLVDS-1/workplace0/last-image" = "";
-        };
+        xfce4-desktop = { };
 
         xfce4-keyboard-shortcuts = {
-          "commands/custom/override" = true;
-          "commands/custom/<Primary><Alt>Delete" = "xfce4-session-logout";
-          "commands/custom/<Primary><Alt>t" = "exo-open --launch TerminalEmulator";
-          "commands/custom/<Primary><Alt>b" = "exo-open --launch WebBrowser";
-          "commands/custom/<Primary><Alt>f" = "exo-open --launch FileManager";
-          "commands/custom/<Primary><Shift>Escape" = "xfce4-taskmanager";
-          "commands/custom/Print" = "xfce4-screenshooter";
-          "commands/custom/<Super>l" = "xflock4";
-          "commands/custom/<Super>r" = "xfce4-appfinder";
+          #"commands/custom/override" = true;
+          "providers" = [
+            "xfwm4" # "commands"
+          ];
 
           "xfwm4/custom/override" = true;
           "xfwm4/custom/<Alt>Tab" = "cycle_windows_key";
           "xfwm4/custom/<Alt><Shift>Tab" = "cycle_reverse_windows_key";
+
+          "xfwm4/custom/<Primary><Alt>Delete" = "xfce4-session-logout";
+          "xfwm4/custom/<Primary><Alt>t" = "exo-open --launch TerminalEmulator";
+          "xfwm4/custom/<Primary><Alt>b" = "exo-open --launch WebBrowser";
+          "xfwm4/custom/<Primary><Alt>f" = "exo-open --launch FileManager";
+          "xfwm4/custom/<Primary><Shift>Escape" = "xfce4-taskmanager";
+          "xfwm4/custom/Print" = "xfce4-screenshooter";
+          "xfwm4/custom/<Super>l" = "xflock4";
+          "xfwm4/custom/<Super>r" = "xfce4-appfinder";
 
           "xfwm4/custom/<Super>Up" = "maximize_window_key";
           "xfwm4/custom/<Super>Down" = "hide_window_key";
@@ -80,13 +78,13 @@ in
         xfce4-panel = {
           "panels/dark-mode" = true;
           # Disable bottom panel by any means
+          "panels" = 1;
           "panels/panel-2" = null;
-          #"panels/panel-2/autohide-behavior" = 2;
 
           # Experimental xpath config
           #"//*[@name='digital-date-format']" = "%Y-%m-%d";
           #"//*[@name='digital-time-format']" = "%a, %R";
-          "plugins/plugin-8/digital-date-format" = "%Y-%m-%d";
+          "plugins/plugin-8/digital-date-format" = "%Y_%m_%d";
           "plugins/plugin-8/digital-time-format" = "%a, %R";
           # TODO: fixed indexes (panel-8) are bad, might break in the future.
           #"panels/*/digital-time-format" = "%a, %R";
