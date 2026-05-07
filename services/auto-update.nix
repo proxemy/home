@@ -21,11 +21,13 @@ in
     allowReboot = true;
     dates = "03:00";
     flake = home_git_dir;
+
     flags = [
       "--print-build-logs"
-      # "--verbose"
       "--show-trace"
-    ];
+    ]
+    ++ lib.optional cfg.debug "--verbose";
+
     randomizedDelaySec = "30min";
     rebootWindow = {
       lower = "03:00";

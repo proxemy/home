@@ -23,7 +23,9 @@
       dotfiles,
     }@inputs:
     let
+
       cfg = {
+        debug = false;
         stateVersion = "26.05";
         home_git_dir = "/etc/nixos/home";
         supported_systems = [
@@ -32,6 +34,7 @@
           "x86_64-linux"
         ];
       };
+
       secrets = import ./secrets {
         inherit (pkgs) lib;
         inherit self;
