@@ -121,13 +121,23 @@
           '';
       };
 
-      apps.${system}.dd-installer = {
-        type = "app";
-        meta.description = ''
-          Create a nixos installer iso with a preconfigured hostname.
-          The iso gets written on target device (thumb drive).
-        '';
-        program = "${./scripts/build-dd-installer.sh}";
+      apps.${system} = {
+        tests = {
+          type = "app";
+          meta.description = "Runs a bunch of flake tests";
+          program = "${pkgs.writeShellScript "home-flake-tests" ''
+            echo TODO
+          ''}";
+        };
+
+        dd-installer = {
+          type = "app";
+          meta.description = ''
+            Create a nixos installer iso with a preconfigured hostname.
+            The iso gets written on target device (thumb drive).
+          '';
+          program = "${./scripts/build-dd-installer.sh}";
+        };
       };
 
       formatter.${system} = pkgs.nixfmt;
