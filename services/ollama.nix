@@ -15,6 +15,7 @@ in
     loadModels = [
       #"codellama:70b"
       #"deepseek-v3"
+      "deepseek-coder:33b"
       "gemma4:31b"
       "qwen3.6:35b"
     ];
@@ -22,8 +23,7 @@ in
 
   # TODO: fix: ollama-model-loader.service cannot download models for a confined ollama.service
   systemd.services.ollama = {
-    enable = true;
-    confinement.enable = false;
-    wantedBy = lib.mkForce [ ];
+    enable = false;
+    confinement.enable = true;
   };
 }

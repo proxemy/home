@@ -25,7 +25,7 @@ in
   };
 
   # TODO: maybe move this to a dedicated profile/sound.nix
-  users.users.${secrets.username}.packages = with pkgs;[
+  users.users.${secrets.username}.packages = with pkgs; [
     thunar-volman
     xfce4-pulseaudio-plugin
   ];
@@ -38,6 +38,7 @@ in
     # xfconf-query -c CHANNEL (-l) -p PROPERTY
     # xfconf-query -c xfce4-desktop -p "/last/window-height"
     #
+
     xfconf = {
       enable = true;
       settings = {
@@ -45,9 +46,7 @@ in
 
         xfce4-keyboard-shortcuts = {
           #"commands/custom/override" = true;
-          "providers" = [
-            "xfwm4" # "commands"
-          ];
+          #"providers" = [ "xfwm4" "commands" ];
 
           "xfwm4/custom/override" = true;
           "xfwm4/custom/<Alt>Tab" = "cycle_windows_key";
@@ -77,9 +76,6 @@ in
 
         xfce4-panel = {
           "panels/dark-mode" = true;
-          # Disable bottom panel by any means
-          "panels" = 1;
-          "panels/panel-2" = null;
 
           # Experimental xpath config
           #"//*[@name='digital-date-format']" = "%Y-%m-%d";
