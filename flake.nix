@@ -92,18 +92,6 @@
         };
       };
 
-      homeConfigurations.${secrets.username} = home-manager.lib.homeManagerConfiguration {
-        inherit pkgs;
-        extraSpecialArgs = {
-          inherit cfg secrets dotfiles;
-        };
-        # TODO try harder to build an isolated hm-home via 'home-manager build'
-        modules = [
-          ./profiles/home.nix
-          #self.outputs.nixosConfigurations.${hostnames.desktop1}.config.home-manager.users.${secrets.username}
-        ];
-      };
-
       devShells.${system}.default = pkgs.mkShell {
         buildInputs = with pkgs; [
           git
@@ -116,15 +104,21 @@
           nixos-container
           pkgs.home-manager # input arg 'home-manager' would be taken otherwise
         ];
-        shellHook = ''
-          echo -e "" \
-          "nixos-rebuild build --flake .#${hostnames.laptop2}[-installer]\n" \
-          "home-manager build --flake .#${secrets.username}\n" \
-          "nix run .#dd-installer -- <hostname> [<block device>]\n" \
-          "nixos-generate --flake .#${hostnames.rpi1} --format iso --out-link result\n" \
-          "nix build .#nixosConfigurations.${hostnames.rpi1}.config.system.build.sdImage\n" \
-          "Hosts: ${builtins.toString secrets.list_of.hostnames}"
-        '';
+
+        shellHook =
+          let
+            inherit (hostnames) desktop1 laptop2 rpi1;
+            inherit (secrets) username list_of;
+          in
+          ''
+            echo -e "" \
+            "nixos-rebuild build --flake .#${laptop2}[-installer]\n" \
+            "nix run .#dd-installer -- <hostname> [<block device>]\n" \
+            "nixos-generate --flake .#${rpi1} --format iso --out-link result\n" \
+            "nix build .#nixosConfigurations.${rpi1}.config.system.build.sdImage\n" \
+            "nix build .#nixosConfigurations.${desktop1}.config.home-manager.users.${username}.home-files\n" \
+            "Hosts: ${builtins.toString list_of.hostnames}"
+          '';
       };
 
       apps.${system}.dd-installer = {
