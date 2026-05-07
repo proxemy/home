@@ -45,21 +45,23 @@ in
         xfce4-desktop = { };
 
         xfce4-keyboard-shortcuts = {
-          #"commands/custom/override" = true;
           #"providers" = [ "xfwm4" "commands" ];
 
+          # commands handles launching hotkeys
+          "commands/custom/override" = true;
+          "commands/custom/<Primary><Alt>Delete" = "xfce4-session-logout";
+          "commands/custom/<Primary><Alt>t" = "exo-open --launch TerminalEmulator";
+          "commands/custom/<Primary><Alt>b" = "exo-open --launch WebBrowser";
+          "commands/custom/<Primary><Alt>f" = "exo-open --launch FileManager";
+          "commands/custom/<Primary><Shift>Escape" = "xfce4-taskmanager";
+          "commands/custom/Print" = "xfce4-screenshooter";
+          "commands/custom/<Super>l" = "xflock4";
+          "commands/custom/<Super>r" = "xfce4-appfinder";
+
+          # xfwm4 handles window manager hotkeys
           "xfwm4/custom/override" = true;
           "xfwm4/custom/<Alt>Tab" = "cycle_windows_key";
           "xfwm4/custom/<Alt><Shift>Tab" = "cycle_reverse_windows_key";
-
-          "xfwm4/custom/<Primary><Alt>Delete" = "xfce4-session-logout";
-          "xfwm4/custom/<Primary><Alt>t" = "exo-open --launch TerminalEmulator";
-          "xfwm4/custom/<Primary><Alt>b" = "exo-open --launch WebBrowser";
-          "xfwm4/custom/<Primary><Alt>f" = "exo-open --launch FileManager";
-          "xfwm4/custom/<Primary><Shift>Escape" = "xfce4-taskmanager";
-          "xfwm4/custom/Print" = "xfce4-screenshooter";
-          "xfwm4/custom/<Super>l" = "xflock4";
-          "xfwm4/custom/<Super>r" = "xfce4-appfinder";
 
           "xfwm4/custom/<Super>Up" = "maximize_window_key";
           "xfwm4/custom/<Super>Down" = "hide_window_key";
