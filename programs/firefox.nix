@@ -5,6 +5,7 @@
   ...
 }:
 let
+
   arkenfox = rec {
     userjs = builtins.readFile "${pkgs.arkenfox-userjs}/user.js";
     split = builtins.split "\nuser_pref\\(([^)]+)" userjs;
@@ -93,144 +94,158 @@ let
       "extensions.autoDisableScopes" = 0; # auto-enables all installed extensions
     };
 
-  mozilla_addon = addon: "https://addons.mozilla.org/firefox/downloads/latest/${addon}/latest.xpi";
-
 in
 #TODO: incorporate https://github.com/pyllyukko/user.js
 {
-  home-manager.users.${secrets.username}.programs.firefox = {
-    enable = true;
+  home-manager.users.${secrets.username} = rec {
 
-    profiles.default = {
-      id = 0;
-      name = "default";
-      isDefault = true;
-      settings = arkenfox.attrs // arkenfox_overrides // custom_settings;
+    # work around for the hm bullshit of requiring NUR to fetch addons
+    # https://github.com/nix-community/home-manager/blob/cc09c0f9b7eaa95c2d9827338a5eb03d32505ca5/modules/programs/firefox/mkFirefoxModule.nix#L1059
+    home.file.".mozilla/firefox/default/extensions".source = lib.mkForce (
+      pkgs.buildEnv {
+        name = "my_firefox_extensions";
+        paths = programs.firefox.profiles.default.extensions.packages;
+      }
+    );
 
-      bookmarks = {
-        enable = true;
-        force = true;
-        settings = with secrets.bookmarks; to_name_url_list firefox;
-      };
+    programs.firefox = {
+      enable = true;
 
-      search = {
-        force = true;
-        default = "ddg";
-        order = [
-          "ddg"
-          "google"
-        ];
-      };
+      profiles.default = {
+        id = 0;
+        name = "default";
+        isDefault = true;
+        settings = arkenfox.attrs // arkenfox_overrides // custom_settings;
 
-      extensions = {
-        force = true;
+        bookmarks = {
+          enable = true;
+          force = true;
+          settings = with secrets.bookmarks; to_name_url_list firefox;
+        };
 
-        packages = [
-          (pkgs.fetchFirefoxAddon rec {
-            name = "uMatrix";
-            url = mozilla_addon name;
-            hash = "sha256-HeFysdgt4owzSDT3sOrs4LUD9Z5iz8DM8jIiuPLLiOU=";
-          })
-          (pkgs.fetchFirefoxAddon rec {
-            name = "privacy-badger17";
-            url = mozilla_addon name;
-            hash = "sha256-7qSfFGHeXrAOsXsisoZLVbVKy1d7A2BodGD+mCYz+9Y=";
-          })
-        ];
+        search = {
+          force = true;
+          default = "ddg";
+          order = [
+            "ddg"
+            "google"
+          ];
+        };
 
-        settings = {
-          # blocks all addons except the ones specified below
-          #"*".installation_mode = "blocked";
+        extensions = {
+          force = true;
 
-          /*
-            "uMatrix@raymondhill.net" = {
-              install_url = mozilla_addon "uMatrix";
-              installation_mode = "force_installed";
-              default_area = "navbar";
-              private_browsing = true;
-              updates_disabled = true;
-              adminSettings = {
-                userSettings = {
-                  uiTheme = "dark";
-                  autoUpdate = true;
-                  cloudStorageEnabled = false;
-                  externalList = secrets.umatrix_rules;
+          packages =
+            let
+              ff_addon_url = name: "https://addons.mozilla.org/firefox/downloads/latest/${name}/latest.xpi";
+            in
+            [
+              (pkgs.fetchFirefoxAddon rec {
+                name = "uMatrix";
+                url = ff_addon_url name;
+                hash = "sha256-HeFysdgt4owzSDT3sOrs4LUD9Z5iz8DM8jIiuPLLiOU=";
+              })
+              (pkgs.fetchFirefoxAddon rec {
+                name = "privacy-badger17";
+                url = ff_addon_url name;
+                hash = "sha256-7qSfFGHeXrAOsXsisoZLVbVKy1d7A2BodGD+mCYz+9Y=";
+              })
+            ];
+
+          settings = {
+            # blocks all addons except the ones specified below
+            #"*".installation_mode = "blocked";
+
+            /*
+              "uMatrix@raymondhill.net" = {
+                install_url = mozilla_addon "uMatrix";
+                installation_mode = "force_installed";
+                default_area = "navbar";
+                private_browsing = true;
+                updates_disabled = true;
+                adminSettings = {
+                  userSettings = {
+                    uiTheme = "dark";
+                    autoUpdate = true;
+                    cloudStorageEnabled = false;
+                    externalList = secrets.umatrix_rules;
+                  };
                 };
               };
-            };
 
-            "jid1-MnnxcxisBPnSXQ@jetpack" = {
-              install_url = mozilla_addon "privacy-badger17";
-              installation_mode = "force_installed";
-              private_browsing = true;
-              updates_disabled = true;
-            };
-          */
+              "jid1-MnnxcxisBPnSXQ@jetpack" = {
+                install_url = mozilla_addon "privacy-badger17";
+                installation_mode = "force_installed";
+                private_browsing = true;
+                updates_disabled = true;
+              };
+            */
+          };
         };
       };
-    };
 
-    policies = {
-      # From: https://wiki.nixos.org/wiki/Firefox
-      # Updates & Background Services
-      AppAutoUpdate = false;
-      BackgroundAppUpdate = false;
+      policies = {
+        # From: https://wiki.nixos.org/wiki/Firefox
+        # Updates & Background Services
+        AppAutoUpdate = false;
+        BackgroundAppUpdate = false;
 
-      Cookies = "AllowSession";
-      NetworkPrediction = false;
+        Cookies = "AllowSession";
+        NetworkPrediction = false;
 
-      EnableTrackingProtection = {
-        Value = true;
-        Locked = true;
-        Cryptomining = true;
-        Fingerprinting = true;
+        EnableTrackingProtection = {
+          Value = true;
+          Locked = true;
+          Cryptomining = true;
+          Fingerprinting = true;
+        };
+
+        SanitizeOnShutdown = {
+          Cache = true;
+          Cookies = true;
+          Downloads = true;
+          FormData = true;
+          History = true;
+          Sessions = true;
+          SiteSettings = true;
+          OfflineApps = true;
+          Locked = true;
+        };
+
+        # Feature Disabling
+        #DisableBuiltinPDFViewer       = true;
+        DisableFirefoxStudies = true;
+        DisableFirefoxAccounts = true;
+        #DisableFirefoxScreenshots     = true;
+        #DisableForgetButton           = true;
+        DisableMasterPasswordCreation = true;
+        DisableProfileImport = true;
+        DisableProfileRefresh = true;
+        DisableSetDesktopBackground = true;
+        DisablePocket = true;
+        DisableTelemetry = true;
+        DisableFormHistory = true;
+        DisablePasswordReveal = true;
+
+        # Access Restrictions
+        BlockAboutConfig = false;
+        BlockAboutProfiles = true;
+        BlockAboutSupport = true;
+
+        # UI and Behavior
+        DisplayMenuBar = "never";
+        DontCheckDefaultBrowser = true;
+        #HardwareAcceleration          = false;
+        OfferToSaveLogins = false;
+        PasswordManagerEnabled = false;
+        DefaultDownloadDirectory = "~/Downloads";
+        #NoDefaultBookmarks = true;
+
+        # Bookmarks
+        DisplayBookmarksToolbar = "newtab";
+        # TODO: fix malformed bookmarks
+        #ManagedBookmarks = secrets.bookmarks.firefox;
       };
-
-      SanitizeOnShutdown = {
-        Cache = true;
-        Cookies = true;
-        Downloads = true;
-        FormData = true;
-        History = true;
-        Sessions = true;
-        SiteSettings = true;
-        OfflineApps = true;
-        Locked = true;
-      };
-
-      # Feature Disabling
-      #DisableBuiltinPDFViewer       = true;
-      DisableFirefoxStudies = true;
-      DisableFirefoxAccounts = true;
-      #DisableFirefoxScreenshots     = true;
-      #DisableForgetButton           = true;
-      DisableMasterPasswordCreation = true;
-      DisableProfileImport = true;
-      DisableProfileRefresh = true;
-      DisableSetDesktopBackground = true;
-      DisablePocket = true;
-      DisableTelemetry = true;
-      DisableFormHistory = true;
-      DisablePasswordReveal = true;
-
-      # Access Restrictions
-      BlockAboutConfig = false;
-      BlockAboutProfiles = true;
-      BlockAboutSupport = true;
-
-      # UI and Behavior
-      DisplayMenuBar = "never";
-      DontCheckDefaultBrowser = true;
-      #HardwareAcceleration          = false;
-      OfferToSaveLogins = false;
-      PasswordManagerEnabled = false;
-      DefaultDownloadDirectory = "~/Downloads";
-      #NoDefaultBookmarks = true;
-
-      # Bookmarks
-      DisplayBookmarksToolbar = "newtab";
-      # TODO: fix malformed bookmarks
-      #ManagedBookmarks = secrets.bookmarks.firefox;
     };
   };
 }
