@@ -95,6 +95,9 @@
         };
       };
 
+      homeConfigurations.${secrets.username} =
+        self.outputs.nixosConfigurations.${hostnames.desktop1}.config.home-manager.users.${secrets.username}.home;
+
       devShells.${system}.default = pkgs.mkShell {
         buildInputs = with pkgs; [
           git
@@ -120,6 +123,7 @@
             "nixos-generate --flake .#${rpi1} --format iso --out-link result\n" \
             "nix build .#nixosConfigurations.${rpi1}.config.system.build.sdImage\n" \
             "nix build .#nixosConfigurations.${desktop1}.config.home-manager.users.${username}.home-files\n" \
+            "home-manager switch --flake .\n" \
             "Hosts: ${builtins.toString list_of.hostnames}"
           '';
       };
