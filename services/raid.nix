@@ -7,7 +7,7 @@
 let
   # TODO test and refine this maybe
   mdadm_event_handler = pkgs.writeShellScript "mdadm_event_handler.sh" ''
-    echo "$*" | systemd-cat --identifier=mdadm --priority=alert
+    ${pkgs.systemd}/bin/systemd-cat --identifier=mdadm --priority=alert printf "$*"
   '';
 
   raid = {
@@ -61,9 +61,7 @@ let
           ]
         );
 
-      cryptsetup_open_1 = "${cryptsetup} luksOpen /dev/sda luks1";
-      cryptsetup_open_2 = "${cryptsetup} luksOpen /dev/sdb luks2";
-      cryptsetup_open_3 = "${cryptsetup} luksOpen /dev/sdc luks3";
+      cryptsetup_open = num: "${cryptsetup} luksOpen /dev/sda luks${num}";
       cryptsetup_close =
         "${cryptsetup} luksClose "
         + builtins.toString [
@@ -148,9 +146,9 @@ in
       raid-lock = "sudo ${cmds.cryptsetup_close}";
 
       raid-unlock = ''
-        sudo ${cmds.cryptsetup_open_1}
-        sudo ${cmds.cryptsetup_open_2}
-        sudo ${cmds.cryptsetup_open_3}
+        sudo ${cmds.cryptsetup_open "1"}
+        sudo ${cmds.cryptsetup_open "2"}
+        sudo ${cmds.cryptsetup_open "3"}
       '';
 
       raid-help = ''
