@@ -52,7 +52,7 @@ let
       mdadm_detail = "${mdadm} --detail ${mount.source}";
       mdadm_stop = "${mdadm} --stop --verbose ${mount.source}";
       mdadm_asssemble =
-        "${mdadm} --assemble --verbose ${mount.source} "
+        "${mdadm} --assemble --no-degraded --verbose ${mount.source} "
         + builtins.toString (
           builtins.map (num: "/dev/mapper/luks" + num) [
             "1"
@@ -153,14 +153,23 @@ in
 
       raid-help = ''
         echo -e " \
-        --- format:
-        cryptsetup luksFormat --debug --type luks2 --integrity hmac-sha256 /dev/sd-
-        --- create:
-        mdadm --create --verbose --level 1 --raid-devices=3 /dev/md0 [ /dev/mapper/luks1 <mapped devices> ]
-        --- partition & mount:
-        mkfs.ext4 -v /dev/md0 && mount /dev/md0 /mnt/raid
-        --- Re-add missing drives:
-        mdadm --re-add /dev/md0 /dev/mapper/luks1
+        Format new device:
+          cryptsetup luksFormat --debug --type luks2 --integrity hmac-sha256 /dev/sd_
+
+        Create raid:
+          mdadm --create --verbose --level 1 --raid-devices=3 /dev/md0 [ /dev/mapper/luks1 <mapped devices> ]
+
+        Re-add missing drives:
+          mdadm --re-add /dev/md0 /dev/mapper/luks1
+
+        Start degraded/partial raid:
+          mdadm --assemble --run [ /dev/mapper/luks1 <mapped devices> ]
+
+        Check (scrub) RAID (alt: repair, recover):
+          echo check | sudo tee /sys/block/md0/md/sync_action
+
+        Docs:
+          https://docs.kernel.org/admin-guide/device-mapper/dm-raid.html
         "
       '';
 
