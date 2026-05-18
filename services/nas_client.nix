@@ -45,7 +45,10 @@ in
         mountConfig.Options = mount.options;
         what = mount.source;
         where = mount.target;
-        after = [ "nfs-client.target" ];
+        after = [
+          "nfs-client.target"
+          "network.target"
+        ];
       }
     ];
     automounts = [
