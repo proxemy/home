@@ -19,9 +19,5 @@
       syntastic
       rustaceanvim
     ];
-
-    initLua = ''
-      loadfile("${self.inputs.dotfiles}/.config/nvim/init.lua")()
-    '';
   };
 }

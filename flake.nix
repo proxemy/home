@@ -35,10 +35,7 @@
         ];
       };
 
-      secrets = import ./secrets {
-        inherit (pkgs) lib;
-        inherit self;
-      };
+      secrets = import ./secrets pkgs.lib;
       inherit (secrets) hostnames;
 
       forSystems = nixpkgs.lib.genAttrs cfg.supportedSystems;

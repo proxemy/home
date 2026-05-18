@@ -27,10 +27,11 @@
   programs = {
     bash = {
       enable = true;
-      #.bash_aliases lives in dotfiles
-      initExtra = ''
-        test -f ~/.bash_aliases && source ~/.bash_aliases
-      '';
+      initExtra = "source ${dotfiles}/.bash_aliases";
     };
+    ssh.includes = [ "${dotfiles}/.ssh/config" ];
+    neovim.initLua = ''
+      loadfile("${dotfiles}/.config/nvim/init.lua")()
+    '';
   };
 }
