@@ -1,4 +1,5 @@
 {
+  pkgs,
   cfg,
   secrets,
   dotfiles,
@@ -11,16 +12,14 @@
     username = secrets.username;
     homeDirectory = "/home/${username}";
 
-    file.".dotfiles_copy" = {
+    file.".dotfiles_store" = {
       source = dotfiles;
+      force = true;
       # workaround for missing feature: https://github.com/nix-community/home-manager/issues/3090
       onChange = ''
         umask 0077
-        # swallow all errors because some read-only files have been created
-        # by home-manager already
-        cp --recursive "${dotfiles}"/. ~ || true
+        cp --no-preserve=all --recursive "${dotfiles}"/. ~ || true
       '';
-      force = true;
     };
   };
 
@@ -33,5 +32,10 @@
     neovim.initLua = ''
       loadfile("${dotfiles}/.config/nvim/init.lua")()
     '';
+  };
+
+  home.file = {
+    ".ssh/config".force = true;
+    #".config/nvim/init.lua".force = true;
   };
 }
