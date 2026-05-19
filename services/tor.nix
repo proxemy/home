@@ -1,13 +1,12 @@
 { self, ... }:
 {
   imports = [
-    "${self}/secrets/tor.nix"
+    "${self}/secrets/tor_relay.nix"
   ];
 
   services.tor = {
     enable = true;
     openFirewall = true;
-    client.enable = true;
 
     relay = {
       enable = true;
