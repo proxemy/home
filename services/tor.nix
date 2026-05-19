@@ -1,4 +1,9 @@
-{ self, ... }:
+{
+  lib,
+  self,
+  cfg,
+  ...
+}:
 {
   imports = [
     "${self}/secrets/tor_relay.nix"
@@ -35,6 +40,9 @@
       #ExtraInfoStatistics = true; # upload extra telemetry
       ConnDirectionStatistics = true;
       MainloopStats = true;
+    }
+    // lib.optionalAttrs cfg.debug {
+      Log = "info stdout";
     };
   };
 
@@ -44,5 +52,15 @@
       #cat /var/lib/tor/fingerprint
       #cat /var/lib/tor/stats
     '';
+  };
+
+  # workaround for delayed DHCP lease, causing tor.service to fail during boot
+  systemd.services.tor = {
+    requires = [ "network-online.target" ];
+    after = [ "network-online.target" ];
+    serviceConfig = {
+      Restart = lib.mkForce "always";
+      RestartSec = 30;
+    };
   };
 }

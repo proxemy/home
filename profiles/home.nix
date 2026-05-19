@@ -1,5 +1,4 @@
 {
-  pkgs,
   cfg,
   secrets,
   dotfiles,

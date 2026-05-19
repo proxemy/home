@@ -23,7 +23,7 @@
       home-manager = {
         useGlobalPkgs = true;
         useUserPackages = true;
-        users.${secrets.username} = import "${self}/profiles/home.nix" { inherit pkgs cfg secrets dotfiles; };
+        users.${secrets.username} = import "${self}/profiles/home.nix" { inherit cfg secrets dotfiles; };
         verbose = cfg.debug;
       };
     }
