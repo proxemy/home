@@ -53,6 +53,9 @@ in
         "${git} reset --hard origin/main"
         "${git-crypt} unlock .git/git-crypt/keys/default"
         "${nix} flake update"
+        "${pkgs.coreutils}/bin/chown --recursive root:users ."
+        "${pkgs.coreutils}/bin/chmod --recursive a-rwx,ug+rwx ."
+        "${pkgs.coreutils}/bin/chmod --recursive a-rwx,u+rwx ./secrets"
       ];
     };
   };
