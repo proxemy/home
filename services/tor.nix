@@ -1,4 +1,5 @@
 {
+  pkgs,
   lib,
   self,
   cfg,
@@ -48,10 +49,10 @@
 
   environment.shellAliases = {
     tor-status = ''
-      systemctl status tor.service --no-pager
-      #cat /var/lib/tor/fingerprint
-      #cat /var/lib/tor/stats
+      ${lib.getBin pkgs.systemd}/bin/systemctl status tor.service --no-pager
     '';
+    #cat /var/lib/tor/fingerprint
+    #cat /var/lib/tor/stats
   };
 
   # workaround for delayed DHCP lease, causing tor.service to fail during boot
