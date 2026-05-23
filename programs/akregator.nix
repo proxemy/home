@@ -23,14 +23,14 @@
                 target_opml = "${local_dir}/data/feeds.opml";
               in
               {
-                # akregator writes to the feeds.opml, copying it then.
+                # akregator needs a writable feeds.opml
                 source = source_opml;
-                #target = target_opml;
+                target = target_opml;
                 force = true;
                 onChange = ''
-                  rm --force ${local_dir}/Archive/*
+                  #rm --force ${local_dir}/Archive/*
                   cp --force ${source_opml} ${target_opml}
-                  chmod a=,u+rwx ${target_opml}
+                  chmod u+rwx,go= ${target_opml}
                 '';
               };
           };
