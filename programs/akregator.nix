@@ -19,21 +19,6 @@
               pkgs.kdePackages.akregator
             ];
 
-            #            file."${local_dir}/feeds.link" =
-            #              let
-            #              in
-            #              {
-            #                # akregator needs a writable feeds.opml
-            #                source = source_opml;
-            #                target = target_opml;
-            #                force = true;
-            #                onChange = ''
-            #                  #rm --force ${local_dir}/Archive/*
-            #                  cp --force ${source_opml} ${target_opml}
-            #                  chmod u+rwx,go= ${target_opml}
-            #                '';
-            #              };
-            #
             activation.akregator_feeds = home-manager.lib.hm.dag.entryAfter [ "writeBoudnary" ] ''
               run umask 077 && cat ${source_opml} > ${target_opml}
             '';
@@ -43,13 +28,13 @@
           force = true;
           text = ''
             [Advanced]
-            Mark Read Delay=1
+            Mark Read Delay=2
 
             [Appearance]
             Fixed Font=monospace
-            Sans Serif Font=Sans
-            Serif Font=Sans
-            Standard Font=Sans
+            Sans Serif Font=monospace
+            Serif Font=monospace
+            Standard Font=monospace
 
             [Archive]
             ArchiveMode=limitArticleNumber
@@ -59,19 +44,19 @@
             LMB Behaviour=OpenInExternalBrowser
 
             [General]
-            ArticleListFeedHeaders=AAAA/wAAAAAAAAABAAAAAQAAAAMBAAAAAAAAAAAAAAAEAgAAAAEAAAABAAAAZAAABY0AAAAEAQEAAAAAAAAAAAAAAAAAAGT/////AAAAgQAAAAAAAAAEAAAEswAAAAEAAAAAAAAAAAAAAAEAAAAAAAAAZAAAAAEAAAAAAAAAdgAAAAEAAAAAAAAD6AAAAABkAAAAAAAAAAAAAAAAAAAAAQ==
-            ArticleListGroupHeaders=AAAA/wAAAAAAAAABAAAAAQAAAAMBAAAAAAAAAAAAAAAAAAAAAAAABiYAAAAEAQEAAAAAAAAAAAAAAAAAAGT/////AAAAgQAAAAAAAAAEAAAE6AAAAAEAAAAAAAAAZAAAAAEAAAAAAAAAZAAAAAEAAAAAAAAAdgAAAAEAAAAAAAAD6AD/////AAAAAAAAAAAAAAAAAAAAAQ==
+            ArticleListFeedHeaders=
+            ArticleListGroupHeaders=AAAA/wAAAAAAAAABAAAAAQAAAAMBAAAAAAAAAAAAAAAAAAAAAAAABXAAAAAEAQEAAAAAAAAAAAAAAAAAAGT/////AAAAgQAAAAAAAAAEAAAC/gAAAAEAAAAAAAAA9QAAAAEAAAAAAAABBwAAAAEAAAAAAAAAdgAAAAEAAAAAAAAD6AD/////AAAAAAAAAAAAAAAAAAAAAQ==
             PreviousNewFeaturesMD5=rMGXcQMwFu7xghlAkh4bXg==
             Show Tray Icon=false
             Show Unread In Taskbar=false
-            SubscriptionListHeaders=AAAA/wAAAAAAAAABAAAAAQAAAAAAAAAAAAAAAAAAAAADBgAAAAIAAAABAAAAHAAAAAIAAABkAAABrAAAAAMBAAABAAAAAAAAAAAAAAAAZP////8AAACBAAAAAAAAAAMAAAGsAAAAAQAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAQAAAAAAAAPoAAAAAGQAAAAAAAAAAAAAAAAAAAAB
+            SubscriptionListHeaders=AAAA/wAAAAAAAAABAAAAAQAAAAAAAAAAAAAAAAAAAAADBgAAAAIAAAABAAAAHAAAAAIAAABkAAABzwAAAAMBAAABAAAAAAAAAAAAAAAAZP////8AAACBAAAAAAAAAAMAAAHPAAAAAQAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAQAAAAAAAAPoAAAAAGQAAAAAAAAAAAAAAAAAAAAB
             Use Interval Fetch=false
 
             [HTML Settings]
             AccessKeyEnabled=false
-            Fonts=Sans,monospace,Sans,Sans,Sans,Sans,0
+            Fonts=monospace,monospace,monospace,monospace,monospace,monospace,0
             MediumFontSize=14
-            MinimumFontSize=12
+            MinimumFontSize=14
 
             [Network]
             Use HTML Cache=false
@@ -80,8 +65,8 @@
             LoadExternalReferences=false
 
             [View]
-            Splitter 1 Sizes=430,1486
-            Splitter 2 Sizes=321,630
+            Splitter 1 Sizes=479,1437
+            Splitter 2 Sizes=317,634
           '';
         };
       }
