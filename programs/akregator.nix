@@ -1,5 +1,6 @@
 {
   pkgs,
+  home-manager,
   config,
   secrets,
   ...
@@ -10,29 +11,32 @@
       {
         home =
           let
-            local_dir = ".local/share/akregator/";
+            source_opml = builtins.toFile "feeds.opml" secrets.feeds.OPML;
+            target_opml = ".local/share/akregator/data/feeds.opml";
           in
           {
             packages = [
               pkgs.kdePackages.akregator
             ];
 
-            file."${local_dir}/feeds.link" =
-              let
-                source_opml = builtins.toFile "feeds.opml" secrets.feeds.OPML;
-                target_opml = "${local_dir}/data/feeds.opml";
-              in
-              {
-                # akregator needs a writable feeds.opml
-                source = source_opml;
-                target = target_opml;
-                force = true;
-                onChange = ''
-                  #rm --force ${local_dir}/Archive/*
-                  cp --force ${source_opml} ${target_opml}
-                  chmod u+rwx,go= ${target_opml}
-                '';
-              };
+            #            file."${local_dir}/feeds.link" =
+            #              let
+            #              in
+            #              {
+            #                # akregator needs a writable feeds.opml
+            #                source = source_opml;
+            #                target = target_opml;
+            #                force = true;
+            #                onChange = ''
+            #                  #rm --force ${local_dir}/Archive/*
+            #                  cp --force ${source_opml} ${target_opml}
+            #                  chmod u+rwx,go= ${target_opml}
+            #                '';
+            #              };
+            #
+            activation.akregator_feeds = home-manager.lib.hm.dag.entryAfter [ "writeBoudnary" ] ''
+              run umask 077 && cat ${source_opml} > ${target_opml}
+            '';
           };
 
         xdg.configFile."akregatorrc" = {
