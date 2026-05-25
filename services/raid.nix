@@ -47,28 +47,27 @@ let
       cryptsetup = "${getBin pkgs.cryptsetup}/bin/cryptsetup";
       systemctl = "${getBin pkgs.systemd}/bin/systemctl";
       umount = "${getBin pkgs.util-linux}/bin/umount";
+
+      drive_count = [
+        "1"
+        "2"
+        "3"
+      ];
+      cryptsetup_open = dev: num: "${cryptsetup} luksOpen /dev/${dev} luks${num}";
+
     in
     {
       mdadm_detail = "${mdadm} --detail ${mount.source}";
       mdadm_stop = "${mdadm} --stop --verbose ${mount.source}";
       mdadm_asssemble =
         "${mdadm} --assemble --no-degraded --verbose ${mount.source} "
-        + builtins.toString (
-          builtins.map (num: "/dev/mapper/luks" + num) [
-            "1"
-            "2"
-            "3"
-          ]
-        );
+        + builtins.toString (builtins.map (num: "/dev/mapper/luks" + num) drive_count);
 
-      cryptsetup_open = num: "${cryptsetup} luksOpen /dev/sda luks${num}";
+      cryptsetup_open_1 = cryptsetup_open "sda" "1";
+      cryptsetup_open_2 = cryptsetup_open "sdb" "2";
+      cryptsetup_open_3 = cryptsetup_open "sdc" "3";
       cryptsetup_close =
-        "${cryptsetup} luksClose "
-        + builtins.toString [
-          "luks1"
-          "luks2"
-          "luks3"
-        ];
+        "${cryptsetup} luksClose " + (builtins.toString (builtins.map (n: "luks" + n) drive_count));
 
       systemctl_stop = "${systemctl} stop ${builtins.toString systemd_service_names_list}";
       systemctl_start = "${systemctl} start ${builtins.toString systemd_service_names_list}";
@@ -146,9 +145,9 @@ in
       raid-lock = "sudo ${cmds.cryptsetup_close}";
 
       raid-unlock = ''
-        sudo ${cmds.cryptsetup_open "1"}
-        sudo ${cmds.cryptsetup_open "2"}
-        sudo ${cmds.cryptsetup_open "3"}
+        sudo ${cmds.cryptsetup_open_1}
+        sudo ${cmds.cryptsetup_open_2}
+        sudo ${cmds.cryptsetup_open_3}
       '';
 
       raid-help = ''
