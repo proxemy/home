@@ -13,6 +13,7 @@
     "${self}/profiles/cli_full.nix"
     "${self}/profiles/feedreaders.nix"
     "${self}/programs/firefox.nix"
+    "${self}/programs/thunderbird.nix"
     "${self}/programs/keepassxc.nix"
     "${self}/programs/office_package.nix"
   ];
