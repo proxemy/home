@@ -60,7 +60,7 @@ let
       mdadm_detail = "${mdadm} --detail ${mount.source}";
       mdadm_stop = "${mdadm} --stop --verbose ${mount.source}";
       mdadm_asssemble =
-        "${mdadm} --assemble --no-degraded --verbose ${mount.source} "
+        "${mdadm} --assemble --scan --no-degraded --verbose ${mount.source} "
         + builtins.toString (builtins.map (num: "/dev/mapper/luks" + num) drive_count);
 
       cryptsetup_open_1 = cryptsetup_open "sda" "1";
@@ -182,6 +182,20 @@ in
         raid-stop
         raid-lock
         raid-status
+      '';
+
+      raid-scrub = ''
+        echo check | sudo tee /sys/block/md0/md/sync_action
+      '';
+
+      raid-aliases = ''
+        alias raid-unlock
+        echo
+        alias raid-start
+        echo
+        alias raid-stop
+        echo
+        alias raid-lock
       '';
     };
   };
