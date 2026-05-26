@@ -126,12 +126,13 @@
       };
 
       apps.${system} = {
-        tests = {
+        test_build_all = {
           type = "app";
-          meta.description = "Runs a bunch of flake tests";
-          program = "${pkgs.writeShellScript "home-flake-tests" ''
-            echo TODO
-          ''}";
+          meta.description = "Build all nixosConfigurations.";
+          program = "${import ./tests/build_all.nix {
+            inherit pkgs self;
+            inherit (secrets.list_of) hostnames;
+          }}";
         };
 
         dd-installer = {
