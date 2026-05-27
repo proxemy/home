@@ -8,7 +8,7 @@ pkgs.writeShellScript "test_build_all.sh" ''
 
   for hostname in ${builtins.toString hostnames}; do
     echo building "$hostname" ...
-    nix build \
+    ${pkgs.lib.getBin pkgs.nix}/bin/nix build \
       --verbose \
       --show-trace \
       "${self}"#nixosConfigurations."$hostname".config.system.build.toplevel
