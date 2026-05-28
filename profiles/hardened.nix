@@ -1,13 +1,12 @@
 {
+  pkgs,
+  lib,
   modulesPath,
+  cfg,
   secrets,
   ...
 }:
 {
-  imports = [
-    #"${modulesPath}/profiles/hardened.nix"
-  ];
-
   security = {
     #auditd.enable = true;
     apparmor.enable = true;
@@ -21,7 +20,15 @@
 
   nix.settings.allowed-users = [ secrets.username ];
 
-  # TMP: workaround for logrotate, a common dependency, failing to build
-  # https://discourse.nixos.org/t/logrotate-config-fails-due-to-missing-group-30000
-  #boot.kernel.sysctl."kernel.unprivileged_userns_clone" = 1;
+  # breaks alot of desktop apps
+  environment.memoryAllocator.provider = lib.mkDefault "graphene-hardened";
+
+  boot.kernel.sysctl = {
+    "kernel.modules_disabled" = 1;
+    "kernel.unprivileged_userns_clone" = 0;
+
+    "kernel.printk" = if cfg.debug then 6 else 4;
+  };
+
+  boot.kernelPackages = lib.mkDefault pkgs.linuxPackages_latest;
 }
