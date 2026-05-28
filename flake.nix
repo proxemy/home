@@ -110,9 +110,9 @@
 
         shellHook =
           let
-            inherit (hostnames) desktop1 laptop2 rpi1;
             inherit (secrets) username list_of;
           in
+          with hostnames;
           ''
             echo -e "" \
             "nixos-rebuild build --flake .#${laptop2}[-installer]\n" \
@@ -121,6 +121,7 @@
             "nix build .#nixosConfigurations.${rpi1}.config.system.build.sdImage\n" \
             "nix build .#nixosConfigurations.${desktop1}.config.home-manager.users.${username}.home-files\n" \
             "home-manager switch --flake .\n" \
+            "nixos-option --flake .#${rpi2} --recursive boot.kernelPackages.kernel\n" \
             "Hosts: ${builtins.toString list_of.hostnames}"
           '';
       };
