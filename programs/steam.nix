@@ -24,9 +24,9 @@
         };
 
         unitConfig = {
-          CanStop = false;
-          RefuseManualStop = true;
-          StopWhenUnneeded = false;
+          #CanStop = false;
+          #RefuseManualStop = true;
+          #StopWhenUnneeded = false;
         };
       };
 

@@ -10,7 +10,6 @@
     "${self}/programs/neovim/"
   ];
 
-  # TODO: segregate stull into cli_minimal/full. Its all in one for now here
   programs = {
     wireshark.enable = true;
     usbtop.enable = true;
@@ -27,6 +26,7 @@
     libxml2
     python3
     ripgrep
+    unzip
     usbutils
   ];
 

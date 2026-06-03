@@ -19,7 +19,7 @@ in
   # mount.nfs4 <mount.source> <mount.target>
 
   # xfce thunar bookmark. maybe older gtk versions are used ...
-  home-manager.users.ddder =
+  home-manager.users.${secrets.username} =
     let
       file_url = "file://${mount.target}";
     in

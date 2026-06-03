@@ -1,6 +1,7 @@
 {
   pkgs,
   lib,
+  config,
   secrets,
   ...
 }:
@@ -91,22 +92,40 @@ let
       # https://www.theregister.com/2024/06/18/mozilla_buys_anonym_betting_privacy/
       "dom.private-attribution.submission.enabled" = "false";
 
-      "extensions.autoDisableScopes" = 0; # auto-enables all installed extensions
+      # auto-enables all user profile installed extensions
+      "extensions.enabledScopes" = 0;
+      "extensions.autoDisableScopes" = 0;
+      "extensions.startupScanScopes" = 0;
+      "extensions.blocklist.enabled" = false;
+
+      #"devtools.console.stdout.chrome" = true;
     };
 
 in
 #TODO: incorporate https://github.com/pyllyukko/user.js
 {
-  home-manager.users.${secrets.username} = rec {
+  home-manager.users.${secrets.username} = {
 
     # work around for the hm bullshit of requiring NUR to fetch addons
     # https://github.com/nix-community/home-manager/blob/cc09c0f9b7eaa95c2d9827338a5eb03d32505ca5/modules/programs/firefox/mkFirefoxModule.nix#L1059
-    home.file.".mozilla/firefox/default/extensions".source = lib.mkForce (
-      pkgs.buildEnv {
-        name = "my_firefox_extensions";
-        paths = programs.firefox.profiles.default.extensions.packages;
-      }
-    );
+    home.file =
+      let
+        ff_id = "{ec8030f7-c20a-464f-9b0e-13a3a9e97384}";
+        ext_path = "/extensions/share/mozilla/extensions/${ff_id}";
+        ff_cfg = config.home-manager.users.${secrets.username}.programs.firefox;
+        profiles = ff_cfg.profilesPath;
+        profile = ff_cfg.profiles.default.path;
+      in
+      {
+        "${profiles}/${profile}/extensions".enable = false;
+
+        "${profiles}/${profile}/${ext_path}".source = lib.mkForce (
+          pkgs.buildEnv {
+            name = "my_firefox_extensions";
+            paths = ff_cfg.profiles.default.extensions.packages;
+          }
+        );
+      };
 
     programs.firefox = {
       enable = true;
@@ -137,49 +156,46 @@ in
 
           packages =
             let
-              ff_addon_url = name: "https://addons.mozilla.org/firefox/downloads/latest/${name}/latest.xpi";
+              fetch_addon =
+                name: fixedExtid: hash:
+                pkgs.fetchFirefoxAddon {
+                  inherit name hash fixedExtid;
+                  url = "https://addons.mozilla.org/firefox/downloads/latest/${name}/latest.xpi";
+                };
             in
             [
-              (pkgs.fetchFirefoxAddon rec {
-                name = "uMatrix";
-                url = ff_addon_url name;
-                hash = "sha256-HeFysdgt4owzSDT3sOrs4LUD9Z5iz8DM8jIiuPLLiOU=";
-              })
-              (pkgs.fetchFirefoxAddon rec {
-                name = "privacy-badger17";
-                url = ff_addon_url name;
-                hash = "sha256-7qSfFGHeXrAOsXsisoZLVbVKy1d7A2BodGD+mCYz+9Y=";
-              })
+              (fetch_addon "uMatrix" "uMatrix@raymondhill.net"
+                "sha256-HeFysdgt4owzSDT3sOrs4LUD9Z5iz8DM8jIiuPLLiOU="
+              )
+              (fetch_addon "privacy-badger17" "jid1-MnnxcxisBPnSXQ@jetpack"
+                "sha256-7qSfFGHeXrAOsXsisoZLVbVKy1d7A2BodGD+mCYz+9Y="
+              )
             ];
 
           settings = {
             # blocks all addons except the ones specified below
-            #"*".installation_mode = "blocked";
+            "*".settings = {
+              installation_mode = "blocked";
+              private_browsing = true;
+              updates_disabled = true;
+            };
 
-            /*
-              "uMatrix@raymondhill.net" = {
-                install_url = mozilla_addon "uMatrix";
-                installation_mode = "force_installed";
-                default_area = "navbar";
-                private_browsing = true;
-                updates_disabled = true;
-                adminSettings = {
-                  userSettings = {
-                    uiTheme = "dark";
-                    autoUpdate = true;
-                    cloudStorageEnabled = false;
-                    externalList = secrets.umatrix_rules;
-                  };
+            "uMatrix@raymondhill.net".settings = {
+              installation_mode = "force_installed";
+              default_area = "navbar";
+              adminSettings = {
+                userSettings = {
+                  uiTheme = "dark";
+                  autoUpdate = true;
+                  cloudStorageEnabled = false;
+                  externalList = secrets.umatrix_rules;
                 };
               };
+            };
 
-              "jid1-MnnxcxisBPnSXQ@jetpack" = {
-                install_url = mozilla_addon "privacy-badger17";
-                installation_mode = "force_installed";
-                private_browsing = true;
-                updates_disabled = true;
-              };
-            */
+            "jid1-MnnxcxisBPnSXQ@jetpack".settings = {
+              installation_mode = "force_installed";
+            };
           };
         };
       };
