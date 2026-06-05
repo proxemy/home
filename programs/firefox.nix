@@ -91,14 +91,6 @@ let
 
       # https://www.theregister.com/2024/06/18/mozilla_buys_anonym_betting_privacy/
       "dom.private-attribution.submission.enabled" = "false";
-
-      # auto-enables all user profile installed extensions
-      "extensions.enabledScopes" = 0;
-      "extensions.autoDisableScopes" = 0;
-      "extensions.startupScanScopes" = 0;
-      "extensions.blocklist.enabled" = false;
-
-      #"devtools.console.stdout.chrome" = true;
     };
 
 in
@@ -106,20 +98,16 @@ in
 {
   home-manager.users.${secrets.username} = {
 
-    # work around for the hm bullshit of requiring NUR to fetch addons
-    # https://github.com/nix-community/home-manager/blob/cc09c0f9b7eaa95c2d9827338a5eb03d32505ca5/modules/programs/firefox/mkFirefoxModule.nix#L1059
     home.file =
       let
-        ff_id = "{ec8030f7-c20a-464f-9b0e-13a3a9e97384}";
-        ext_path = "/extensions/share/mozilla/extensions/${ff_id}";
         ff_cfg = config.home-manager.users.${secrets.username}.programs.firefox;
         profiles = ff_cfg.profilesPath;
         profile = ff_cfg.profiles.default.path;
       in
       {
-        "${profiles}/${profile}/extensions".enable = false;
-
-        "${profiles}/${profile}/${ext_path}".source = lib.mkForce (
+        # overwrite HMs creation of extensions sub dirs.
+        # see https://github.com/nix-community/home-manager/blob/3ee51fbdac8c8bdfe1e7e1fcaba6520a563f394f/modules/programs/firefox/mkFirefoxModule.nix#L53
+        "${profiles}/${profile}/extensions".source = lib.mkForce (
           pkgs.buildEnv {
             name = "my_firefox_extensions";
             paths = ff_cfg.profiles.default.extensions.packages;
@@ -153,15 +141,26 @@ in
 
         extensions = {
           force = true;
+          #exactPermissions = true;
 
           packages =
             let
               fetch_addon =
-                name: fixedExtid: hash:
-                pkgs.fetchFirefoxAddon {
-                  inherit name hash fixedExtid;
-                  url = "https://addons.mozilla.org/firefox/downloads/latest/${name}/latest.xpi";
+                # addonId must match mozillas GUID (https://addons.mozilla.org/api/v5/addons/addon/${name})
+                # or firefox silently rejects the extension (maybe warn in logs, see CTRL+SHIFT+J)
+                name: addonId: sha256:
+                pkgs.stdenv.mkDerivation {
+                  inherit name addonId;
+                  meta.mozPermissions =
+                    config.home-manager.users.${secrets.username}.programs.firefox.profiles.default.extensions.settings.${addonId}.permissions
+                      or [ ];
+                  src = builtins.fetchurl {
+                    inherit name sha256;
+                    url = "https://addons.mozilla.org/firefox/downloads/latest/${name}/latest.xpi";
+                  };
+                  buildCommand = ''install -D "$src" "$out"/"${addonId}".xpi'';
                 };
+
             in
             [
               (fetch_addon "uMatrix" "uMatrix@raymondhill.net"
@@ -173,29 +172,24 @@ in
             ];
 
           settings = {
-            # blocks all addons except the ones specified below
-            "*".settings = {
-              installation_mode = "blocked";
-              private_browsing = true;
-              updates_disabled = true;
+            "uMatrix@raymondhill.net" = {
+              force = true;
+              # extension permissions should match its manifest.json listed permissions
+              permissions = [
+                "browsingData"
+                "cookies"
+                "privacy"
+                "storage"
+                "tabs"
+                "webNavigation"
+                "webRequest"
+                "webRequestBlocking"
+                "<all_urls>"
+              ];
+              settings.userMatrix = secrets.umatrix_rules;
             };
 
-            "uMatrix@raymondhill.net".settings = {
-              installation_mode = "force_installed";
-              default_area = "navbar";
-              adminSettings = {
-                userSettings = {
-                  uiTheme = "dark";
-                  autoUpdate = true;
-                  cloudStorageEnabled = false;
-                  externalList = secrets.umatrix_rules;
-                };
-              };
-            };
-
-            "jid1-MnnxcxisBPnSXQ@jetpack".settings = {
-              installation_mode = "force_installed";
-            };
+            #"jid1-MnnxcxisBPnSXQ@jetpack" = { };
           };
         };
       };
@@ -259,8 +253,6 @@ in
 
         # Bookmarks
         DisplayBookmarksToolbar = "newtab";
-        # TODO: fix malformed bookmarks
-        #ManagedBookmarks = secrets.bookmarks.firefox;
       };
     };
   };
