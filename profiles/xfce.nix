@@ -50,10 +50,11 @@ in
           # commands handles launching hotkeys
           "commands/custom/override" = true;
           "commands/custom/<Primary><Alt>Delete" = "xfce4-session-logout";
-          "commands/custom/<Primary><Alt>t" = "exo-open --launch TerminalEmulator";
-          "commands/custom/<Primary><Alt>b" = "exo-open --launch WebBrowser";
-          "commands/custom/<Primary><Alt>f" = "exo-open --launch FileManager";
-          "commands/custom/<Primary><Shift>Escape" = "xfce4-taskmanager";
+          "commands/custom/<Super>t" = "exo-open --launch TerminalEmulator";
+          "commands/custom/<Super>b" = "exo-open --launch WebBrowser";
+          "commands/custom/<Super>f" = "exo-open --launch FileManager";
+          "commands/custom/<Super>m" = "exo-open --launch MailReader";
+          "commands/custom/<Super>Escape" = "xfce4-taskmanager";
           "commands/custom/Print" = "xfce4-screenshooter";
           "commands/custom/<Super>l" = "xflock4";
           "commands/custom/<Super>r" = "xfce4-appfinder";

@@ -13,9 +13,9 @@
     "${self}/profiles/cli_full.nix"
     "${self}/profiles/feedreaders.nix"
     "${self}/programs/firefox.nix"
-    "${self}/programs/thunderbird.nix"
     "${self}/programs/keepassxc.nix"
     "${self}/programs/office_package.nix"
+    "${self}/programs/thunderbird.nix"
   ];
 
   hardware = {
@@ -35,10 +35,10 @@
   users.users.${secrets.username}.packages = with pkgs; [
     # TODO: Maybe turn vlc into its own programs/vlc.nix
     ffmpeg
-    yt-dlp
-    vlc
-    torsocks
     tor-browser
+    torsocks
+    vlc
+    yt-dlp
   ];
 
   # hardened allocator (scudo/graphene-hardened) often fail with desktop apps eg.firefox
