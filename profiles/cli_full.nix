@@ -8,6 +8,7 @@
   imports = [
     ./cli_minimal.nix
     "${self}/programs/neovim/"
+    "${self}/programs/weechat.nix"
   ];
 
   programs = {
