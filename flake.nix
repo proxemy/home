@@ -86,6 +86,14 @@
           host = secrets.hosts.laptop2;
         };
 
+        ${hostnames.laptop3} = mk_nixos {
+          host = secrets.hosts.laptop3;
+        };
+
+        "${hostnames.laptop3}-installer" = mk_installer {
+          host = secrets.hosts.laptop3;
+        };
+
         ${hostnames.rpi1} = mk_nixos {
           host = secrets.hosts.rpi1;
         };
