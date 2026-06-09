@@ -119,7 +119,7 @@
           ''
             echo -e "" \
             "nixos-rebuild build --flake .#${laptop2}[-installer]\n" \
-            "nix run .#dd-installer -- <hostname> [<block device>]\n" \
+            "nix run .#dd_installer -- <hostname> [<block device>]\n" \
             "nixos-generate --flake .#${rpi1} --format iso --out-link result\n" \
             "nix build .#nixosConfigurations.${rpi1}.config.system.build.sdImage\n" \
             "nix build .#nixosConfigurations.${desktop1}.config.home-manager.users.${username}.home-files\n" \
@@ -139,13 +139,13 @@
           }}";
         };
 
-        dd-installer = {
+        dd_installer = {
           type = "app";
           meta.description = ''
             Create a nixos installer iso with a preconfigured hostname.
             The iso gets written on target device (thumb drive).
           '';
-          program = "${./scripts/build-dd-installer.sh}";
+          program = "${./scripts/build_dd_installer.sh}";
         };
       };
 
