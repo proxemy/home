@@ -162,7 +162,10 @@ in
           mdadm --re-add /dev/md0 /dev/mapper/luks1
 
         Start degraded/partial raid:
-          mdadm --assemble --run [ /dev/mapper/luks1 <mapped devices> ]
+          # forcefully --run
+          mdadm --assemble --run /dev/md0 [ /dev/mapper/luks1, ]
+          # ignore bad block log, to force a stale assembly
+          mdadm --assemble /dev/md0 --update=force-no-bbl [ /dev/mapper/luks1, ]
 
         Check (scrub) RAID (alt: repair, recover):
           echo check | sudo tee /sys/block/md0/md/sync_action
