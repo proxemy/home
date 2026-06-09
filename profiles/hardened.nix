@@ -32,4 +32,6 @@
   };
 
   boot.kernelPackages = lib.mkDefault pkgs.linuxPackages_latest;
+
+  system.etc.overlay.mutable = false;
 }
