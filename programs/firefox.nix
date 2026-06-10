@@ -122,7 +122,11 @@ in
         id = 0;
         name = "default";
         isDefault = true;
-        settings = arkenfox.attrs // arkenfox_overrides // custom_settings;
+        settings =
+          import ./mozilla_prefs.nix { inherit lib; }
+          // arkenfox.attrs
+          // arkenfox_overrides
+          // custom_settings;
 
         bookmarks = {
           enable = true;
