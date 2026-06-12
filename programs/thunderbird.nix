@@ -1,6 +1,8 @@
 { lib, secrets, ... }:
 {
   home-manager.users.${secrets.username} = {
+    home.file.".thunderbird/default/user.js".force = true;
+
     programs.thunderbird = {
       enable = true;
 
