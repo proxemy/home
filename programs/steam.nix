@@ -1,4 +1,9 @@
-{ pkgs, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}:
 {
   # https://nixos.wiki/wiki/Steam
   programs.steam.enable = true;
@@ -42,7 +47,8 @@
 
         script =
           let
-            steam_exec = "/run/current-system/sw/bin/steam";
+            steam_exec = "${lib.getBin config.programs.steam.package}/bin/steam";
+            #steam_exec = "/run/current-system/sw/bin/steam";
           in
           with pkgs;
           ''
@@ -52,6 +58,14 @@
             fi
             ${coreutils}/bin/sleep 58
             ${coreutils}/bin/chmod +x ${steam_exec} 2&>/dev/null || true
+          '';
+
+        postStop =
+          let
+            systemctl = "${lib.getBin config.systemd.package}/bin/systemctl";
+          in
+          ''
+            ${systemctl} start ${name}.timer
           '';
       };
     };
