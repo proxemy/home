@@ -91,6 +91,15 @@ let
 
       # https://www.theregister.com/2024/06/18/mozilla_buys_anonym_betting_privacy/
       "dom.private-attribution.submission.enabled" = "false";
+
+      # newtab stuff
+      # disable newtab shortcuts/suggestions
+      "browser.newtabpage.activity-stream.feeds.topsites" = false;
+      "browser.newtabpage.activity-stream.showSponsoredTopSites" = false;
+      "browser.newtabpage.activity-stream.feeds.section.topstories" = false;
+      "browser.newtabpage.activity-stream.feeds.section.highlights" = false;
+      "browser.newtabpage.activity-stream.showSearch" = false;
+      "browser.newtabpage.activity-stream.asrouter.devtoolsEnabled" = true;
     };
 
   ff_cfg = config.home-manager.users.${secrets.username}.programs.firefox;
