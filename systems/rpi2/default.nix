@@ -10,6 +10,7 @@
     "${self}/profiles/headless.nix"
     "${self}/profiles/common.nix"
     "${self}/services/tor_server.nix"
+    "${self}/services/dns_server.nix"
     "${self}/services/i2p.nix"
   ];
 
