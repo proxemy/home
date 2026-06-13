@@ -168,6 +168,7 @@ in
           mdadm --assemble /dev/md0 --update=force-no-bbl [ /dev/mapper/luks1, ]
 
         Check (scrub) RAID (alt: repair, recover):
+          mdadm --misc --action=check /dev/md0
           echo check | sudo tee /sys/block/md0/md/sync_action
 
         Docs:
