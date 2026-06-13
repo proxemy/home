@@ -9,7 +9,7 @@
     "${modulesPath}/installer/sd-card/sd-image-aarch64-new-kernel.nix"
     "${self}/profiles/headless.nix"
     "${self}/profiles/common.nix"
-    "${self}/services/tor.nix"
+    "${self}/services/tor_server.nix"
     "${self}/services/i2p.nix"
   ];
 
