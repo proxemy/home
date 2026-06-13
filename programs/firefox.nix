@@ -93,6 +93,8 @@ let
       "dom.private-attribution.submission.enabled" = "false";
     };
 
+  ff_cfg = config.home-manager.users.${secrets.username}.programs.firefox;
+
 in
 #TODO: incorporate https://github.com/pyllyukko/user.js
 {
@@ -100,7 +102,6 @@ in
 
     home.file =
       let
-        ff_cfg = config.home-manager.users.${secrets.username}.programs.firefox;
         profiles = ff_cfg.profilesPath;
         profile = ff_cfg.profiles.default.path;
       in
@@ -259,5 +260,31 @@ in
         DisplayBookmarksToolbar = "newtab";
       };
     };
+
+    # set default browser
+    xdg.mimeApps =
+      let
+        ff_mime = "org.mozilla.firefox.desktop";
+      in
+      {
+        enable = true;
+
+        defaultApplications = {
+          "text/html" = ff_mime;
+          "x-scheme-handler/http" = ff_mime;
+          "x-scheme-handler/https" = ff_mime;
+          "x-scheme-handler/about" = ff_mime;
+          "x-scheme-handler/unknown" = ff_mime;
+        };
+      };
+
+    home.sessionVariables =
+      let
+        ff_exec = "${lib.getBin ff_cfg.package}/bin/firefox";
+      in
+      {
+        BROWSER = ff_exec;
+        DEFAULT_BROWSER = ff_exec;
+      };
   };
 }
