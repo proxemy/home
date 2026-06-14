@@ -16,10 +16,10 @@ managed by nix and get copied blindly.
 * [ ] nix tests before update appliance.
 * [ ] LAN carnary.
 * [ ] IPsec for known services/hosts.
-* [x] Update flake.lock in auto-update.
+* [x] Update flake.lock in auto-update service.
 * [x] RSS feeds OPML.
 * [x] Script to partition new RAID drives.
-* [x] DCHP known IP leased?
+* [x] Check if expected IP as DHCP lease?
 * [x] create cfg.debug bool and pass it down to crucial services: sshd, nfsd, systemd, auto-update
 * [x] Deprecate either 'output.homeConfigurations.${user_name}' or 'common.nix:imports.home-manager...'.
 * [ ] Secrets string scanning in all but 'secrets.nix' nix files.
@@ -45,3 +45,8 @@ managed by nix and get copied blindly.
 * [ ] Use local DNS server as system provider and check router for passthru.
 * [ ] Optional import of email data into thunderbird. Keep it encrypted separately, not in the nix store.
 * [ ] Add air quality sensors to raspi + logging SIEM.
+* [ ] git repo code signing and updater verification.
+* [ ] Service to mirror all git projects across several platforms as migration away from github.
+* [ ] Finish i2p service.
+* [ ] fetchRadicle nix source fetcher and seeds of home git.
+* [ ] PoE + PSU power supply.
