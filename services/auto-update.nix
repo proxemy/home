@@ -79,6 +79,7 @@ in
     shellAliases = {
       "home-goto" = "cd ${home_git_dir}";
       "home-upgrade" = "sudo ${upgrade_cmd}";
+      "home-version" = "${git} --git-dir=${home_git_dir}/.git log -1";
     };
   };
 
