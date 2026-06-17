@@ -19,11 +19,25 @@ in
       "gemma4:31b"
       "qwen3.6:35b"
     ];
+
+    syncModels = true; # adds/removes models according to 'loadModels'
   };
 
-  # TODO: fix: ollama-model-loader.service cannot download models for a confined ollama.service
   systemd.services.ollama = {
-    enable = false;
-    confinement.enable = true;
+    enable = true;
+    #confinement.enable = true;
+
+    serviceConfig = {
+      PrivateNetwork = true;
+      PrivateDevices = lib.mkForce true;
+      PrivateIPC = true;
+      PrivateBPF = true;
+
+      # i dont know why these are false by default
+      #CanIsolate = true;
+      #AllowIsolate = true;
+    };
+
+    wantedBy = lib.mkForce [ ]; # disable autostart
   };
 }
