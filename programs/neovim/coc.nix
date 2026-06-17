@@ -8,7 +8,7 @@
 
     plugins = with pkgs.vimPlugins; [
       coc-clangd
-      coc-cmake
+      #coc-cmake
       coc-git
       #coc-html
       #coc-java
