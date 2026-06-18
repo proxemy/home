@@ -48,7 +48,7 @@ in
   };
 
   isoImage = {
-    edition = host.alias;
+    edition = host.hostname;
     volumeID = "${host.hostname}-nixos-installer";
 
     includeSystemBuildDependencies = true;

@@ -2,10 +2,10 @@
 
 if [ $# -lt 1 ]; then
 	echo -e \
-		"USAGE: $(basename $0)\n"\
+		"USAGE: $(basename "$0")\n"\
 		"- nix run .#dd-installer -- <host_name> [<target_device>]\n"\
 		"-- <host_name>: A flake output with '-installer' suffix.\n"\
-		"-- <target_device>: Block device to dd the ISO onto. If omitted, nothing is written."
+		"-- <target_device>: Block device to dd the ISO onto."
 	exit 255
 fi
 
@@ -24,13 +24,11 @@ nixos-generate --flake .#"$host_name" --format iso --out-link result
 iso=$(find result/iso/ -iname '*.iso')
 
 if [ ! -f "$iso" ]; then
-	echo "Result ISO file not found."
+	echo "No result ISO file found!" >&2
 	exit 2
 fi
 
-if [ ! -z "$target_device" ]; then
-	echo "Writing ISO to target device '$target_device'"
-	set -x
-	sudo umount "$target_device"* || true
-	sudo dd if="$iso" of="$target_device" status=progress conv=fsync
-fi
+echo "Writing to '$target_device': " "$(du -h "$iso")"
+set -x
+sudo umount "$target_device"* || true
+sudo dd if="$iso" of="$target_device" status=progress conv=fsync
