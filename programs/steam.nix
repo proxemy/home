@@ -2,6 +2,7 @@
   pkgs,
   lib,
   config,
+  secrets,
   ...
 }:
 {
@@ -12,6 +13,8 @@
     "steam"
     "steam-unwrapped"
   ];
+
+  home-manager.users.${secrets.username}.programs.obs-studio.enable = true;
 
   systemd =
     let
