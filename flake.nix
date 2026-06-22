@@ -104,7 +104,16 @@
       };
 
       homeConfigurations.${secrets.username} =
-        self.outputs.nixosConfigurations.${hostnames.desktop1}.config.home-manager.users.${secrets.username}.home;
+        self.outputs.nixosConfigurations.${hostnames.desktop1}.config.home-manager.users.${secrets.username}.home
+        # weird fix to make 'home-manager switch' not complain about missing news
+        // {
+          config.news.json.output = pkgs.writeText "dummy-hm-news.json" (
+            builtins.toJSON {
+              entries = [ ];
+              display = "silent";
+            }
+          );
+        };
 
       devShells.${system}.default = pkgs.mkShell {
         packages = with pkgs; [
