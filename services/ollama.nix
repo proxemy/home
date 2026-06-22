@@ -1,4 +1,9 @@
-{ pkgs, lib, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}:
 let
   user = "ollama";
   #pkg = pkgs.ollama-rocm;
@@ -23,21 +28,28 @@ in
     syncModels = true; # adds/removes models according to 'loadModels'
   };
 
-  systemd.services.ollama = {
-    enable = true;
-    #confinement.enable = true;
+  systemd.services = {
+    ollama = {
+      enable = true;
+      #confinement.enable = true;
 
-    serviceConfig = {
-      PrivateNetwork = true;
-      PrivateDevices = lib.mkForce true;
-      PrivateIPC = true;
-      PrivateBPF = true;
+      serviceConfig = {
+        PrivateNetwork = true;
+        PrivateDevices = lib.mkForce true;
+        PrivateIPC = true;
+        PrivateBPF = true;
 
-      # i dont know why these are false by default
-      #CanIsolate = true;
-      #AllowIsolate = true;
+        # i dont know why these are false by default
+        #CanIsolate = true;
+        #AllowIsolate = true;
+      };
+
+      wantedBy = lib.mkForce [ ]; # disable autostart
     };
 
-    wantedBy = lib.mkForce [ ]; # disable autostart
+    # break dependence of 'multi-user.target' by removal to disable autostart
+    ollama-model-loader.wantedBy = lib.mkForce [
+      config.systemd.services.ollama.name
+    ];
   };
 }
