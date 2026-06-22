@@ -19,19 +19,21 @@
               pkgs.kdePackages.akregator
             ];
 
-            file.${target_opml} = {
-              source = source_opml;
-              force = true;
+            #file.${target_opml} = {
+            #  source = source_opml;
+            #  force = true;
 
-              #onChange = ''
-              #    cp --force ${source_opml} ${target_opml}
-              #    chmod u+rwx,go= ${target_opml}
-              #  '';
-            };
+            #  onChange = ''
+            #    cp --force ${source_opml} ${target_opml}
+            #    chmod u+rwx,go= ${target_opml}
+            #  '';
+            #};
 
-            #activation.akregator_feeds = home-manager.lib.hm.dag.entryAfter [ "writeBoudnary" ] ''
-            #  run umask 077 && cat ${source_opml} > ${target_opml}
-            #'';
+            activation.akregator_feeds = home-manager.lib.hm.dag.entryAfter [ "writeBoudnary" ] ''
+              run umask 077
+              run mkdir -p $(dirname "${target_opml}") || true
+              run cat "${source_opml}" > "${target_opml}"
+            '';
           };
 
         xdg.configFile."akregatorrc" = {
