@@ -107,7 +107,7 @@
         self.outputs.nixosConfigurations.${hostnames.desktop1}.config.home-manager.users.${secrets.username}.home;
 
       devShells.${system}.default = pkgs.mkShell {
-        buildInputs = with pkgs; [
+        packages = with pkgs; [
           git
           git-crypt
           nixos-generators
@@ -145,6 +145,12 @@
             inherit pkgs self;
             inherit (secrets.list_of) hostnames;
           }}";
+        };
+
+        test_shellcheck_all = {
+          type = "app";
+          meta.description = "Shellcheck all sh files pedantically.";
+          program = "${import ./tests/shellcheck_all.nix { inherit pkgs self; }}";
         };
 
         dd_installer = {
