@@ -25,7 +25,8 @@ in
   };
 
   # TODO: maybe move this to a dedicated profile/sound.nix
-  users.users.${secrets.username}.packages = with pkgs; [
+  #users.users.${secrets.username}.packages = with pkgs; [
+  programs.thunar.plugins = with pkgs; [
     thunar-volman
     xfce4-pulseaudio-plugin
   ];
@@ -107,6 +108,11 @@ in
           "general/repeat_urgent_blink" = true;
         };
       };
+    };
+
+    xdg = {
+      mimeApps.associations.added."text/plain" = "writer.desktop;org.xfce.mousepad.desktop";
+      configFile."mimeapps.list".force = true;
     };
   };
 }

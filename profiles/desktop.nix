@@ -16,6 +16,7 @@
     "${self}/programs/keepassxc.nix"
     "${self}/programs/office_package.nix"
     "${self}/programs/thunderbird.nix"
+    "${self}/programs/vlc.nix"
   ];
 
   hardware = {
@@ -33,11 +34,9 @@
   home-manager.users.${secrets.username}.services.udiskie.enable = true;
 
   users.users.${secrets.username}.packages = with pkgs; [
-    # TODO: Maybe turn vlc into its own programs/vlc.nix
     ffmpeg
     tor-browser
     torsocks
-    vlc
     yt-dlp
   ];
 

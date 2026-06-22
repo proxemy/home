@@ -21,6 +21,7 @@
     home-manager.nixosModules.home-manager
     {
       home-manager = {
+        backupFileExtension = "hm_bak";
         useGlobalPkgs = true;
         useUserPackages = true;
         users.${secrets.username} = import "${self}/profiles/home.nix" { inherit cfg secrets dotfiles; };

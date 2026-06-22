@@ -273,18 +273,28 @@ in
     # set default browser
     xdg.mimeApps =
       let
-        ff_mime = "org.mozilla.firefox.desktop";
+        #ff = "org.mozilla.firefox.desktop";
+        ff = "firefox.desktop";
+
+        mime_types = [
+          "application/x-extension-htm"
+          "application/x-extension-html"
+          "application/x-extension-shtml"
+          "application/x-extension-xht"
+          "application/x-extension-xhtml"
+          "application/xhtml+xml"
+          "text/html"
+          "x-scheme-handler/about"
+          "x-scheme-handler/chrome"
+          "x-scheme-handler/http"
+          "x-scheme-handler/https"
+          "x-scheme-handler/unknown"
+        ];
       in
       {
         enable = true;
-
-        defaultApplications = {
-          "text/html" = ff_mime;
-          "x-scheme-handler/http" = ff_mime;
-          "x-scheme-handler/https" = ff_mime;
-          "x-scheme-handler/about" = ff_mime;
-          "x-scheme-handler/unknown" = ff_mime;
-        };
+        defaultApplications = lib.attrsets.genAttrs mime_types (mime_type: ff);
+        associations.added = lib.attrsets.genAttrs mime_types (mime_type: ff);
       };
 
     home.sessionVariables =
