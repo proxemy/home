@@ -17,6 +17,7 @@
     "${self}/programs/office_package.nix"
     "${self}/programs/thunderbird.nix"
     "${self}/programs/vlc.nix"
+    "${self}/programs/redshift.nix"
   ];
 
   hardware = {
