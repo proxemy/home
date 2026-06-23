@@ -1,7 +1,14 @@
 { lib, secrets, ... }:
+let
+  enable_webinterface = true;
+in
 {
   services.pihole-ftl = {
     enable = true;
+
+    webserverEnabled = enable_webinterface;
+    openFirewallWebserver = enable_webinterface;
+    openFirewallDNS = true;
 
     # https://docs.pi-hole.net/ftldns/configfile/
     settings = {
@@ -42,7 +49,7 @@
   };
 
   services.pihole-web = {
-    enable = true;
+    enable = enable_webinterface;
     ports = [ "443s" ];
   };
 }
