@@ -11,24 +11,36 @@ let
 in
 
 {
-  services.ollama = {
-    enable = true;
-    inherit user;
-    group = user;
-    package = pkg;
+  services = {
+    ollama = {
+      enable = true;
+      inherit user;
+      group = user;
+      package = pkg;
 
-    loadModels = [
-      #"codellama:70b"
-      #"deepseek-v3"
-      "deepseek-coder:33b"
-      "gemma4:31b"
-      "qwen3.6:35b"
-    ];
+      loadModels = [
+        #"codellama:70b"
+        #"deepseek-v3"
+        "deepseek-coder:33b"
+        "gemma4:31b"
+        "qwen3.6:35b"
+      ];
 
-    syncModels = true; # adds/removes models according to 'loadModels'
+      syncModels = true; # adds/removes models according to 'loadModels'
+    };
+
+    open-webui = {
+      enable = true;
+      openFirewall = true;
+    };
   };
 
+  nixpkgs.config.allowUnfreePackages = lib.optional config.services.open-webui.enable "open-webui";
+
   systemd.services = {
+
+    open-webui.wantedBy = lib.mkForce [ ];
+
     ollama = {
       enable = true;
       #confinement.enable = true;
