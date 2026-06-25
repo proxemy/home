@@ -25,6 +25,7 @@
     gnupg
     jq
     libxml2
+    nethogs
     python3
     ripgrep
     unzip

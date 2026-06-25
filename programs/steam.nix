@@ -28,7 +28,7 @@
         wantedBy = [ "timers.target" ];
         timerConfig = {
           OnBootSec = 0;
-          OnCalendar = "Mon..Fri *-*-* 00..18:*";
+          OnCalendar = "Mon..Fri *-*-* 00..17:*:00";
         };
 
         unitConfig = {
@@ -63,13 +63,9 @@
             ${coreutils}/bin/chmod +x ${steam_exec} 2&>/dev/null || true
           '';
 
-        postStop =
-          let
-            systemctl = "${lib.getBin config.systemd.package}/bin/systemctl";
-          in
-          ''
-            ${systemctl} start ${name}.timer
-          '';
+        postStop = ''
+          ${lib.getBin config.systemd.package}/bin/systemctl start ${name}.timer
+        '';
       };
     };
 }
