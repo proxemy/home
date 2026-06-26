@@ -39,7 +39,18 @@ in
 
   systemd.services = {
 
-    open-webui.wantedBy = lib.mkForce [ ];
+    open-webui = rec {
+      requiredBy = lib.mkForce [ config.systemd.services.ollama.name ];
+      requires = requiredBy;
+      serviceConfig = {
+        IPAddressDeny = "any";
+        IPAddressAllow = "localhost";
+        #PrivateNetwork = true;
+        PrivateDevices = lib.mkForce true;
+        PrivateIPC = true;
+        PrivateBPF = true;
+      };
+    };
 
     ollama = {
       enable = true;
@@ -60,8 +71,11 @@ in
     };
 
     # break dependence of 'multi-user.target' by removal to disable autostart
-    ollama-model-loader.wantedBy = lib.mkForce [
-      config.systemd.services.ollama.name
-    ];
+    ollama-model-loader = rec {
+      wantedBy = lib.mkForce [
+        config.systemd.services.ollama.name
+      ];
+      requires = wantedBy;
+    };
   };
 }

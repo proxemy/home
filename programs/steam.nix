@@ -55,12 +55,12 @@
           in
           with pkgs;
           ''
-            ${coreutils}/bin/chmod -x ${steam_exec} 2&>/dev/null || true
             if pid="$(${procps}/bin/pidof steam)"; then
               ${procps}/bin/kill "$pid"
             fi
-            ${coreutils}/bin/sleep 58
-            ${coreutils}/bin/chmod +x ${steam_exec} 2&>/dev/null || true
+            #${coreutils}/bin/chmod -x ${steam_exec} 2&>/dev/null || true
+            #${coreutils}/bin/sleep 58
+            #${coreutils}/bin/chmod +x ${steam_exec} 2&>/dev/null || true
           '';
 
         postStop = ''
