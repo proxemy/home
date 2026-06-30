@@ -108,6 +108,10 @@ in
           "general/urgent_blink" = true;
           "general/repeat_urgent_blink" = true;
         };
+
+        xfce4-screesaver = {
+          "lock/saver-activation/delay" = 1;
+        };
       };
     };
 
