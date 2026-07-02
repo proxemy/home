@@ -2,6 +2,7 @@
   pkgs,
   lib,
   config,
+  cfg,
   ...
 }:
 let
@@ -39,9 +40,9 @@ in
 
   systemd.services = {
 
-    open-webui = rec {
-      requiredBy = lib.mkForce [ config.systemd.services.ollama.name ];
-      requires = requiredBy;
+    open-webui = {
+      requires = [ config.systemd.services.ollama.name ];
+
       serviceConfig = {
         IPAddressDeny = "any";
         IPAddressAllow = "localhost";
@@ -53,11 +54,16 @@ in
     };
 
     ollama = {
-      enable = true;
-      #confinement.enable = true;
+      environment = {
+        OLLAMA_NO_CLOUD = "1";
+        OLLAMA_NOHISTORY = "1";
+        OLLAMA_DEBUG = if cfg.debug then "1" else "0";
+      };
 
       serviceConfig = {
-        PrivateNetwork = true;
+        IPAddressDeny = "any";
+        AddressAllow = "localhost";
+        #PrivateNetwork = true;
         PrivateDevices = lib.mkForce true;
         PrivateIPC = true;
         PrivateBPF = true;
@@ -67,15 +73,34 @@ in
         #AllowIsolate = true;
       };
 
+      after = [ config.systemd.services.ollama-model-loader.name ];
+      requires = [ config.systemd.services.ollama-model-loader.name ];
       wantedBy = lib.mkForce [ ]; # disable autostart
     };
 
-    # break dependence of 'multi-user.target' by removal to disable autostart
-    ollama-model-loader = rec {
-      wantedBy = lib.mkForce [
-        config.systemd.services.ollama.name
-      ];
-      requires = wantedBy;
-    };
+    ollama-model-loader =
+      let
+        ollama_exec = "${lib.getBin config.services.ollama.package}/bin/ollama";
+        procps = "${pkgs.procps}/bin";
+      in
+      {
+        # custom launch behavior allows downloading of models while the main
+        # ollama.service has only access to localhosts network.
+
+        after = lib.mkForce [ "network-online.target" ];
+        bindsTo = lib.mkForce [ ];
+
+        preStart = "${ollama_exec} serve & sleep 5";
+        serviceConfig =
+          (builtins.removeAttrs config.systemd.services.ollama.serviceConfig [
+            "IPAddressDeny"
+            "AddressAllow"
+            "ExecStart"
+            "Restart"
+          ])
+          // {
+            Type = lib.mkForce "oneshot";
+          };
+      };
   };
 }
