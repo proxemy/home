@@ -62,10 +62,6 @@
             #${coreutils}/bin/sleep 58
             #${coreutils}/bin/chmod +x ${steam_exec} 2&>/dev/null || true
           '';
-
-        postStop = ''
-          ${lib.getBin config.systemd.package}/bin/systemctl start ${name}.timer
-        '';
       };
     };
 }
