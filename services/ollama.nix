@@ -42,6 +42,7 @@ in
 
     open-webui = {
       requires = [ config.systemd.services.ollama.name ];
+      wantedBy = lib.mkForce [ ]; # remove multi-user.target to disable autostart
 
       serviceConfig = {
         IPAddressDeny = "any";
@@ -78,29 +79,26 @@ in
       wantedBy = lib.mkForce [ ]; # disable autostart
     };
 
-    ollama-model-loader =
-      let
-        ollama_exec = "${lib.getBin config.services.ollama.package}/bin/ollama";
-        procps = "${pkgs.procps}/bin";
-      in
-      {
-        # custom launch behavior allows downloading of models while the main
-        # ollama.service has only access to localhosts network.
+    ollama-model-loader = {
+      # custom launch behavior allows downloading of models while the main
+      # ollama.service has only access to localhosts network.
 
-        after = lib.mkForce [ "network-online.target" ];
-        bindsTo = lib.mkForce [ ];
+      after = lib.mkForce [ "network-online.target" ];
+      #bindsTo = lib.mkForce [ ];
+      wantedBy = lib.mkForce [ ]; # remove multi-user.target to disable autostart
 
-        preStart = "${ollama_exec} serve & sleep 5";
-        serviceConfig =
-          (builtins.removeAttrs config.systemd.services.ollama.serviceConfig [
-            "IPAddressDeny"
-            "AddressAllow"
-            "ExecStart"
-            "Restart"
-          ])
-          // {
-            Type = lib.mkForce "oneshot";
-          };
-      };
+      preStart = "${lib.getBin config.services.ollama.package}/bin/ollama serve & sleep 5";
+
+      serviceConfig =
+        (builtins.removeAttrs config.systemd.services.ollama.serviceConfig [
+          "IPAddressDeny"
+          "AddressAllow"
+          "ExecStart"
+          "Restart"
+        ])
+        // {
+          Type = lib.mkForce "oneshot";
+        };
+    };
   };
 }
