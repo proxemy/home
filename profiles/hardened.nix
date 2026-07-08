@@ -26,6 +26,9 @@
   # TODO: load kernel modules required by iptables that are disallowed by 'modules_disabled'
   boot.kernel.sysctl = {
     #"kernel.modules_disabled" = 1;
+    "kernel.kptr_restrict" = 2; # hides kernel pointers in /proc, 2 for even root (may break things)
+    "kernel.yama.ptrace_scope" = 1;
+    "kernel.unprivileged_bpf_disabled" = 1;
     #"kernel.unprivileged_userns_clone" = 0;
 
     "kernel.printk" = if cfg.debug then 6 else 4;
