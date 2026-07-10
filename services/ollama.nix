@@ -63,7 +63,7 @@ in
 
       serviceConfig = {
         IPAddressDeny = "any";
-        AddressAllow = "localhost";
+        IPAddressAllow = "localhost";
         #PrivateNetwork = true;
         PrivateDevices = lib.mkForce true;
         PrivateIPC = true;
@@ -84,7 +84,7 @@ in
       # ollama.service has only access to localhosts network.
 
       after = lib.mkForce [ "network-online.target" ];
-      #bindsTo = lib.mkForce [ ];
+      bindsTo = lib.mkForce [ ];
       wantedBy = lib.mkForce [ ]; # remove multi-user.target to disable autostart
 
       preStart = "${lib.getBin config.services.ollama.package}/bin/ollama serve & sleep 5";
@@ -101,4 +101,17 @@ in
         };
     };
   };
+
+  systemd.sockets.open-webui =
+    let
+      open-webui = config.systemd.services.open-webui;
+    in
+    {
+      description = "Launches ${open-webui.name} (ollama)";
+      wantedBy = [ "sockets.target" ];
+      socketConfig = {
+        ListenStream = 8080;
+        Accept = false; # pass the port to the service and only start it once.
+      };
+    };
 }
