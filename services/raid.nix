@@ -59,10 +59,12 @@ let
     {
       mdadm_detail = "${mdadm} --detail ${mount.source}";
       mdadm_stop = "${mdadm} --stop --verbose ${mount.source}";
-      mdadm_asssemble =
-        "${mdadm} --assemble --scan --no-degraded --verbose ${mount.source} "
+      mdadm_asssemble = # --scan --no-degraded
+        "${mdadm} --assemble --verbose ${mount.source} "
         + builtins.toString (builtins.map (num: "/dev/mapper/luks" + num) drive_count);
+      mdadm_check = "${mdadm} --misc --action=check ${mount.source}";
 
+      # TODO: make this generic over an arbitrary range
       cryptsetup_open_1 = cryptsetup_open "sda" "1";
       cryptsetup_open_2 = cryptsetup_open "sdb" "2";
       cryptsetup_open_3 = cryptsetup_open "sdc" "3";
@@ -150,6 +152,8 @@ in
         sudo ${cmds.cryptsetup_open_3}
       '';
 
+      raid-check = "sudo ${cmds.mdadm_check}";
+
       raid-help = ''
         echo -e " \
         Format new device:
@@ -167,12 +171,14 @@ in
           # ignore bad block log, to force a stale assembly
           mdadm --assemble /dev/md0 --update=force-no-bbl [ /dev/mapper/luks1, ]
 
-        Check (scrub) RAID (alt: repair, recover):
-          mdadm --misc --action=check /dev/md0
+        Check/Repair (scrub):
+          mdadm --misc --action=[check/repair/frozen] /dev/md0
           echo check | sudo tee /sys/block/md0/md/sync_action
 
         Docs:
           https://docs.kernel.org/admin-guide/device-mapper/dm-raid.html
+          https://www.man7.org/linux/man-pages/man8/mdadm.8.html
+          https://www.man7.org/linux/man-pages/man4/md.4.html
         "
       '';
 
@@ -186,10 +192,6 @@ in
         raid-stop
         raid-lock
         raid-status
-      '';
-
-      raid-scrub = ''
-        echo check | sudo tee /sys/block/md0/md/sync_action
       '';
 
       raid-aliases = ''
