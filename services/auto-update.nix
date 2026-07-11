@@ -60,6 +60,13 @@ in
     };
   };
 
+  systemd.services.nixos-upgrade = {
+    serviceConfig = {
+      Nice = 19;
+      IOSchedulingPriority = 7;
+    };
+  };
+
   system.activationScripts = {
     init-home-git-repo =
       let
