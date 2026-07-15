@@ -1,6 +1,7 @@
 {
   pkgs,
   lib,
+  config,
   secrets,
   ...
 }:
@@ -106,12 +107,37 @@ in
         where = mount.target;
       }
     ];
+
     automounts = [
       {
         wantedBy = [ "multi-user.target" ];
         where = mount.target;
       }
     ];
+
+    services.raid-repair = {
+      description = "RAID repair";
+
+      conflicts = [ config.systemd.services.nixos-upgrade.name ];
+
+      path = with pkgs; [
+        mdadm
+        gnugrep
+        coreutils-full
+      ];
+
+      serviceConfig.Type = "simple";
+
+      # TODO: unmount raid and e2fsck
+      script = with pkgs; ''
+        mdadm --verbose --misc --action=repair ${mount.source}
+        sleep 3s
+
+        while grep "repair" /proc/mdstat; do
+          sleep 30m
+        done
+      '';
+    };
   };
 
   environment = {
