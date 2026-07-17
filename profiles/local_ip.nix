@@ -20,8 +20,16 @@
     requiredBy = [ "multi-user.target" ];
     enableStrictShellChecks = true;
     serviceConfig.Type = "oneshot";
-    script = with pkgs; ''
-      ${iproute2}/bin/ip -brief -4 addr | ${gnugrep}/bin/grep --quiet "${host.ip}"
+    path = with pkgs; [
+      iproute2
+      gnugrep
+      #coreutils-full
+      findutils
+    ];
+    script = ''
+      out=$(ip -brief -oneline -4 addr show to "${host.ip}" | xargs)
+      echo "$out"
+      [[ "$out" =~ ${host.ip} ]]
     '';
   };
 }
