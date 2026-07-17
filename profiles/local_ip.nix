@@ -17,6 +17,7 @@
   systemd.services.local-ip-check = {
     description = "Check requested LAN-IPv4";
     after = [ "network.target" ];
+    requiredBy = [ "multi-user.target" ];
     enableStrictShellChecks = true;
     serviceConfig.Type = "oneshot";
     script = with pkgs; ''
