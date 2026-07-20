@@ -7,7 +7,10 @@
 }:
 {
   # https://nixos.wiki/wiki/Steam
-  programs.steam.enable = true;
+  programs = {
+    steam.enable = true;
+    gamemode.enable = true;
+  };
 
   nixpkgs.config.allowUnfreePackages = [
     "steam"

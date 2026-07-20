@@ -40,9 +40,14 @@
     nvidia = {
       #enabled = true; # implicitly enabled, cant be set multiple times
       open = true;
-      gsp.enable = true;
-      dynamicBoost.enable = true;
+      nvidiaSettings =  true;
       package = config.boot.kernelPackages.nvidiaPackages.latest;
+
+      gsp.enable = true;
+      videoAcceleration = true;
+      forceFullCompositionPipeline = true;
+      dynamicBoost.enable = false;
+      powerManagement.enable = false;
     };
   };
 
