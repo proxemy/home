@@ -8,7 +8,7 @@
 let
   # TODO test and refine this maybe
   mdadm_event_handler = pkgs.writeShellScript "mdadm_event_handler.sh" ''
-    ${pkgs.systemd}/bin/systemd-cat --identifier=mdadm --priority=alert printf "$*"
+    ${lib.getBin pkgs.systemd}/bin/systemd-cat --identifier=mdadm --priority=alert ${lib.getBin pkgs.coreutils-full}/bin/printf "$*"
   '';
 
   raid = {
