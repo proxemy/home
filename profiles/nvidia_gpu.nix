@@ -40,7 +40,7 @@
     nvidia = {
       #enabled = true; # implicitly enabled, cant be set multiple times
       open = true;
-      nvidiaSettings =  true;
+      nvidiaSettings = true;
       package = config.boot.kernelPackages.nvidiaPackages.latest;
 
       gsp.enable = true;

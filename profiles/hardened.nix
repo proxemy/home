@@ -10,6 +10,26 @@
   security = {
     #auditd.enable = true;
     apparmor.enable = true;
+    polkit.enable = true;
+
+    sudo.enable = false;
+    run0 = {
+      enable = true;
+      enableSudoAlias = true;
+    };
+  };
+
+  security.wrappers = {
+    chsh.enable = false;
+    fusermount.enable = false;
+    fusermount3.enable = false;
+    newgidmap.setuid = false;
+    newgrp.setuid = lib.mkForce false;
+    newuidmap.setuid = false;
+    pkexec.setuid = lib.mkForce false;
+    sg.enable = false;
+    su.enable = false;
+    sudoedit.enable = false;
   };
 
   networking.firewall = {
