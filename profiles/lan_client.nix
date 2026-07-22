@@ -5,31 +5,39 @@
   systemd.network.networks."10-dhcp" = {
     matchConfig.Name = "en* eth* wlan*";
 
-    networkConfig = {
-      DHCP = "ipv4";
-    };
+    networkConfig.DHCP = "ipv4";
 
-    dhcpV4Config = {
-      RequestAddress = host.ip;
-    };
+    dhcpV4Config.RequestAddress = host.ip;
   };
 
-  systemd.services.local-ip-check = {
+  systemd.services.lan-check = {
     description = "Check requested LAN-IPv4";
-    after = [ "network.target" ];
+    after = [ "network-online.target" ];
     requiredBy = [ "multi-user.target" ];
     enableStrictShellChecks = true;
     serviceConfig.Type = "oneshot";
+
     path = with pkgs; [
       iproute2
       gnugrep
       #coreutils-full
       findutils
     ];
+
+    # TODO: status check of tor relay and systemd logging
     script = ''
-      out=$(ip -brief -oneline -4 addr show to "${host.ip}" | xargs)
-      echo "$out"
-      [[ "$out" =~ ${host.ip} ]]
+      ret=0
+
+      ip=$(ip -brief -oneline -4 addr show to "${host.ip}" | xargs)
+
+      if [[ ! "$ip" =~ ${host.ip} ]]; then
+        echo "Expected ${host.ip} but found: $ip"
+        ret=$((ret | 1))
+      else
+        echo "$ip"
+      fi
+
+      exit $ret
     '';
   };
 }

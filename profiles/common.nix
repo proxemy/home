@@ -14,7 +14,7 @@
     secrets.module
     "${self}/profiles/hardened.nix"
     "${self}/profiles/cli_minimal.nix"
-    "${self}/profiles/local_ip.nix"
+    "${self}/profiles/lan_client.nix"
     "${self}/services/auto-update.nix"
     "${self}/services/sshd.nix"
 
