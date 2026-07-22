@@ -52,7 +52,7 @@
     #"kernel.unprivileged_userns_clone" = 0;
 
     "net.core.bpf_jit_harden" = 2;
-    "user.max_user_namespaces" = 0; # disable user namespaces
+    #"user.max_user_namespaces" = 0; # disable user namespaces
     "kernel.kexec_load_disabled" = 1; # disable builtin kexec
 
     "kernel.printk" = if cfg.debug then 6 else 4;
@@ -61,8 +61,8 @@
   boot.kernelParams = [
     "hardened_usercopy=1"
     "slab_nomerge"
-    "init_on_alloc=1"
-    "init_on_free=1"
+    #"init_on_alloc=1" # zero out on alloc/free
+    #"init_on_free=1"
     "pti=on"
     "vsyscall=none"
   ];
