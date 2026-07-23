@@ -32,10 +32,14 @@
     sudoedit.enable = false;
   };
 
-  networking.firewall = {
-    logRefusedConnections = true;
-    logRefusedPackets = true;
-    logReversePathDrops = true;
+  networking = {
+    #enableIPv6 = false;
+
+    firewall = {
+      logRefusedConnections = true;
+      logRefusedPackets = true;
+      logReversePathDrops = true;
+    };
   };
 
   nix.settings.allowed-users = [ secrets.username ];
@@ -52,6 +56,7 @@
     #"kernel.unprivileged_userns_clone" = 0;
 
     "net.core.bpf_jit_harden" = 2;
+    "net.ipv6.conf.all.accept_ra" = 0; # drop ipv6 router advertisements
     #"user.max_user_namespaces" = 0; # disable user namespaces
     "kernel.kexec_load_disabled" = 1; # disable builtin kexec
 
