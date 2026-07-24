@@ -27,8 +27,7 @@ in
     };
     server = {
       enable = true;
-      # TODO: make it host specific, not for all IPs
-      # TODO: authentification/verificytion!
+      # TODO auth
       exports = builtins.toString (
         builtins.map (ip: nas_cfg.root + " " + ip + nas_cfg.options + "\n") secrets.list_of.ips
       );
