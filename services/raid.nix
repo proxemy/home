@@ -2,10 +2,13 @@
   pkgs,
   lib,
   config,
+  self,
   secrets,
   ...
 }:
 let
+  devices = import "${self}/secrets/raid_devices.nix" lib;
+
   # TODO test and refine this maybe
   mdadm_event_handler = pkgs.writeShellScript "mdadm_event_handler.sh" ''
     ${lib.getBin pkgs.systemd}/bin/systemd-cat --identifier=mdadm --priority=alert ${lib.getBin pkgs.coreutils-full}/bin/printf "$*"
@@ -42,41 +45,36 @@ let
 
   # sudo commands for shell aliases and sudoers file
   cmds =
-    with lib;
     let
-      mdadm = "${getBin pkgs.mdadm}/bin/mdadm";
-      cryptsetup = "${getBin pkgs.cryptsetup}/bin/cryptsetup";
-      systemctl = "${getBin pkgs.systemd}/bin/systemctl";
-      umount = "${getBin pkgs.util-linux}/bin/umount";
-
-      drive_count = [
-        "1"
-        "2"
-        "3"
-      ];
-      cryptsetup_open = dev: num: "${cryptsetup} luksOpen /dev/${dev} luks${num}";
+      mdadm = "${lib.getBin pkgs.mdadm}/bin/mdadm";
+      cryptsetup = "${lib.getBin pkgs.cryptsetup}/bin/cryptsetup";
+      systemctl = "${lib.getBin pkgs.systemd}/bin/systemctl";
+      umount = "${lib.getBin pkgs.util-linux}/bin/umount";
 
     in
     {
-      mdadm_detail = "${mdadm} --detail ${mount.source}";
+      mdadm_detail = "${mdadm} --detail --test --prefer=by-uuid ${mount.source}";
       mdadm_stop = "${mdadm} --stop --verbose ${mount.source}";
       mdadm_asssemble = # --scan --no-degraded
         "${mdadm} --assemble --verbose ${mount.source} "
-        + builtins.toString (builtins.map (num: "/dev/mapper/luks" + num) drive_count);
+        + builtins.toString (builtins.map (id: "/dev/mapper/${id}") devices.ids);
       mdadm_check = "${mdadm} --misc --action=check ${mount.source}";
-
-      # TODO: make this generic over an arbitrary range
-      cryptsetup_open_1 = cryptsetup_open "sda" "1";
-      cryptsetup_open_2 = cryptsetup_open "sdb" "2";
-      cryptsetup_open_3 = cryptsetup_open "sdc" "3";
-      cryptsetup_close =
-        "${cryptsetup} luksClose " + (builtins.toString (builtins.map (n: "luks" + n) drive_count));
 
       systemctl_stop = "${systemctl} stop ${builtins.toString systemd_service_names_list}";
       systemctl_start = "${systemctl} start ${builtins.toString systemd_service_names_list}";
 
       umount = "${umount} ${mount.source}";
-    };
+
+      cryptsetup_close = "${cryptsetup} luksClose " + (builtins.toString devices.ids);
+    }
+    //
+      # cryptsetup_open_[0..n]
+      builtins.listToAttrs (
+        lib.imap (i: id: {
+          name = "cryptsetup_open_${builtins.toString i}";
+          value = "${cryptsetup} luksOpen /dev/disk/by-id/${id} ${id}";
+        }) devices.ids
+      );
 
 in
 {
@@ -129,14 +127,7 @@ in
       serviceConfig.Type = "simple";
 
       # TODO: unmount raid and e2fsck
-      script = with pkgs; ''
-        mdadm --verbose --misc --action=repair ${mount.source}
-        sleep 3s
-
-        while grep "repair" /proc/mdstat; do
-          sleep 30m
-        done
-      '';
+      script = "mdadm --verbose --wait --misc --action=repair ${mount.source}";
     };
   };
 
@@ -153,7 +144,7 @@ in
     shellAliases = {
       #dmsetup ls --tree -o blkdevname,uuid
       raid-status = ''
-        lsblk -s ${mount.source} -o NAME,SIZE,FSTYPE,FSVER,LABEL,FSAVAIL,FSUSED,MOUNTPOINTS
+        lsblk -s ${mount.source} -o NAME,SIZE,FSTYPE,FSVER,LABEL,MOUNTPOINTS,MODEL,SERIAL
         sudo ${cmds.mdadm_detail}
         cat /proc/mdstat
       '';
@@ -172,11 +163,11 @@ in
 
       raid-lock = "sudo ${cmds.cryptsetup_close}";
 
-      raid-unlock = ''
-        sudo ${cmds.cryptsetup_open_1}
-        sudo ${cmds.cryptsetup_open_2}
-        sudo ${cmds.cryptsetup_open_3}
-      '';
+      raid-unlock =
+        let
+          cmd = i: cmds."cryptsetup_open_${i}";
+        in
+        builtins.toString (builtins.map (i: "sudo ${cmd i}\n") devices.range);
 
       raid-check = "sudo ${cmds.mdadm_check}";
 
@@ -200,6 +191,7 @@ in
         Check/Repair (scrub):
           mdadm --misc --action=[check/repair/frozen] /dev/md0
           echo check | sudo tee /sys/block/md0/md/sync_action
+          dmsetup staus / info <dm-device>
 
         Docs:
           https://docs.kernel.org/admin-guide/device-mapper/dm-raid.html
