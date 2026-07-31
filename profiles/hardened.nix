@@ -26,10 +26,19 @@
     newgidmap.setuid = false;
     newgrp.setuid = lib.mkForce false;
     newuidmap.setuid = false;
-    pkexec.setuid = lib.mkForce false;
+    pkexec.setuid = false;
     sg.enable = false;
     su.enable = false;
     sudoedit.enable = false;
+  };
+
+  security.polkit = {
+    enablePkexecWrapper = false;
+    extraArgs = lib.optionals cfg.debug [
+      "--debug"
+      "--log-level=debug"
+    ];
+    #adminIdentities = [ ];
   };
 
   networking = {
@@ -73,6 +82,8 @@
   ];
 
   boot.kernelPackages = lib.mkDefault pkgs.linuxPackages_latest;
+
+  boot.tmp.cleanOnBoot = true;
 
   system.etc.overlay.mutable = false;
 }
