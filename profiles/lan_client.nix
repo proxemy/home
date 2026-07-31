@@ -13,6 +13,7 @@
   systemd.services.lan-check = {
     description = "Check requested LAN-IPv4";
     after = [ "network-online.target" ];
+    requires = [ "network-online.target" ];
     requiredBy = [ "multi-user.target" ];
     enableStrictShellChecks = true;
     serviceConfig.Type = "oneshot";
