@@ -62,6 +62,7 @@
     serviceConfig = {
       Restart = lib.mkForce "always";
       RestartSec = 30;
+      CPUQuota = "5%";
     };
   };
 }
