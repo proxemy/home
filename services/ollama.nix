@@ -3,12 +3,13 @@
   lib,
   config,
   cfg,
+  secrets,
   ...
 }:
 let
   user = "ollama";
-  #pkg = pkgs.ollama-rocm;
-  pkg = pkgs.ollama-vulkan;
+  pkg = pkgs.ollama-cuda;
+  #pkg = pkgs.ollama-vulkan;
 in
 
 {
@@ -22,9 +23,15 @@ in
       loadModels = [
         #"codellama:70b"
         #"deepseek-v3"
-        #"deepseek-coder:33b"
+        "deepseek-coder:33b"
         "gemma4:31b"
         "qwen3.6:35b"
+
+        # auxiliary embeding models, see RAG_EMBEDDING_MODEL
+        "all-minilm"
+        #"nomic-embed-text"
+        #"mxbai-embed-large"
+
         #"smollm:135m" # small test model
       ];
 
@@ -43,15 +50,26 @@ in
     let
       hardened_service = {
         IPAddressDeny = "any";
-        IPAddressAllow = "localhost";
-        PrivateDevices = lib.mkForce true;
-        PrivateIPC = true;
+        IPAddressAllow = "localhost"; # TODO: only allow certain local IPC ports
+        LockPersonality = true;
+        MemoryDenyWriteExecute = lib.mkForce true;
+        NoNewPrivileges = true;
         PrivateBPF = true;
+        #PrivateDevices = lib.mkForce true; # required for cuda
+        PrivateIPC = true;
         PrivateTmp = true;
         PrivateUsers = true;
-        NoNewPrivileges = true;
+        ProtectControlGroups = true;
+        ProtectHome = lib.mkForce "read-only"; # true
+        ProtectHostname = true;
+        ProtectKernelLogs = true;
+        ProtectKernelModules = true;
+        ProtectKernelTunables = true;
+        ProtectProc = "invisible";
         ProtectSystem = "strict";
-        LockPersonality = true;
+        RestrictNamespaces = true;
+        RestrictRealtime = true;
+        RestrictSUIDSGID = true;
       };
     in
 
@@ -62,15 +80,22 @@ in
         wantedBy = lib.mkForce [ ]; # remove multi-user.target to disable autostart
 
         environment = {
-          GLOBAL_LOG_LEVEL = if cfg.debug then "DEBUG" else "INFO";
-          LOG_LEVEL = if cfg.debug then "DEBUG" else "INFO";
+          GLOBAL_LOG_LEVEL = if cfg.debug then "DEBUG" else "ERROR";
+          LOG_LEVEL = if cfg.debug then "DEBUG" else "ERROR";
           OFFLINE_MODE = "true";
+          HF_HUB_OFFLINE = "true";
+
           RAG_EMBEDDING_ENGINE = "ollama";
-          #HF_HUB_OFFLINE = "1";
-          #RAG_EMBEDDING_MODEL_AUTO_UPDATE = "false";
-          #RAG_RERANKING_MODEL_AUTO_UPDATE = "false";
-          #WHISPER_MODEL_AUTO_UPDATE = "false";
+          RAG_EMBEDDING_MODEL = "all-minilm"; # "nomic-embed-text"; "mxbai-embed-large";
+          RAG_EMBEDDING_MODEL_AUTO_UPDATE = "false";
+          RAG_RERANKING_MODEL_AUTO_UPDATE = "false";
+          WHISPER_MODEL_AUTO_UPDATE = "false";
+
           #CORS_ALLOW_ORIGIN = "http://${config.services.open-webui.host}";
+
+          WEBUI_ADMIN_EMAIL = "${secrets.username}@a.b";
+          WEBUI_ADMIN_PASSWORD = secrets.username;
+          WEBUI_ADMIN_NAME = secrets.username;
         };
 
         serviceConfig = hardened_service;
@@ -84,7 +109,13 @@ in
         environment = {
           OLLAMA_NO_CLOUD = "1";
           OLLAMA_NOHISTORY = "1";
+
+          #OLLAMA_CONTEXT_LENGTH = 0;
+          #OLLAMA_FLASH_ATTENTION = "1";
+
+          OLLAMA_VERBOSE = if cfg.debug then "1" else "0";
           OLLAMA_DEBUG = if cfg.debug then "1" else "0";
+          OLLAMA_DEBUG_LOG_REQUESTS = if cfg.debug then "1" else "0";
         };
 
         serviceConfig = hardened_service;
@@ -99,6 +130,8 @@ in
         wantedBy = lib.mkForce [ ]; # remove multi-user.target to disable autostart
 
         preStart = "${lib.getBin config.services.ollama.package}/bin/ollama serve & sleep 5";
+
+        environment = lib.mkForce config.systemd.services.ollama.environment;
 
         serviceConfig =
           (builtins.removeAttrs config.systemd.services.ollama.serviceConfig [
