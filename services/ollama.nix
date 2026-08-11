@@ -10,6 +10,7 @@ let
   user = "ollama";
   pkg = pkgs.ollama-cuda;
   #pkg = pkgs.ollama-vulkan;
+  #systemd = config.systemd.package;
 in
 
 {
@@ -147,16 +148,17 @@ in
     };
 
   /*
+    open-webui is not able the take over a connection FD, tries to bind to 8080 directly.
     systemd.sockets.open-webui =
       let
-        open-webui = config.systemd.services.open-webui;
+        open-webui = config.services.open-webui;
       in
       {
-        description = "Launch ${open-webui.name}";
         wantedBy = [ "sockets.target" ];
         socketConfig = {
           ListenStream = open-webui.port;
-          #Accept = false; # pass the port to the service and only start it once.
+          Accept = false;
+          BindToDevice = "lo";
         };
       };
   */
