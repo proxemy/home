@@ -41,9 +41,6 @@
     yt-dlp
   ];
 
-  # hardened allocator (scudo/graphene-hardened) often fail with desktop apps eg.firefox
-  environment.memoryAllocator.provider = lib.mkForce "libc";
-
   boot.binfmt.emulatedSystems = lib.lists.remove host.platform cfg.supported_systems;
 
   services = {

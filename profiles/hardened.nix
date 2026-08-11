@@ -54,7 +54,9 @@
   nix.settings.allowed-users = [ secrets.username ];
 
   # breaks alot of desktop apps
-  environment.memoryAllocator.provider = lib.mkDefault "graphene-hardened";
+  # nix apparently has a double free caught by graphene-hardened, while auto-updating
+  # fallback to libc
+  #environment.memoryAllocator.provider = lib.mkDefault "graphene-hardened";
 
   # TODO: load kernel modules required by iptables that are disallowed by 'modules_disabled'
   boot.kernel.sysctl = {
