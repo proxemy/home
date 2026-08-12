@@ -34,7 +34,7 @@
 
       ORPort = [ 9001 ]; # Onion Routing Port for data
       #DirPort = [ 9030 ]; # Directory Port for node organisation # not for bridge relays
-      #ConnLimit = 200;
+      ConnLimit = 200;
 
       HeartbeatPeriod = "2 hours"; # log message interval, default: 6 hours
       EntryStatistics = true;
@@ -62,7 +62,7 @@
     serviceConfig = {
       Restart = lib.mkForce "always";
       RestartSec = 30;
-      CPUQuota = "5%";
+      #CPUQuota = "5%";
     };
   };
 }
