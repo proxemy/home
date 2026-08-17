@@ -26,10 +26,11 @@ in
         #"deepseek-v3"
         "deepseek-coder:33b"
         "gemma4:31b"
-        "qwen3.6:35b"
+        "qwen3.8:27b"
+        #"qwen3.6:35b"
 
         # auxiliary embeding models, see RAG_EMBEDDING_MODEL
-        "all-minilm"
+        "all-minilm:latest"
         #"nomic-embed-text"
         #"mxbai-embed-large"
 
@@ -122,29 +123,60 @@ in
         serviceConfig = hardened_service;
       };
 
-      ollama-model-loader = {
-        # custom launch behavior allows downloading of models while the main
-        # ollama.service has only access to localhosts network.
+      ollama-model-loader =
+        # models must contain a ':<tag>' definition for path lookup below, use ':latest' if missing
+        assert builtins.all (m: (builtins.match "(.+:.+)" m != null)) config.services.ollama.loadModels;
+        let
+          ollama = "${lib.getBin config.services.ollama.package}/bin/ollama";
+          models = config.services.ollama.loadModels;
+          library = "${config.services.ollama.home}/models/manifests/registry.ollama.ai/library";
+        in
+        {
+          # custom launch behavior allows downloading of models while the main
+          # ollama.service has only access to localhosts network.
 
-        after = lib.mkForce [ "network-online.target" ];
-        bindsTo = lib.mkForce [ ];
-        wantedBy = lib.mkForce [ ]; # remove multi-user.target to disable autostart
+          after = lib.mkForce [ "network-online.target" ];
+          bindsTo = lib.mkForce [ ];
+          wantedBy = lib.mkForce [ ]; # remove multi-user.target to disable autostart
 
-        preStart = "${lib.getBin config.services.ollama.package}/bin/ollama serve & sleep 5";
+          preStart = ''
+            all_models_found=true
 
-        environment = lib.mkForce config.systemd.services.ollama.environment;
+            for model in ${builtins.toString models}; do
+              if [ ! -f "${library}"/"''${model/":"/"/"}" ]; then
+                echo Missing model: "$model"
+                all_models_found=false
+              fi
+            done
 
-        serviceConfig =
-          (builtins.removeAttrs config.systemd.services.ollama.serviceConfig [
-            "IPAddressDeny"
-            "AddressAllow"
-            "ExecStart"
-            "Restart"
-          ])
-          // {
-            Type = lib.mkForce "oneshot";
-          };
-      };
+            if $all_models_found; then
+              echo Nothing to download
+              exit 0
+            else
+              echo Starting ollama to download models
+              ${ollama} serve &
+              sleep 5s
+            fi
+          '';
+
+          #postStop = "${ollama} stop ...";
+
+          environment = lib.mkForce config.systemd.services.ollama.environment;
+
+          serviceConfig =
+            (builtins.removeAttrs config.systemd.services.ollama.serviceConfig [
+              "IPAddressDeny"
+              "AddressAllow"
+              "ExecStart"
+              "Restart"
+            ])
+            // {
+              Type = lib.mkForce "oneshot";
+              ConditionPathExists = builtins.map (
+                m: builtins.replaceStrings [ ":" ] [ "/" ] ("!${library}/${m}")
+              ) models;
+            };
+        };
     };
 
   /*
