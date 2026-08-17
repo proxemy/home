@@ -43,6 +43,8 @@
 
   boot.binfmt.emulatedSystems = lib.lists.remove host.platform cfg.supported_systems;
 
+  system.autoUpgrade.operation = "boot";
+
   services = {
     devmon.enable = true;
     pulseaudio.enable = true;
