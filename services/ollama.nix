@@ -27,12 +27,10 @@ in
         "deepseek-coder:33b"
         "gemma4:31b"
         "qwen3.8:27b"
-        #"qwen3.6:35b"
 
-        # auxiliary embeding models, see RAG_EMBEDDING_MODEL
-        "all-minilm:latest"
-        #"nomic-embed-text"
-        #"mxbai-embed-large"
+        #"all-minilm:latest"
+        "nomic-embed-text:latest"
+        #"mxbai-embed-large:latest"
 
         #"smollm:135m" # small test model
       ];
@@ -82,22 +80,33 @@ in
         wantedBy = lib.mkForce [ ]; # remove multi-user.target to disable autostart
 
         environment = {
-          GLOBAL_LOG_LEVEL = if cfg.debug then "DEBUG" else "ERROR";
-          LOG_LEVEL = if cfg.debug then "DEBUG" else "ERROR";
-          OFFLINE_MODE = "true";
-          HF_HUB_OFFLINE = "true";
+          GLOBAL_LOG_LEVEL = if cfg.debug then "INFO" else "ERROR";
+          LOG_LEVEL = if cfg.debug then "INFO" else "ERROR";
+          FFLINE_MODE = "True";
+          HF_HUB_OFFLINE = "True";
 
           RAG_EMBEDDING_ENGINE = "ollama";
-          RAG_EMBEDDING_MODEL = "all-minilm"; # "nomic-embed-text"; "mxbai-embed-large";
-          RAG_EMBEDDING_MODEL_AUTO_UPDATE = "false";
-          RAG_RERANKING_MODEL_AUTO_UPDATE = "false";
-          WHISPER_MODEL_AUTO_UPDATE = "false";
+          RAG_EMBEDDING_MODEL = "nomic-embed-text"; # "all-minilm"; "nomic-embed-text"; "mxbai-embed-large";
+          RAG_EMBEDDING_MODEL_AUTO_UPDATE = "False";
+          RAG_RERANKING_MODEL_AUTO_UPDATE = "False";
+          WHISPER_MODEL_AUTO_UPDATE = "False";
 
           #CORS_ALLOW_ORIGIN = "http://${config.services.open-webui.host}";
 
           WEBUI_ADMIN_EMAIL = "${secrets.username}@a.b";
           WEBUI_ADMIN_PASSWORD = secrets.username;
           WEBUI_ADMIN_NAME = secrets.username;
+          ENABLE_SIGNUP = "False";
+
+          ENABLE_KB_EXEC = "True";
+          ENABLE_CALENDAR = "False";
+          ENABLE_CHANNELS = "False";
+          ENABLE_AUTOMATIONS = "False";
+          ENABLE_SUBAGENTS = "False";
+          ENABLE_EASTER_EGGS = "False";
+
+          USE_CUDA = "True";
+          DEVICE_TYPE = "cuda";
         };
 
         serviceConfig = hardened_service;
@@ -157,8 +166,6 @@ in
               sleep 5s
             fi
           '';
-
-          #postStop = "${ollama} stop ...";
 
           environment = lib.mkForce config.systemd.services.ollama.environment;
 
