@@ -150,8 +150,7 @@ in
             done
 
             if $all_models_found; then
-              echo Nothing to download
-              exit 0
+              echo No models to download
             else
               echo Starting ollama to download models
               ${ollama} serve &
@@ -172,26 +171,30 @@ in
             ])
             // {
               Type = lib.mkForce "oneshot";
-              ConditionPathExists = builtins.map (
-                m: builtins.replaceStrings [ ":" ] [ "/" ] ("!${library}/${m}")
-              ) models;
             };
+
+          unitConfig = {
+            ConditionPathExists = builtins.map (
+              model: builtins.replaceStrings [ ":" ] [ "/" ] "|!${library}/${model}"
+            ) models;
+          };
         };
     };
 
-  /*
-    open-webui is not able the take over a connection FD, tries to bind to 8080 directly.
-    systemd.sockets.open-webui =
-      let
-        open-webui = config.services.open-webui;
-      in
-      {
-        wantedBy = [ "sockets.target" ];
-        socketConfig = {
-          ListenStream = open-webui.port;
-          Accept = false;
-          BindToDevice = "lo";
-        };
+  systemd.sockets.open-webui =
+    let
+      open-webui = config.services.open-webui;
+    in
+    {
+      wantedBy = [ "sockets.target" ];
+      socketConfig = {
+        # open-webui is not trivially able the take over a connection fd
+        # tries to bind to 8080 directly.
+        ListenStream = open-webui.port + 1;
+        Accept = false;
+        #BindToDevice = "lo";
+        IPAllow = [ "127.0.0.1" ] ++ secrets.list_of.ips;
+        IPDeny = "any";
       };
-  */
+    };
 }
