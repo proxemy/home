@@ -1,38 +1,34 @@
 # This function return an attribte set to generate hardened systemd service.
 # TODO
 {
-  description,
+  serviceConfig ? {},
 
-  # parameters passed to ServiceConfig
-  PrivateTmp ? "yes",
-  NoNewPrivileges ? true,
-  ProtectSystem ? "strict",
-  CapabilityBoundingSet ? "CAP_NET_BIND_SERVICE CAP_DAC_READ_SEARCH",
-  RestrictNamespaces ? "uts ipc pid user cgroup net mnt",
-  ProtectKernelTunables ? "yes",
-  ProtectKernelModules ? "yes",
-  ProtectControlGroups ? "yes",
-  PrivateDevices ? "yes",
-  RestrictSUIDSGID ? true,
-  IPAddressAllow,
-}:
+}@args:
 {
-  inherit description;
-
-  # see: https://github.com/alegrey91/systemd-service-hardening
   serviceConfig = {
-    inherit
-      PrivateTmp
-      NoNewPrivileges
-      ProtectSystem
-      CapabilityBoundingSet
-      RestrictNamespaces
-      ProtectKernelTunables
-      ProtectKernelModules
-      ProtectControlGroups
-      PrivateDevices
-      RestrictSUIDSGID
-      IPAddressAllow
-      ;
-  };
+    # see: https://github.com/alegrey91/systemd-service-hardening
+
+    #CapabilityBoundingSet ? "CAP_NET_BIND_SERVICE CAP_DAC_READ_SEARCH",
+    IPAddressAllow = "localhost";
+    IPAddressDeny = "any";
+    LockPersonality = true;
+    MemoryDenyWriteExecute = true;
+    NoNewPrivileges = true;
+    PrivateBPF = true;
+    PrivateDevices = true;
+    PrivateIPC = true;
+    PrivateTmp = true;
+    PrivateUsers = true;
+    ProtectControlGroups = true;
+    ProtectHome = true; # "read-only"
+    ProtectHostname = true;
+    ProtectKernelLogs = true;
+    ProtectKernelModules = true;
+    ProtectKernelTunables = true;
+    ProtectProc = "invisible";
+    ProtectSystem = "strict";
+    RestrictNamespaces = true; # "uts ipc pid user cgroup net mnt",
+    RestrictRealtime = true;
+    RestrictSUIDSGID = true;
+  } // args.serviceConfig;
 }
