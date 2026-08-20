@@ -15,6 +15,7 @@
     "${self}/services/nas_client.nix"
     "${self}/services/ollama.nix"
     "${self}/services/open-webui.nix"
+    "${self}/programs/goose.nix"
     "${self}/programs/steam.nix"
     "${self}/programs/chromium.nix"
   ];
