@@ -53,21 +53,23 @@ in
       DEVICE_TYPE = "cuda";
     };
 
-    serviceConfig = (import "${self}/lib/mk_systemd_service.nix" {
-      MemoryDenyWriteExecute = lib.mkForce true;
-    });
+    serviceConfig = (
+      import "${self}/lib/mk_systemd_service.nix" {
+        MemoryDenyWriteExecute = lib.mkForce true;
+      }
+    );
   };
 
   systemd.sockets.open-webui = {
-      wantedBy = [ "sockets.target" ];
-      socketConfig = {
-        # open-webui is not trivially able the take over a connection fd
-        # tries to bind to 8080 directly.
-        ListenStream = config.services.open-webui.port + 1;
-        Accept = false;
-        #BindToDevice = "lo";
-        IPAddressAllow = [ "127.0.0.1" ] ++ secrets.list_of.ips;
-        IPAddressDeny = "any";
-      };
+    wantedBy = [ "sockets.target" ];
+    socketConfig = {
+      # open-webui is not trivially able the take over a connection fd
+      # tries to bind to 8080 directly.
+      ListenStream = config.services.open-webui.port + 1;
+      Accept = false;
+      #BindToDevice = "lo";
+      IPAddressAllow = [ "127.0.0.1" ] ++ secrets.list_of.ips;
+      IPAddressDeny = "any";
     };
+  };
 }

@@ -60,7 +60,7 @@ in
       serviceConfig = (
         import "${self}/lib/mk_systemd_service.nix" {
           ProtectHome = lib.mkForce "read-only"; # true
-          PrivateDevices = false; # required for cuda
+          PrivateDevices = false; # required for cuda TODO: selective /dev permissions
         }
       );
     };

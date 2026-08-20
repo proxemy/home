@@ -60,7 +60,7 @@
 
   # TODO: load kernel modules required by iptables that are disallowed by 'modules_disabled'
   boot.kernel.sysctl = {
-    #"kernel.modules_disabled" = 1;
+    #"kernel.modules_disabled" = 1; # add + vm-test conditional virtio_gpu
     "kernel.kptr_restrict" = 2; # hides kernel pointers in /proc, 2 for even root (may break things)
     "kernel.yama.ptrace_scope" = 1;
     "kernel.unprivileged_bpf_disabled" = 1;

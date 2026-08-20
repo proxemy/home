@@ -49,15 +49,16 @@
   };
 
   environment.shellAliases = {
-    tor-status = let
-      systemctl = "${lib.getBin pkgs.systemd}/bin/systemctl";
-      curl = "${lib.getBin pkgs.curl}/bin/curl";
-      port = builtins.toString config.services.tor.client.socksListenAddress.port;
-    in
-    ''
-      ${systemctl} status tor.service --no-pager
-      ${curl} --socks5-hostname 127.0.0.1:${port} https://check.torproject.org/api/ip
-    '';
+    tor-status =
+      let
+        systemctl = "${lib.getBin pkgs.systemd}/bin/systemctl";
+        curl = "${lib.getBin pkgs.curl}/bin/curl";
+        port = builtins.toString config.services.tor.client.socksListenAddress.port;
+      in
+      ''
+        ${systemctl} status tor.service --no-pager
+        ${curl} --socks5-hostname 127.0.0.1:${port} https://check.torproject.org/api/ip
+      '';
     #cat /var/lib/tor/fingerprint
     #cat /var/lib/tor/stats
   };
