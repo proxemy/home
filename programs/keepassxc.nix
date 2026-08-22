@@ -8,10 +8,26 @@
 }:
 let
   kp_secrets = import "${self}/secrets/keepassxc.nix" secrets;
-  home = config.users.users.${secrets.username}.home;
+  keepassxc = "${pkgs.keepassxc}/bin/keepassxc";
+  user = secrets.username;
+  group = "keepassxc";
+  unit = "keepassxc-run0";
+  systemd = config.systemd.package;
+  xdg = config.home-manager.users.${user}.xdg;
+  home = config.users.users.${user}.home;
+  cmd = ''
+    ${systemd}/bin/run0 \
+      --user="${user}" \
+      --group="${group}" \
+      --unit="${unit}" \
+      --description="keepassxc-run0 command wrapper" \
+      --setenv=DISPLAY="$DISPLAY" \
+      --setenv=XDG_RUNTIME_DIR="$XDG_RUNTIME_DIR" \
+      ${keepassxc}
+  '';
 in
 {
-  users.users.${secrets.username}.packages = [
+  users.users.${user}.packages = [
     pkgs.keepassxc
     #pkgs.apparmor-parser
   ];
@@ -33,17 +49,17 @@ in
           ${home}/${kp_secrets.vault}.* rwl,
           ${home}/${kp_secrets.token} r,
 
-          ${home}/.config/keepassxc/keepassxc.ini rw,
-          ${home}/.config/fontconfig/conf.d/ r,
-          ${home}/.cache/keepassxc/** rwkl,
-          ${home}/.cache/fontconfig/** r,
-          ${home}/.local/share/** r,
+          ${xdg.configHome}/keepassxc/keepassxc.ini rw,
+          ${xdg.cacheHome}/keepassxc/** rwkl,
+          ${xdg.configHome}/fontconfig/conf.d/ r,
+          ${xdg.cacheHome}/fontconfig/** r,
+          ${xdg.dataHome}/** r,
           ${home}/.Xauthority r,
           ${home}/#[0-9]* rw,
           /run/user/1000/ICEauthority r,
-          /tmp/keepassxc-${secrets.username}.lock rwk,
+          /tmp/keepassxc-${user}.lock rwk,
 
-          ${pkgs.keepassxc}/bin/keepassxc r,
+          ${keepassxc} r,
           ${pkgs.keepassxc}/bin/.keepassxc-wrapped ix,
 
           /nix/store/**.so* rm,
@@ -61,7 +77,6 @@ in
                 # silence verbose logging
                 deny /proc/** rwklm,
                 deny /dev/** rwklm,
-                deny /dev/ rwklm,
                 deny /sys/** rwklm,
                 deny /tmp/** rwklm,
               ''
@@ -69,6 +84,32 @@ in
         }
       '';
     };
+  /*
+    systemd.user.services.keepassxc = {
+      serviceConfig = {
+        ExecStart = "${keepassxc}";
+        Group = group;
+      };
+    };
+
+    security.polkit.extraConfig =
+      assert config.security.polkit.enable;
+      ''
+        # Allow ${user} to run keepassxc without password prompt
+        polkit.addRule(function(action, subject) {
+          if (subject.user === "${user}") {
+            polkit.log(action.toString());
+            polkit.log(subject.toString());
+            #return polkit.Result.YES;
+          }
+        })
+      '';
+
+    users.groups.${group} = {
+      name = group;
+      members = [ ];
+    };
+  */
 }
 #${pkgs.libc}/lib/libc.so* rm,
 #${pkgs.qrencode.out}/lib/*.so* rm,
