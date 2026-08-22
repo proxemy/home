@@ -18,8 +18,10 @@ let
       "GOOSE_MODEL = \"qwen3.8:27b\""
       #"GOOSE_TEMPERATURE = 0.7"
       "GOOSE_TELEMETRY_ENABLED = false"
-      "GOOSE_MODE = \"approve\""
+      "GOOSE_MODE = \"auto\"" # \"approve\""
       "GOOSE_TOOLSHIM = true"
+      "GOOSE_MAX_TURNS =  5000"
+      "GOOSE_CLI_MIN_PRIORITY = 0.75" # tool output verbosity: 0.0 = max
     ]
   );
 
@@ -38,13 +40,14 @@ let
       ncurses
       acl
       attr
+      openssl
+      pcre2
 
       # from: https://github.com/NixOS/nixpkgs/blob/nixos-unstable/nixos/modules/config/vte.nix
       (pkgs.vte.override {
         withApp = false;
         gtkVersion = null;
       })
-
     ]
     ++ goose_pkg.buildInputs;
 
@@ -54,6 +57,11 @@ let
     bash-completion
     coreutils
     coreutils-full
+    gnused
+    gnugrep
+    which
+    git
+    findutils
   ];
 in
 
@@ -74,15 +82,13 @@ in
       state = "enforce";
 
       profile = ''
-        include <tunables/global>
-
         profile ${goose_pkg}/bin/* {
           ${home}/src/** rw,
           ${home}/**/{.git,.svn,.hg}/** r,
           deny ${home}/.bash_history rwk,
 
-          #${xdg.binHome}/** r,
-          #${xdg.configHome}/** r,
+          ${xdg.binHome}/** r,
+          ${xdg.configHome}/** r,
           ${xdg.configHome}/goose/** rwk,
           ${xdg.dataHome}/goose/** rwk,
           ${xdg.stateHome}/goose/** rwk,
@@ -122,7 +128,7 @@ in
           ${pkgs.cacert}/** r,
 
           # TODO: find package of gmp-with-cxx and remove broad /nix/store access
-          /nix/store/*-gmp-with-cxx-*/lib/** rm,
+          /nix/store/*-gmp-with-cxx-*/lib/*.so* rm,
           /nix/store/** r,
 
           /etc/ssl/certs/ r,
