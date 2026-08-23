@@ -60,6 +60,9 @@
 
     in
     {
+      # for quick repl testing
+      inherit pkgs secrets;
+
       nixosConfigurations = {
 
         ${hostnames.desktop1} = mk_nixos {
