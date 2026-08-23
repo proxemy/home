@@ -21,7 +21,11 @@ let
       "GOOSE_MODE = \"auto\"" # \"approve\""
       "GOOSE_TOOLSHIM = true"
       "GOOSE_MAX_TURNS =  5000"
-      "GOOSE_CLI_MIN_PRIORITY = 0.75" # tool output verbosity: 0.0 = max
+      #"GOOSE_CLI_MIN_PRIORITY = 0.0" # tool output verbosity: 0.0 = max
+      #"GOOSE_SHOW_FULL_OUTPUT = true" # show full cli command invocations
+      #"GOOSE_NO_CODE_TRUNCATION = true"
+      #"GOOSE_TERMINAL = true"
+      #"AGENT = \"goose\""
     ]
   );
 
@@ -29,27 +33,6 @@ let
   xdg = hm_user.xdg;
   home = hm_user.home.homeDirectory;
   goose_yaml = "${xdg.configHome}/goose/config.yaml";
-
-  dependencies =
-    with pkgs;
-    [
-      glibc
-      gcc-unwrapped
-      libgcc
-      readline
-      ncurses
-      acl
-      attr
-      openssl
-      pcre2
-
-      # from: https://github.com/NixOS/nixpkgs/blob/nixos-unstable/nixos/modules/config/vte.nix
-      (pkgs.vte.override {
-        withApp = false;
-        gtkVersion = null;
-      })
-    ]
-    ++ goose_pkg.buildInputs;
 
   allowed_tools = with pkgs; [
     goose_pkg
@@ -59,9 +42,22 @@ let
     coreutils-full
     gnused
     gnugrep
+    gawk
     which
-    git
+    file
     findutils
+    attr
+    git
+    curl
+    wget
+    netcat
+    iproute2
+    iputils
+    nmap
+
+    python3
+    cargo
+    config.nix.package
   ];
 in
 
@@ -82,10 +78,14 @@ in
       state = "enforce";
 
       profile = ''
+        #include <tunables/global>
+
         profile ${goose_pkg}/bin/* {
           ${home}/src/** rw,
+          ${home}/src/ rw,
           ${home}/**/{.git,.svn,.hg}/** r,
-          deny ${home}/.bash_history rwk,
+          deny ${home}/ rwxkm,
+          deny ${home}/.bash_history rwxkm,
 
           ${xdg.binHome}/** r,
           ${xdg.configHome}/** r,
@@ -94,57 +94,44 @@ in
           ${xdg.stateHome}/goose/** rwk,
 
           #deny network,
+          network inet,
+          network inet6,
           deny dbus,
           deny signal,
-
-          # dependencies
-          ${builtins.foldl' (
-            acc: dep:
-            acc
-            + ''
-              ${lib.getLib dep}/** rm,
-            ''
-          ) "" dependencies}
 
           # tools
           ${builtins.foldl' (
             acc: tool:
             acc
             + ''
-              ${lib.getBin tool}/bin/* rix,
-              ${tool}/** r,
+              ${lib.getBin tool}/bin/* ix,
             ''
           ) "" allowed_tools}
 
-          # data
-          ${config.i18n.glibcLocales}/** r,
-          ${config.environment.etc.profile.source} r,
-          ${config.environment.etc.bashrc.source} r,
-          ${config.environment.etc."profiles/per-user/${secrets.username}".source}/** r,
-          ${config.home-manager.users."${secrets.username}".home.file.".profile".source} r,
-          ${config.system.path}/** r,
-          ${hm_user.home.file.".bash_profile".source} r,
-          ${pkgs.tzdata}/** r,
-          ${pkgs.cacert}/** r,
-
-          # TODO: find package of gmp-with-cxx and remove broad /nix/store access
-          /nix/store/*-gmp-with-cxx-*/lib/*.so* rm,
           /nix/store/** r,
+          /nix/store/*/lib/**.so* rm,
 
-          /etc/ssl/certs/ r,
-          /etc/ssl/certs/** r,
-          /etc/pki/tls/certs/ r,
-          /etc/pki/tls/certs/** r,
+          @{etc_ro}/ssl/certs/ r,
+          @{etc_ro}/ssl/certs/** r,
+          @{etc_ro}/pki/tls/certs/ r,
+          @{etc_ro}/pki/tls/certs/** r,
+          @{run}/nscd/socket r,
+          @{sys}/devices/system/cpu/** r,
+          @{sys}/fs/cgroup/user.slice/** r,
+
+          @{PROC}/stat r,
+          @{PROC}/sys/vm/* r,
+          owner @{PROC}/self/** r,
+          owner @{PROC}/@{pid}/** r,
+
           /dev/tty rw,
           /dev/pts/** rw,
           /dev/urandom r,
           /dev/null rw,
-          /sys/devices/system/cpu/** r,
-          /sys/fs/cgroup/user.slice/** r,
-          /proc/stat r,
-          /proc/self/** r,
-          /proc/@{pid}/** r,
-          /tmp/** wr,
+          /tmp/ r,
+          owner /tmp/** wr,
+
+          deny /etc/passwd rwxkm,
         }
       '';
     };
