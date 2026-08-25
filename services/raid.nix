@@ -118,16 +118,23 @@ in
 
       conflicts = [ config.systemd.services.nixos-upgrade.name ];
 
-      path = with pkgs; [
-        mdadm
-        gnugrep
-        coreutils-full
-      ];
+      path = [ pkgs.mdadm ];
 
-      serviceConfig.Type = "simple";
+      serviceConfig = {
+        Type = "simple";
+        Nice = 19;
+        #IOSchedulingPriority = 7;
+      };
 
       # TODO: unmount raid and e2fsck
       script = "mdadm --verbose --wait --misc --action=repair ${mount.source}";
+    };
+
+    timers.raid-repair = {
+      timerConfig = {
+        OnUnitActiveSec = "2 weeks";
+        Persistent = true;
+      };
     };
   };
 
