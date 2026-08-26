@@ -15,9 +15,17 @@ let
     # https://wiki.nixos.org/wiki/Llama-cpp#Migration_to_nixos-unstable_(RFC42)
     # https://github.com/ggml-org/llama.cpp/blob/master/docs/preset.md
 
-    "Qwen3.8" = {
+    "unsloth/Qwen3.8-27B-GGUF:Q6_K" = {
+      alias = "Qwen3.8";
       hf-repo = "unsloth/Qwen3.8-27B-GGUF";
-      hf-file = "Qwen3.8-27B-UD-Q8_K_XL.gguf";
+      #hf-file = "Qwen3.8-27B-UD-Q8_K_XL.gguf"; # 31.6GB
+      hf-file = "Qwen3.8-27B-UD-Q6_K.gguf"; # 22 GB
+      temperature = 1.0;
+      top-p = 0.95;
+      top-k = 20;
+      min-p = 0.0;
+      repeat-penalty = 1.0;
+      presence-penalty = 0.0;
     };
 
     #"TestModel_SmolLM2" = {
@@ -27,10 +35,11 @@ let
     #};
   };
 
-  model_downloads = lib.mapAttrsToList (k: v: {
-    repo = v.hf-repo;
-    file = v.hf-file;
-  }) models;
+  main_model = builtins.elemAt (builtins.attrNames (
+    lib.filterAttrs (n: v: v.alias == "Qwen3.8") models
+  )) 0;
+
+  cuda_device = "CUDA0";
 
 in
 {
@@ -40,27 +49,32 @@ in
 
   services.llama-cpp = {
     enable = true;
+    package = llama_pkg;
 
     settings = {
-      batch-size = 512;
-      ctx-size = 252144;
-      flash-attn = "on";
-      host = "0.0.0.0";
+      host = "127.0.0.1";
       port = 8080;
-      spec-draft-n-max = 2;
+      model = main_model;
+
+      n-gpu-layers = "all";
+      device = cuda_device;
+
+      flash-attn = "on";
+      #batch-size = 512;
+      #ctx-size = 252144;
+      #spec-draft-n-max = 2;
       #spec-type = "draft-mtp";
-      temp = 0.6;
-      top-k = 20;
-      top-p = 0.95;
-      ubatch-size = 256;
+      #temp = 0.6;
+      #top-k = 20;
+      #top-p = 0.95;
+      #ubatch-size = 256;
+
+      jinja = ""; # OpenAI API, required for goose agent
 
       offline = "";
-      verbosity = 0;
+      verbosity = if cfg.debug then 5 else 1;
 
       models-preset = (pkgs.formats.ini { }).generate "models-preset.ini" models;
-    }
-    // lib.optionalAttrs cfg.debug {
-      verbosity = 5;
     };
   };
 
@@ -91,25 +105,32 @@ in
 
       script = ''
         cached_models=$(${llama_pkg}/bin/llama-cli --cache-list)
-        ${llama_pkg}/bin/llama-cli --list-devices
+        found_devices=$(${llama_pkg}/bin/llama-cli --list-devices)
+
         echo "$cached_models"
+        echo "$found_devices"
+
+        if ! grep -q "${cuda_device}" <<< "$found_devices"; then
+          echo Missing cuda device: ${cuda_device}
+          exit 1
+        fi
 
         ${builtins.toString (
           builtins.map (model: ''
-            if ! grep -q "${model.repo}" <<< "$cached_models" \
-              || ! find "$LLAMA_CACHE" -name "${model.file}" \
+            if ! grep -q "${model.hf-repo}" <<< "$cached_models" \
+              || ! find "$LLAMA_CACHE" -name "${model.hf-file}" \
             ; then
-              echo Missing repo: "${model.repo}" or
-              echo missing file: "${model.file}"
+              echo Missing repo: "${model.hf-repo}" or
+              echo missing file: "${model.hf-file}"
               echo downloading ...
 
               ${llama_pkg}/bin/llama download \
-                --hf-repo "${model.repo}" \
-                --hf-file "${model.file}"
+                --hf-repo "${model.hf-repo}" \
+                --hf-file "${model.hf-file}"
 
               echo Done.
             fi
-          '') model_downloads
+          '') (builtins.attrValues models)
         )}
       '';
     };

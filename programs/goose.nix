@@ -9,13 +9,25 @@
 let
   goose_pkg = pkgs.goose-cli;
 
+  llama = {
+    host = config.services.llama-cpp.settings.host;
+    port = builtins.toString config.services.llama-cpp.settings.port;
+    model = config.services.llama-cpp.model;
+  };
+
   # construct yq compatible filter rule
   goose_config = builtins.concatStringsSep " | " (
     builtins.map (e: ".${e}") [
-      "OLLAMA_HOST = \"localhost\""
-      "OLLAMA_TIMEOUT = 600"
-      "GOOSE_PROVIDER = \"ollama\""
-      "GOOSE_MODEL = \"qwen3.8:27b\""
+      "OPENAI_API_KEY = \"no-key\""
+      "OPENAI_HOST = \"http://${llama.host}:${llama.port}\""
+      "OPENAI_BASE_PATH = \"v1/chat/completions\""
+      "GOOSE_PROVIDER = \"openai\""
+      "GOOSE_MODEL = \"${llama.model}\""
+
+      #"OLLAMA_HOST = \"localhost\""
+      #"OLLAMA_TIMEOUT = 600"
+      #"GOOSE_PROVIDER = \"ollama\""
+      #"GOOSE_MODEL = \"qwen3.8:27b\""
       #"GOOSE_TEMPERATURE = 0.7"
       "GOOSE_TELEMETRY_ENABLED = false"
       "GOOSE_MODE = \"auto\"" # \"approve\""
