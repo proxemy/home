@@ -35,15 +35,12 @@
         ];
       };
 
-      secrets = import ./secrets {
-        inherit self;
-        lib = pkgs.lib;
-      };
-      inherit (secrets) hostnames;
-
-      forSystems = nixpkgs.lib.genAttrs cfg.supportedSystems;
-      system = "x86_64-linux"; # builtins.currentSystem;
       pkgs = inputs.nixpkgs.legacyPackages.${system}; # TODO .pkgsExtraHardening;
+      lib = nixpkgs.lib;
+      forSystems = lib.genAttrs cfg.supportedSystems;
+      system = "x86_64-linux"; # builtins.currentSystem;
+
+      secrets = import ./secrets { inherit lib self; };
 
       inherit
         (import ./lib/mk_nixos.nix {
@@ -63,51 +60,18 @@
       # for quick repl testing
       inherit pkgs secrets;
 
-      nixosConfigurations = {
-
-        ${hostnames.desktop1} = mk_nixos {
-          host = secrets.hosts.desktop1;
-        };
-
-        "${hostnames.desktop1}-installer" = mk_installer {
-          host = secrets.hosts.desktop1;
-        };
-
-        ${hostnames.laptop1} = mk_nixos {
-          host = secrets.hosts.laptop1;
-        };
-
-        "${hostnames.laptop1}-installer" = mk_installer {
-          host = secrets.hosts.laptop1;
-        };
-
-        ${hostnames.laptop2} = mk_nixos {
-          host = secrets.hosts.laptop2;
-        };
-
-        "${hostnames.laptop2}-installer" = mk_installer {
-          host = secrets.hosts.laptop2;
-        };
-
-        ${hostnames.laptop3} = mk_nixos {
-          host = secrets.hosts.laptop3;
-        };
-
-        "${hostnames.laptop3}-installer" = mk_installer {
-          host = secrets.hosts.laptop3;
-        };
-
-        ${hostnames.rpi1} = mk_nixos {
-          host = secrets.hosts.rpi1;
-        };
-
-        ${hostnames.rpi2} = mk_nixos {
-          host = secrets.hosts.rpi2;
-        };
-      };
+      nixosConfigurations = lib.concatMapAttrs (
+        alias: host:
+        {
+          "${host.hostname}" = mk_nixos { inherit host; };
+        }
+        // lib.optionalAttrs (host.with_installer) {
+          "${host.hostname}-installer" = mk_installer { inherit host; };
+        }
+      ) secrets.hosts;
 
       homeConfigurations.${secrets.username} =
-        self.outputs.nixosConfigurations.${hostnames.desktop1}.config.home-manager.users.${secrets.username}.home
+        self.outputs.nixosConfigurations.${secrets.hostnames.desktop1}.config.home-manager.users.${secrets.username}.home
         # weird fix to make 'home-manager switch' not complain about missing news
         // {
           config.news.json.output = pkgs.writeText "dummy-hm-news.json" (
@@ -135,7 +99,7 @@
           let
             inherit (secrets) username list_of;
           in
-          with hostnames;
+          with secrets.hostnames;
           ''
             echo -e "" \
             "nixos-rebuild build --flake .#${laptop2}[-installer]\n" \
