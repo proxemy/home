@@ -22,7 +22,7 @@ let
       "OPENAI_HOST = \"http://${llama.host}:${llama.port}\""
       "OPENAI_BASE_PATH = \"v1/chat/completions\""
       "GOOSE_PROVIDER = \"openai\""
-      "GOOSE_MODEL = \"${llama.model}\""
+      "GOOSE_MODEL = \"unsloth/Qwen3.8-27B-GGUF:Q6_K\""
 
       #"OLLAMA_HOST = \"localhost\""
       #"OLLAMA_TIMEOUT = 600"
@@ -54,6 +54,7 @@ let
     coreutils-full
     gnused
     gnugrep
+    ripgrep
     gawk
     which
     file

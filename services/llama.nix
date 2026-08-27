@@ -35,9 +35,9 @@ let
     #};
   };
 
-  main_model = builtins.elemAt (builtins.attrNames (
-    lib.filterAttrs (n: v: v.alias == "Qwen3.8") models
-  )) 0;
+  #main_model = builtins.elemAt (builtins.attrNames (
+  #  lib.filterAttrs (n: v: v.alias == "Qwen3.8") models
+  #)) 0;
 
   cuda_device = "CUDA0";
 
@@ -54,7 +54,7 @@ in
     settings = {
       host = "127.0.0.1";
       port = 8080;
-      model = main_model;
+      #model = main_model;
 
       n-gpu-layers = "all";
       device = cuda_device;
