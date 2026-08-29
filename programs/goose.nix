@@ -12,7 +12,7 @@ let
   llama = {
     host = config.services.llama-cpp.settings.host;
     port = builtins.toString config.services.llama-cpp.settings.port;
-    model = config.services.llama-cpp.model;
+    #model = config.services.llama-cpp.model;
   };
 
   # construct yq compatible filter rule
@@ -36,7 +36,7 @@ let
       #"GOOSE_CLI_MIN_PRIORITY = 0.0" # tool output verbosity: 0.0 = max
       #"GOOSE_SHOW_FULL_OUTPUT = true" # show full cli command invocations
       #"GOOSE_NO_CODE_TRUNCATION = true"
-      #"GOOSE_TERMINAL = true"
+      "GOOSE_TERMINAL = true"
       #"AGENT = \"goose\""
     ]
   );
@@ -52,6 +52,7 @@ let
     bash-completion
     coreutils
     coreutils-full
+    binutils
     gnused
     gnugrep
     ripgrep
@@ -121,6 +122,7 @@ in
             ''
           ) "" allowed_tools}
 
+          /nix/store/ r,
           /nix/store/** r,
           /nix/store/*/lib/**.so* rm,
 
@@ -138,7 +140,7 @@ in
           owner @{PROC}/@{pid}/** r,
 
           /dev/tty rw,
-          /dev/pts/** rw,
+          owner /dev/pts/** rw,
           /dev/urandom r,
           /dev/null rw,
           /tmp/ r,

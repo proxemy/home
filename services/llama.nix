@@ -35,10 +35,6 @@ let
     #};
   };
 
-  #main_model = builtins.elemAt (builtins.attrNames (
-  #  lib.filterAttrs (n: v: v.alias == "Qwen3.8") models
-  #)) 0;
-
   cuda_device = "CUDA0";
 
 in
@@ -56,23 +52,23 @@ in
       port = 8080;
       #model = main_model;
 
-      n-gpu-layers = "all";
+      #n-gpu-layers = "all";
       device = cuda_device;
+      #cache-ram = -1;
 
+      #ctx-size = 40 * 1024;
       flash-attn = "on";
       #batch-size = 512;
-      #ctx-size = 252144;
+      #ubatch-size = 256;
       #spec-draft-n-max = 2;
       #spec-type = "draft-mtp";
-      #temp = 0.6;
-      #top-k = 20;
-      #top-p = 0.95;
-      #ubatch-size = 256;
 
-      jinja = ""; # OpenAI API, required for goose agent
+      #jinja = ""; # OpenAI API, required for goose agent
 
       offline = "";
-      verbosity = if cfg.debug then 5 else 1;
+      parallel = 1;
+      context-shift = "";
+      verbosity = if cfg.debug then 5 else 3;
 
       models-preset = (pkgs.formats.ini { }).generate "models-preset.ini" models;
     };
