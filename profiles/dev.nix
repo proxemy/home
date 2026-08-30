@@ -9,8 +9,10 @@ let
   rust_tools = with pkgs; [
     cargo
     rust-analyzer
-    rustc
+    rustc-unwrapped
     rustfmt
+    clippy
+    #rustup
   ];
 in
 
@@ -19,9 +21,11 @@ in
     "${self}/programs/neovim/"
   ];
 
-  users.users.${secrets.username}.packages = with pkgs; [
-    gcc
-    rustup
-    vscodium
-  ]; # ++ rust_tools;
+  users.users.${secrets.username}.packages =
+    with pkgs;
+    [
+      gcc
+      vscodium
+    ]
+    ++ rust_tools;
 }
