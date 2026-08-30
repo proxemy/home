@@ -16,7 +16,7 @@ let
   };
 
   # construct yq compatible filter rule
-  goose_config = builtins.concatStringsSep " | " (
+  goose_settings = builtins.concatStringsSep " | " (
     builtins.map (e: ".${e}") [
       "OPENAI_API_KEY = \"no-key\""
       "OPENAI_HOST = \"http://${llama.host}:${llama.port}\""
@@ -41,17 +41,34 @@ let
     ]
   );
 
+  goose_hints = ''
+    You are an expert coding assistant running in a restricted environment.
+    Do not try to work around ‘permissions denied’ and similar errors.
+    You cannot commit to version control.
+    You do have access to the Internet.
+
+    Directories you can write to and execute from are:
+    ${builtins.toString writable_dirs}
+
+    You can use the following tools / packages:
+    ${builtins.toString (builtins.map (p: p.meta.mainProgram or p.pname) allowed_tools)}
+  '';
+
   hm_user = config.home-manager.users.${secrets.username};
   xdg = hm_user.xdg;
   home = hm_user.home.homeDirectory;
-  goose_yaml = "${xdg.configHome}/goose/config.yaml";
+  goose_cfg = rec {
+    dir = "${xdg.configHome}/goose/";
+    yaml = "${dir}/config.yaml";
+    hints = "${dir}/.goosehints";
+  };
 
   allowed_tools = with pkgs; [
-    goose_pkg
     bash
     bash-completion
     coreutils
     coreutils-full
+    util-linux
     binutils
     gnused
     gnugrep
@@ -73,17 +90,24 @@ let
     cargo
     config.nix.package
   ];
+
+  writable_dirs = [
+    "${home}/src/"
+    "/tmp/goose/"
+  ];
 in
 
 {
-  home-manager.users.${secrets.username} = {
-    home.packages = [ goose_pkg ];
+  home-manager.users.${secrets.username}.home = {
+    packages = [ goose_pkg ];
 
-    home.activation.goose_config = home-manager.lib.hm.dag.entryAfter [ "writeBoudnary" ] ''
+    activation.goose_settings = home-manager.lib.hm.dag.entryAfter [ "writeBoudnary" ] ''
       run umask 0077
-      touch ${goose_yaml}
-      run ${pkgs.yq}/bin/yq -nyi '${goose_config}' ${goose_yaml}
+      touch ${goose_cfg.yaml}
+      run ${pkgs.yq}/bin/yq -nyi '${goose_settings}' ${goose_cfg.yaml}
     '';
+
+    file."${goose_cfg.hints}".source = pkgs.writers.writeText "goose_hints" goose_hints;
   };
 
   security.apparmor.policies.goose =
@@ -95,9 +119,10 @@ in
         #include <tunables/global>
 
         profile ${goose_pkg}/bin/* {
-          ${home}/src/** rw,
-          ${home}/src/ rw,
-          ${home}/**/{.git,.svn,.hg}/** r,
+
+          ${goose_pkg}/bin/* ix,
+
+          deny ${home}/**/{.git,.svn,.hg}/** wxkm,
           deny ${home}/ rwxkm,
           deny ${home}/.bash_history rwxkm,
 
@@ -112,6 +137,17 @@ in
           network inet6,
           deny dbus,
           deny signal,
+
+          # write-exec dirs
+          ${builtins.foldl' (
+            acc: dir:
+            acc
+            + ''
+              ${dir}/ rw,
+              ${dir}/** rwix,
+            ''
+          ) "" writable_dirs}
+
 
           # tools
           ${builtins.foldl' (
@@ -131,6 +167,7 @@ in
           @{etc_ro}/pki/tls/certs/ r,
           @{etc_ro}/pki/tls/certs/** r,
           @{run}/nscd/socket r,
+          @{run}/systemd/resolve/stub-resolv.conf r,
           @{sys}/devices/system/cpu/** r,
           @{sys}/fs/cgroup/user.slice/** r,
 
@@ -144,7 +181,7 @@ in
           /dev/urandom r,
           /dev/null rw,
           /tmp/ r,
-          owner /tmp/** wr,
+          owner /tmp/** rwk,
 
           deny /etc/passwd rwxkm,
         }

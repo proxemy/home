@@ -68,7 +68,7 @@ in
       offline = "";
       parallel = 1;
       context-shift = "";
-      verbosity = if cfg.debug then 5 else 3;
+      verbosity = if cfg.debug then 5 else 1;
 
       models-preset = (pkgs.formats.ini { }).generate "models-preset.ini" models;
     };
