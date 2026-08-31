@@ -20,6 +20,8 @@ let
       hf-repo = "unsloth/Qwen3.8-27B-GGUF";
       #hf-file = "Qwen3.8-27B-UD-Q8_K_XL.gguf"; # 31.6GB
       hf-file = "Qwen3.8-27B-UD-Q6_K.gguf"; # 22 GB
+
+      ctx-size = 48 * 1024;
       temperature = 1.0;
       top-p = 0.95;
       top-k = 20;
@@ -50,25 +52,21 @@ in
     settings = {
       host = "127.0.0.1";
       port = 8080;
-      #model = main_model;
 
-      #n-gpu-layers = "all";
       device = cuda_device;
-      #cache-ram = -1;
+      n-gpu-layers = 999;
+      cache-ram = -1;
 
-      #ctx-size = 40 * 1024;
       flash-attn = "on";
-      #batch-size = 512;
-      #ubatch-size = 256;
+      batch-size = 512;
+      ubatch-size = 256;
       #spec-draft-n-max = 2;
       #spec-type = "draft-mtp";
-
-      #jinja = ""; # OpenAI API, required for goose agent
 
       offline = "";
       parallel = 1;
       context-shift = "";
-      verbosity = if cfg.debug then 5 else 1;
+      verbosity = if cfg.debug then 5 else 2;
 
       models-preset = (pkgs.formats.ini { }).generate "models-preset.ini" models;
     };
@@ -79,6 +77,11 @@ in
       after = [ config.systemd.services.llama-model-loader.name ];
       requires = [ config.systemd.services.llama-model-loader.name ];
       wantedBy = lib.mkForce [ ];
+
+      environment = {
+        #offload to ram, broken
+        #"GGML_CUDA_ENABLE_UNIFIED_MEMORY" = "1";
+      };
 
       serviceConfig = import "${self}/lib/mk_systemd_service.nix" {
         PrivateDevices = false; # required for cuda
@@ -124,7 +127,7 @@ in
                 --hf-repo "${model.hf-repo}" \
                 --hf-file "${model.hf-file}"
 
-              echo Done.
+              echo 'llama download' terminated
             fi
           '') (builtins.attrValues models)
         )}

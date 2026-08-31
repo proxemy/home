@@ -30,14 +30,18 @@ let
       #"GOOSE_MODEL = \"qwen3.8:27b\""
       #"GOOSE_TEMPERATURE = 0.7"
       "GOOSE_TELEMETRY_ENABLED = false"
+      "GOOSE_CLI_SHOW_COST = true"
       "GOOSE_MODE = \"auto\"" # \"approve\""
       "GOOSE_TOOLSHIM = true"
-      "GOOSE_MAX_TURNS =  5000"
       #"GOOSE_CLI_MIN_PRIORITY = 0.0" # tool output verbosity: 0.0 = max
       #"GOOSE_SHOW_FULL_OUTPUT = true" # show full cli command invocations
       #"GOOSE_NO_CODE_TRUNCATION = true"
-      "GOOSE_TERMINAL = true"
-      #"AGENT = \"goose\""
+
+      "GOOSE_MAX_TOKENS = ${builtins.toString (32 * 1024)}"
+      "GOOSE_MAX_TURNS =  50"
+
+      "GOOSE_AUTO_COMPACT_THRESHOLD = 0.85"
+      "GOOSE_CONTEXT_STRATEGY = \"summary\""
     ]
   );
 
