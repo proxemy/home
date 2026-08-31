@@ -69,9 +69,9 @@ let
     hints = "${dir}/.goosehints";
   };
 
+  # TODO: all these tools should be bundled in a goose-wrapper env
   allowed_tools = with pkgs; [
     bash
-    bash-completion
     coreutils
     coreutils-full
     util-linux
@@ -85,6 +85,7 @@ let
     findutils
     attr
     git
+    diffutils
     curl
     wget
     netcat
@@ -92,15 +93,30 @@ let
     iputils
     nmap
 
+    # TODO import profiles/dev.nix packages and remove duplicates below
     python3
+    gcc
     cargo
+    rust-analyzer
+    rustc-unwrapped
+    rustfmt
+    clippy
     config.nix.package
+  ];
+
+  rt_deps = with pkgs; [
+    bash-completion
+    patchelf
+    gcc-unwrapped
+    binutils-unwrapped
   ];
 
   writable_dirs = [
     "${home}/src/"
     "/tmp/goose/"
   ];
+
+  mk_rules = rules: targets: builtins.foldl' (acc: dir: acc + (rules dir)) "" targets;
 in
 
 {
@@ -124,13 +140,23 @@ in
       profile = ''
         #include <tunables/global>
 
-        profile ${goose_pkg}/bin/* {
+        profile ${goose_pkg}/bin/* flags=(enforce) {
 
           ${goose_pkg}/bin/* ix,
 
           deny ${home}/**/{.git,.svn,.hg}/** wxkm,
           deny ${home}/ rwxkm,
           deny ${home}/.bash_history rwxkm,
+
+          ${home}/.rustup/** r,
+          ${home}/.cargo/ r,
+          ${home}/.cargo/.* rwk,
+          ${home}/.cargo/registry/** r,
+
+          #${home}/.rustup/tmp/** rw,
+          #${home}/.rustup/downloads/** rw,
+          #${home}/.rustup/toolchains/*/bin/* rix,
+          #${home}/.rustup/toolchains/*/lib/* rm,
 
           ${xdg.binHome}/** r,
           ${xdg.configHome}/** r,
@@ -139,32 +165,43 @@ in
           ${xdg.stateHome}/goose/** rwk,
 
           #deny network,
-          network inet,
-          network inet6,
-          deny dbus,
-          deny signal,
+          network inet stream,
+          network inet6 stream,
+          audit deny dbus,
+          #audit deny signal,
+          signal (send, receive),
+          audit deny unix,
+          audit deny ptrace,
+          audit deny userns,
+          audit deny capability
+            sys_admin
+            sys_ptrace
+            sys_rawio
+            sys_chroot
+            dac_override
+            dac_read_search
+            setuid
+            setgid
+          ,
 
           # write-exec dirs
-          ${builtins.foldl' (
-            acc: dir:
-            acc
-            + ''
-              ${dir}/ rw,
-              ${dir}/** rwix,
-            ''
-          ) "" writable_dirs}
-
+          ${mk_rules (dir: ''
+            ${dir}/ rw,
+            ${dir}/** rwixklm,
+          '') writable_dirs}
 
           # tools
-          ${builtins.foldl' (
-            acc: tool:
-            acc
-            + ''
-              ${lib.getBin tool}/bin/* ix,
-            ''
-          ) "" allowed_tools}
+          ${mk_rules (tool: ''
+            ${lib.getBin tool}/bin/* ix,
+          '') allowed_tools}
 
-          /nix/store/ r,
+          # runtime deps
+          ${mk_rules (dep: ''
+            ${lib.getBin dep}/bin/* ix,
+            ${lib.getBin dep}/libexec/** ix,
+          '') rt_deps}
+
+          #/nix/store/ r,
           /nix/store/** r,
           /nix/store/*/lib/**.so* rm,
 
@@ -172,13 +209,14 @@ in
           @{etc_ro}/ssl/certs/** r,
           @{etc_ro}/pki/tls/certs/ r,
           @{etc_ro}/pki/tls/certs/** r,
+          @{etc_ro}/passwd r,
           @{run}/nscd/socket r,
           @{run}/systemd/resolve/stub-resolv.conf r,
-          @{sys}/devices/system/cpu/** r,
-          @{sys}/fs/cgroup/user.slice/** r,
+          @{sys}/** r,
 
           @{PROC}/stat r,
           @{PROC}/sys/vm/* r,
+          @{PROC}/meminfo r,
           owner @{PROC}/self/** r,
           owner @{PROC}/@{pid}/** r,
 
@@ -188,8 +226,6 @@ in
           /dev/null rw,
           /tmp/ r,
           owner /tmp/** rwk,
-
-          deny /etc/passwd rwxkm,
         }
       '';
     };
