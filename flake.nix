@@ -57,16 +57,16 @@
 
     in
     {
-      # for quick repl testing
-      inherit pkgs secrets;
+      # for quick repl testing TODO: disable warnings of unkonwn outputs
+      inherit pkgs lib secrets;
 
       nixosConfigurations = lib.concatMapAttrs (
         alias: host:
         {
-          "${host.hostname}" = mk_nixos { inherit host; };
+          "${host.hostname}" = mk_nixos host;
         }
         // lib.optionalAttrs (host.with_installer) {
-          "${host.hostname}-installer" = mk_installer { inherit host; };
+          "${host.hostname}-installer" = mk_installer host;
         }
       ) secrets.hosts;
 

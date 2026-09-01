@@ -4,11 +4,12 @@
   cfg,
   secrets,
 }:
-rec {
-  mk_nixos =
+
+let
+  nixos_system =
     {
       host,
-      modules ? [ "${self}/systems/${host.alias}" ],
+      modules,
     }:
     inputs.nixpkgs.lib.nixosSystem {
       inherit modules;
@@ -20,14 +21,23 @@ rec {
           secrets
           host
           ;
-        # TODO: remove the host_name arg, its contained in 'host' already
-        host_name = secrets.hostnames.${host.alias};
       };
+    };
+in
+
+{
+  inherit nixos_system;
+
+  mk_nixos =
+    host:
+    nixos_system {
+      inherit host;
+      modules = [ "${self}/systems/${host.alias}" ];
     };
 
   mk_installer =
-    { host }:
-    mk_nixos {
+    host:
+    nixos_system {
       inherit host;
       modules = [
         (import "${self}/systems/installer/medium.nix" { inherit host; })
