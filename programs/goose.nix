@@ -81,6 +81,7 @@ let
     ripgrep
     gawk
     which
+    hostname
     file
     findutils
     attr
@@ -104,11 +105,13 @@ let
     config.nix.package
   ];
 
+  # indirect calls, transitive allowed tools
   rt_deps = with pkgs; [
     bash-completion
     patchelf
     gcc-unwrapped
     binutils-unwrapped
+    config.nix.package.nix-cli
   ];
 
   writable_dirs = [
@@ -142,7 +145,9 @@ in
 
         profile ${goose_pkg}/bin/* flags=(enforce) {
 
+          # goose
           ${goose_pkg}/bin/* ix,
+          owner /var/tmp/etilqs_* rw,
 
           deny ${home}/**/{.git,.svn,.hg}/** wxkm,
           deny ${home}/ rwxkm,
@@ -152,11 +157,6 @@ in
           ${home}/.cargo/ r,
           ${home}/.cargo/.* rwk,
           ${home}/.cargo/registry/** r,
-
-          #${home}/.rustup/tmp/** rw,
-          #${home}/.rustup/downloads/** rw,
-          #${home}/.rustup/toolchains/*/bin/* rix,
-          #${home}/.rustup/toolchains/*/lib/* rm,
 
           ${xdg.binHome}/** r,
           ${xdg.configHome}/** r,
@@ -190,20 +190,16 @@ in
             ${dir}/** rwixklm,
           '') writable_dirs}
 
-          # tools
-          ${mk_rules (tool: ''
-            ${lib.getBin tool}/bin/* ix,
-          '') allowed_tools}
+          # tools and rt deps
+          ${mk_rules (p: ''
+            ${lib.getBin p}/bin/* ix,
+            ${p}/libexec/* ix,
+          '') (allowed_tools ++ rt_deps)}
 
-          # runtime deps
-          ${mk_rules (dep: ''
-            ${lib.getBin dep}/bin/* ix,
-            ${lib.getBin dep}/libexec/** ix,
-          '') rt_deps}
-
-          #/nix/store/ r,
+          /nix/store/ r,
           /nix/store/** r,
           /nix/store/*/lib/**.so* rm,
+          ${xdg.cacheHome}/nix/** rw,
 
           @{etc_ro}/ssl/certs/ r,
           @{etc_ro}/ssl/certs/** r,

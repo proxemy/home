@@ -65,7 +65,8 @@ in
 
       offline = "";
       parallel = 1;
-      context-shift = "";
+      #context-shift = "";
+      sleep-idle-seconds = 15 * 60;
       verbosity = if cfg.debug then 5 else 2;
 
       models-preset = (pkgs.formats.ini { }).generate "models-preset.ini" models;
@@ -79,8 +80,12 @@ in
       wantedBy = lib.mkForce [ ];
 
       environment = {
-        #offload to ram, broken
-        #"GGML_CUDA_ENABLE_UNIFIED_MEMORY" = "1";
+        #offload to ram
+        GGML_CUDA_ENABLE_UNIFIED_MEMORY = "1";
+
+        # https://github.com/ggml-org/llama.cpp/blob/master/docs/build.md
+        #GGML_CUDA_FORCE_MMQ = "1";
+        #GGML_CUDA_FORCE_CUBLAS = "1";
       };
 
       serviceConfig = import "${self}/lib/mk_systemd_service.nix" {
