@@ -18,6 +18,8 @@ let
   # construct yq compatible filter rule
   goose_settings = builtins.concatStringsSep " | " (
     builtins.map (e: ".${e}") [
+      # https://goose-docs.ai/docs/guides/environment-variables/
+
       "OPENAI_API_KEY = \"no-key\""
       "OPENAI_HOST = \"http://${llama.host}:${llama.port}\""
       "OPENAI_BASE_PATH = \"v1/chat/completions\""
@@ -33,15 +35,21 @@ let
       "GOOSE_CLI_SHOW_COST = true"
       "GOOSE_MODE = \"auto\"" # \"approve\""
       "GOOSE_TOOLSHIM = true"
+      "GOOSE_TOOLSHIM_BACKEND = \"llama.cpp\""
       #"GOOSE_CLI_MIN_PRIORITY = 0.0" # tool output verbosity: 0.0 = max
       #"GOOSE_SHOW_FULL_OUTPUT = true" # show full cli command invocations
       #"GOOSE_NO_CODE_TRUNCATION = true"
 
-      "GOOSE_MAX_TOKENS = ${builtins.toString (32 * 1024)}"
-      "GOOSE_MAX_TURNS =  50"
+      "GOOSE_MAX_TOKENS = ${builtins.toString (47 * 1024)}"
+      "GOOSE_MAX_TURNS = 75"
 
       "GOOSE_AUTO_COMPACT_THRESHOLD = 0.85"
       "GOOSE_CONTEXT_STRATEGY = \"summary\""
+
+      "GOOSE_DISABLE_SESSION_NAMING = \"true\""
+      "GOOSE_RANDOM_THINKING_MESSAGES = \"false\""
+      "GOOSE_CLI_SHOW_THINKING = 1"
+      "GOOSE_DISABLE_KEYRING = 1"
     ]
   );
 
@@ -199,7 +207,7 @@ in
           /nix/store/ r,
           /nix/store/** r,
           /nix/store/*/lib/**.so* rm,
-          ${xdg.cacheHome}/nix/** rw,
+          ${xdg.cacheHome}/nix/** rwk,
 
           @{etc_ro}/ssl/certs/ r,
           @{etc_ro}/ssl/certs/** r,
