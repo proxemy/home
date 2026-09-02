@@ -16,41 +16,46 @@ let
   };
 
   # construct yq compatible filter rule
-  goose_settings = builtins.concatStringsSep " | " (
-    builtins.map (e: ".${e}") [
-      # https://goose-docs.ai/docs/guides/environment-variables/
+  goose_settings = {
+    # https://goose-docs.ai/docs/guides/environment-variables/
 
-      "OPENAI_API_KEY = \"no-key\""
-      "OPENAI_HOST = \"http://${llama.host}:${llama.port}\""
-      "OPENAI_BASE_PATH = \"v1/chat/completions\""
-      "GOOSE_PROVIDER = \"openai\""
-      "GOOSE_MODEL = \"unsloth/Qwen3.8-27B-GGUF:Q6_K\""
+    OPENAI_API_KEY = "no-key";
+    OPENAI_HOST = "http://${llama.host}:${llama.port}";
+    OPENAI_BASE_PATH = "v1/chat/completions";
+    GOOSE_PROVIDER = "openai";
+    GOOSE_MODEL = "unsloth/Qwen3.8-27B-GGUF:Q6_K";
 
-      #"OLLAMA_HOST = \"localhost\""
-      #"OLLAMA_TIMEOUT = 600"
-      #"GOOSE_PROVIDER = \"ollama\""
-      #"GOOSE_MODEL = \"qwen3.8:27b\""
-      #"GOOSE_TEMPERATURE = 0.7"
-      "GOOSE_TELEMETRY_ENABLED = false"
-      "GOOSE_CLI_SHOW_COST = true"
-      "GOOSE_MODE = \"auto\"" # \"approve\""
-      "GOOSE_TOOLSHIM = true"
-      "GOOSE_TOOLSHIM_BACKEND = \"llama.cpp\""
-      #"GOOSE_CLI_MIN_PRIORITY = 0.0" # tool output verbosity: 0.0 = max
-      #"GOOSE_SHOW_FULL_OUTPUT = true" # show full cli command invocations
-      #"GOOSE_NO_CODE_TRUNCATION = true"
+    #OLLAMA_HOST = "localhost";
+    #OLLAMA_TIMEOUT = 600;
+    #GOOSE_PROVIDER = "ollama";
+    #GOOSE_MODEL = "qwen3.8:27b";
+    #GOOSE_TEMPERATURE = 0.7;
+    GOOSE_TELEMETRY_ENABLED = false;
+    GOOSE_CLI_SHOW_COST = true;
+    GOOSE_MODE = "auto"; # "approve";
+    GOOSE_TOOLSHIM = true;
+    GOOSE_TOOLSHIM_BACKEND = "llama.cpp";
+    #GOOSE_CLI_MIN_PRIORITY = 0.0 # tool output verbosity: 0.0 = max
+    #GOOSE_SHOW_FULL_OUTPUT = true" # show full cli command invocations
+    #GOOSE_NO_CODE_TRUNCATION = true"
 
-      "GOOSE_MAX_TOKENS = ${builtins.toString (47 * 1024)}"
-      "GOOSE_MAX_TURNS = 75"
+    GOOSE_MAX_TOKENS = 47 * 1024;
+    GOOSE_MAX_TURNS = 75;
 
-      "GOOSE_AUTO_COMPACT_THRESHOLD = 0.85"
-      "GOOSE_CONTEXT_STRATEGY = \"summary\""
+    GOOSE_AUTO_COMPACT_THRESHOLD = 0.7;
+    GOOSE_CONTEXT_STRATEGY = "summary";
 
-      "GOOSE_DISABLE_SESSION_NAMING = \"true\""
-      "GOOSE_RANDOM_THINKING_MESSAGES = \"false\""
-      "GOOSE_CLI_SHOW_THINKING = 1"
-      "GOOSE_DISABLE_KEYRING = 1"
-    ]
+    GOOSE_DISABLE_SESSION_NAMING = true;
+    GOOSE_RANDOM_THINKING_MESSAGES = false;
+    GOOSE_CLI_SHOW_THINKING = 1;
+    GOOSE_DISABLE_KEYRING = 1;
+  }
+  // lib.optionalAttrs cfg.debug {
+    GOOSE_DEBUG = 1;
+  };
+
+  goose_settings_yq_filter = builtins.concatStringsSep " | " (
+    builtins.map (s: ".${s.name} = ${builtins.toJSON s.value}") (lib.attrsToList goose_settings)
   );
 
   goose_hints = ''
@@ -138,7 +143,7 @@ in
     activation.goose_settings = home-manager.lib.hm.dag.entryAfter [ "writeBoudnary" ] ''
       run umask 0077
       touch ${goose_cfg.yaml}
-      run ${pkgs.yq}/bin/yq -nyi '${goose_settings}' ${goose_cfg.yaml}
+      run ${pkgs.yq}/bin/yq -nyi '${goose_settings_yq_filter}' ${goose_cfg.yaml}
     '';
 
     file."${goose_cfg.hints}".source = pkgs.writers.writeText "goose_hints" goose_hints;

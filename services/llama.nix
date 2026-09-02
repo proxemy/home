@@ -28,6 +28,10 @@ let
       min-p = 0.0;
       repeat-penalty = 1.0;
       presence-penalty = 0.0;
+      #spec-type = "draft-mtp";
+      #spec-draft-n-max = 2;
+      #spec-draft-type-k = "q5_0";
+      #spec-draft-type-v = "q5_0";
     };
 
     #"TestModel_SmolLM2" = {
@@ -60,14 +64,13 @@ in
       flash-attn = "on";
       batch-size = 512;
       ubatch-size = 256;
-      #spec-draft-n-max = 2;
-      #spec-type = "draft-mtp";
 
+      jinja = "";
       offline = "";
       parallel = 1;
       #context-shift = "";
       sleep-idle-seconds = 15 * 60;
-      verbosity = if cfg.debug then 5 else 2;
+      verbosity = if cfg.debug then 3 else 2;
 
       models-preset = (pkgs.formats.ini { }).generate "models-preset.ini" models;
     };
@@ -80,8 +83,7 @@ in
       wantedBy = lib.mkForce [ ];
 
       environment = {
-        #offload to ram
-        GGML_CUDA_ENABLE_UNIFIED_MEMORY = "1";
+        #GGML_CUDA_ENABLE_UNIFIED_MEMORY = "1";
 
         # https://github.com/ggml-org/llama.cpp/blob/master/docs/build.md
         #GGML_CUDA_FORCE_MMQ = "1";
@@ -90,6 +92,7 @@ in
 
       serviceConfig = import "${self}/lib/mk_systemd_service.nix" {
         PrivateDevices = false; # required for cuda
+        #ProcSubset = lib.mkForce "all";
       };
     };
 
