@@ -79,14 +79,13 @@ let
 
   # TODO: all these tools should be bundled in a goose-wrapper env
   allowed_tools = with pkgs; [
-    bash
-    coreutils
+    #coreutils
     coreutils-full
-    util-linux
+    #util-linux
     binutils
     gnused
     gnugrep
-    ripgrep
+    #ripgrep
     gawk
     which
     hostname
@@ -116,6 +115,7 @@ let
 
   # indirect calls, transitive allowed tools
   rt_deps = with pkgs; [
+    bash
     bash-completion
     patchelf
     gcc-unwrapped
@@ -158,9 +158,9 @@ in
           ${goose_pkg}/bin/* ix,
           owner /var/tmp/etilqs_* rw,
 
-          deny ${home}/**/{.git,.svn,.hg}/** wxkm,
-          deny ${home}/ rwxkm,
-          deny ${home}/.bash_history rwxkm,
+          deny ${home}/**/{.git,.svn,.hg}/** wxklm,
+          deny ${home}/,
+          deny ${home}/.bash_history,
 
           ${home}/.rustup/** r,
           ${home}/.cargo/ r,
