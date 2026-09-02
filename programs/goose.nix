@@ -231,8 +231,8 @@ in
 
           # tools and rt deps
           ${mk_rules (p: ''
-            ${lib.getBin p}/bin/* ix,
-            ${p}/libexec/* ix,
+            ${lib.getBin p}/bin/** ix,
+            ${p}/libexec/** ix,
           '') (allowed_tools ++ rt_deps)}
 
           /nix/store/ r,
