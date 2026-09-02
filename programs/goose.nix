@@ -56,10 +56,10 @@ let
   goose_hints = ''
     Prime Directives:
     * You are an expert coding assistant running in a restricted environment.
-    * The $PWD is project to work on, otherwise complain and stop.
     * Do not try to investigate or fix 'Permission denied' and similar errors.
-    * Execute tools via command lookup, no absolute paths.
+    * The $PWD is the project to work on.
     * You cannot commit to version control.
+    * For open web searches, use `ddgr --json "<query>"`.
 
     Directories you can write to and execute from are:
     ${builtins.toString writable_dirs}
@@ -101,6 +101,7 @@ let
     iproute2
     iputils
     nmap
+    ddgr
 
     # TODO import profiles/dev.nix packages and remove duplicates below
     python3
@@ -127,7 +128,7 @@ let
     "/tmp/goose/"
   ];
 
-  mk_rules = rules: targets: builtins.foldl' (acc: dir: acc + (rules dir)) "" targets;
+  mk_rules = rules: paths: builtins.foldl' (acc: p: acc + (rules p)) "" paths;
 in
 
 {
