@@ -3,6 +3,7 @@
   lib,
   home-manager,
   config,
+  cfg,
   secrets,
   ...
 }:
@@ -16,38 +17,42 @@ let
   };
 
   # construct yq compatible filter rule
-  goose_settings = rec {
-    # https://goose-docs.ai/docs/guides/environment-variables/
+  goose_settings = {
+    # https://goose-docs.ai/docs/guides/config-files/
+    # https://github.com/aaif-goose/goose/blob/main/documentation/docs/guides/config-files.md
 
-    OPENAI_API_KEY = "no-key";
+    #OPENAI_API_KEY = "no-key"; # secrets in config.yaml are ignored
     OPENAI_HOST = "http://${llama.host}:${llama.port}";
     OPENAI_BASE_PATH = "v1/chat/completions";
     GOOSE_PROVIDER = "openai";
     GOOSE_MODEL = "unsloth/Qwen3.8-27B-GGUF:Q6_K";
 
-    #OLLAMA_HOST = "localhost";
-    #OLLAMA_TIMEOUT = 600;
-    #GOOSE_PROVIDER = "ollama";
-    #GOOSE_MODEL = "qwen3.8:27b";
+    GOOSE_MODE = "auto"; # "approve";
+    GOOSE_TOOLSHIM = true;
+    GOOSE_MAX_TURNS = 75;
 
     GOOSE_TELEMETRY_ENABLED = false;
     GOOSE_CLI_SHOW_COST = true;
-    GOOSE_MODE = "auto"; # "approve";
-    GOOSE_TOOLSHIM = true;
-    GOOSE_TOOLSHIM_BACKEND = "llama.cpp";
+  };
+
+  # which parameters can be written in the config.yaml and which not is a total mess
+  goose_env_vars = rec {
+    # https://goose-docs.ai/docs/guides/environment-variables/
+
+    #GOOSE_TOOLSHIM_BACKEND = "llama.cpp"; # breaks conn
 
     GOOSE_CONTEXT_LIMIT = 48 * 1024 / 2; # sync with model ctx-size
     GOOSE_MAX_TOKENS = GOOSE_CONTEXT_LIMIT / 2;
     GOOSE_INPUT_LIMIT = GOOSE_MAX_TOKENS;
-    GOOSE_MAX_TURNS = 75;
-
     GOOSE_AUTO_COMPACT_THRESHOLD = 0.7;
+
     GOOSE_CONTEXT_STRATEGY = "summary";
 
     GOOSE_DISABLE_SESSION_NAMING = true;
     GOOSE_RANDOM_THINKING_MESSAGES = false;
     GOOSE_NO_CODE_TRUNCATION = false;
-    GOOSE_DISABLE_KEYRING = 1;
+    GOOSE_DISABLE_KEYRING = true;
+    GOOSE_CLI_THEME = "dark";
   }
   // lib.optionalAttrs cfg.debug {
     GOOSE_DEBUG = 1;
@@ -86,8 +91,7 @@ let
 
   # TODO: all these tools should be bundled in a goose-wrapper env
   allowed_tools = with pkgs; [
-    #coreutils
-    coreutils-full
+    coreutils
     #util-linux
     binutils
     gnused
@@ -124,6 +128,7 @@ let
   rt_deps = with pkgs; [
     bash
     bash-completion
+    coreutils-full
     patchelf
     gcc-unwrapped
     binutils-unwrapped
@@ -164,7 +169,7 @@ in
               "--set-default ${k} ${
                 lib.escapeShellArg (if builtins.isBool v then if v then "true" else "false" else v)
               }"
-            ) goose_settings}
+            ) goose_env_vars}
         ''
     );
   };
@@ -183,9 +188,9 @@ in
           ${goose_pkg}/bin/* ix,
           owner /var/tmp/etilqs_* rw,
 
-          deny ${home}/**/{.git,.svn,.hg}/** wxklm,
-          deny ${home}/,
-          deny ${home}/.bash_history,
+          deny ${home}/**/{.git,.svn,.hg}/** wklmx,
+          deny ${home}/ rwklmx,
+          deny ${home}/.bash_history rwklmx,
 
           ${home}/.rustup/** r,
           ${home}/.cargo/ r,
