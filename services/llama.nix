@@ -15,16 +15,17 @@ let
     # https://wiki.nixos.org/wiki/Llama-cpp#Migration_to_nixos-unstable_(RFC42)
     # https://github.com/ggml-org/llama.cpp/blob/master/docs/preset.md
 
-    "unsloth/Qwen3.8-27B-GGUF:Q6_K" = {
+    "unsloth/Qwen3.8-27B-GGUF:Q6_K" = rec {
       alias = "Qwen3.8";
       hf-repo = "unsloth/Qwen3.8-27B-GGUF";
       #hf-file = "Qwen3.8-27B-UD-Q8_K_XL.gguf"; # 31.6GB
       hf-file = "Qwen3.8-27B-UD-Q6_K.gguf"; # 22 GB
 
       ctx-size = 48 * 1024;
+      reasoning-budget = ctx-size / 8;
       temperature = 1.0;
-      top-p = 0.95;
       top-k = 20;
+      top-p = 0.95;
       min-p = 0.0;
       repeat-penalty = 1.0;
       presence-penalty = 0.0;
@@ -53,26 +54,28 @@ in
     enable = true;
     package = llama_pkg;
 
-    settings = {
+    settings = rec {
       host = "127.0.0.1";
       port = 8080;
 
       device = cuda_device;
       n-gpu-layers = 999;
+      n-gpu-layers-draft = n-gpu-layers;
       cache-ram = -1;
 
       flash-attn = "on";
-      batch-size = 512;
+      batch-size = 1024;
       ubatch-size = 256;
 
       jinja = "";
+      reasoning-budget-message = lib.escapeShellArg "Reasoning done.";
       offline = "";
       parallel = 1;
       #context-shift = "";
       sleep-idle-seconds = 15 * 60;
       verbosity = if cfg.debug then 3 else 2;
 
-      models-preset = (pkgs.formats.ini { }).generate "models-preset.ini" models;
+      models-preset = (pkgs.formats.ini { }).generate "llama-models-presets.ini" models;
     };
   };
 
@@ -98,6 +101,8 @@ in
 
     llama-model-loader = {
       requires = [ "network-online.target" ];
+
+      unitConfig.RefuseManualStart = true;
 
       serviceConfig =
         (builtins.removeAttrs config.systemd.services.llama-cpp.serviceConfig [

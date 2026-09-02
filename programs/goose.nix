@@ -16,7 +16,7 @@ let
   };
 
   # construct yq compatible filter rule
-  goose_settings = {
+  goose_settings = rec {
     # https://goose-docs.ai/docs/guides/environment-variables/
 
     OPENAI_API_KEY = "no-key";
@@ -29,17 +29,16 @@ let
     #OLLAMA_TIMEOUT = 600;
     #GOOSE_PROVIDER = "ollama";
     #GOOSE_MODEL = "qwen3.8:27b";
-    #GOOSE_TEMPERATURE = 0.7;
+
     GOOSE_TELEMETRY_ENABLED = false;
     GOOSE_CLI_SHOW_COST = true;
     GOOSE_MODE = "auto"; # "approve";
     GOOSE_TOOLSHIM = true;
     GOOSE_TOOLSHIM_BACKEND = "llama.cpp";
-    #GOOSE_CLI_MIN_PRIORITY = 0.0 # tool output verbosity: 0.0 = max
-    #GOOSE_SHOW_FULL_OUTPUT = true" # show full cli command invocations
-    #GOOSE_NO_CODE_TRUNCATION = true"
 
-    GOOSE_MAX_TOKENS = 47 * 1024;
+    GOOSE_CONTEXT_LIMIT = 48 * 1024 / 2; # sync with model ctx-size
+    GOOSE_MAX_TOKENS = GOOSE_CONTEXT_LIMIT / 2;
+    GOOSE_INPUT_LIMIT = GOOSE_MAX_TOKENS;
     GOOSE_MAX_TURNS = 75;
 
     GOOSE_AUTO_COMPACT_THRESHOLD = 0.7;
@@ -47,11 +46,14 @@ let
 
     GOOSE_DISABLE_SESSION_NAMING = true;
     GOOSE_RANDOM_THINKING_MESSAGES = false;
-    GOOSE_CLI_SHOW_THINKING = 1;
+    GOOSE_NO_CODE_TRUNCATION = false;
     GOOSE_DISABLE_KEYRING = 1;
   }
   // lib.optionalAttrs cfg.debug {
     GOOSE_DEBUG = 1;
+    GOOSE_SHOW_FULL_OUTPUT = true;
+    GOOSE_CLI_SHOW_THINKING = true;
+    GOOSE_CLI_MIN_PRIORITY = 0.0; # tool output verbosity: 0.0 = max
   };
 
   goose_settings_yq_filter = lib.concatMapAttrsStringSep " | " (
