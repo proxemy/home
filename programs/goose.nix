@@ -54,9 +54,9 @@ let
     GOOSE_DEBUG = 1;
   };
 
-  goose_settings_yq_filter = builtins.concatStringsSep " | " (
-    builtins.map (s: ".${s.name} = ${builtins.toJSON s.value}") (lib.attrsToList goose_settings)
-  );
+  goose_settings_yq_filter = lib.concatMapAttrsStringSep " | " (
+    k: v: ".${k} = ${builtins.toJSON v}"
+  ) goose_settings;
 
   goose_hints = ''
     Prime Directives:
@@ -64,7 +64,7 @@ let
     * Do not try to investigate or fix 'Permission denied' and similar errors.
     * The $PWD is the project to work on.
     * You cannot commit to version control.
-    * For open web searches, use `ddgr --json "<query>"`.
+    * For open web searches, use `ddgr --json "<query>" [-n <max-results>]`.
 
     Directories you can write to and execute from are:
     ${builtins.toString writable_dirs}
@@ -147,6 +147,24 @@ in
     '';
 
     file."${goose_cfg.hints}".source = pkgs.writers.writeText "goose_hints" goose_hints;
+
+    # goose does not respect all 'goose_settings' in its config.yaml,
+    # so pass them as wrapped env vars too. Launched with this alias.
+    shellAliases.goose = builtins.toString (
+      pkgs.runCommand "goose_wrapper"
+        {
+          nativeBuildInputs = [ pkgs.makeWrapper ];
+        }
+        ''
+          makeWrapper ${lib.getBin goose_pkg}/bin/goose $out \
+            ${lib.concatMapAttrsStringSep " " (
+              k: v:
+              "--set-default ${k} ${
+                lib.escapeShellArg (if builtins.isBool v then if v then "true" else "false" else v)
+              }"
+            ) goose_settings}
+        ''
+    );
   };
 
   security.apparmor.policies.goose =
