@@ -1,11 +1,6 @@
-{
-  pkgs,
-  self,
-  secrets,
-  ...
-}:
-
+{ pkgs, self, secrets, ... }:
 let
+  # TODO: maybe create a dedicated rust_dev profile
   rust_tools = with pkgs; [
     cargo
     rust-analyzer
@@ -19,13 +14,11 @@ in
 {
   imports = [
     "${self}/programs/neovim/"
+    "${self}/programs/vscodium.nix"
   ];
 
-  users.users.${secrets.username}.packages =
-    with pkgs;
-    [
-      gcc
-      vscodium
-    ]
-    ++ rust_tools;
+  users.users.${secrets.username}.packages = [
+    pkgs.gcc
+  ]
+  ++ rust_tools;
 }

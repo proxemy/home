@@ -1,4 +1,5 @@
 { pkgs, secrets, ... }:
+# TODO: only include this in hardware.graphics.enable hosts
 {
   home-manager.users.${secrets.username}.home.packages = with pkgs; [
     libreoffice
