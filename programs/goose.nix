@@ -25,11 +25,11 @@ let
     OPENAI_HOST = "http://${llama.host}:${llama.port}";
     OPENAI_BASE_PATH = "v1/chat/completions";
     GOOSE_PROVIDER = "openai";
-    GOOSE_MODEL = "unsloth/Qwen3.8-27B-GGUF:Q6_K";
+    GOOSE_MODEL = "Qwen3.8-27B";
 
     GOOSE_MODE = "auto"; # "approve";
     GOOSE_TOOLSHIM = true;
-    GOOSE_MAX_TURNS = 75;
+    GOOSE_MAX_TURNS = 200;
 
     GOOSE_TELEMETRY_ENABLED = false;
     GOOSE_CLI_SHOW_COST = true;
@@ -41,23 +41,27 @@ let
 
     #GOOSE_TOOLSHIM_BACKEND = "llama.cpp"; # breaks conn
 
-    GOOSE_CONTEXT_LIMIT = 48 * 1024 / 2; # sync with model ctx-size
-    GOOSE_MAX_TOKENS = GOOSE_CONTEXT_LIMIT / 2;
-    GOOSE_INPUT_LIMIT = GOOSE_MAX_TOKENS;
-    GOOSE_AUTO_COMPACT_THRESHOLD = 0.7;
-
+    # displayed/compacted max context size
+    GOOSE_CONTEXT_LIMIT = 80 * 1024; # sync with model ctx-size
+    GOOSE_AUTO_COMPACT_THRESHOLD = 0.5;
     GOOSE_CONTEXT_STRATEGY = "summary";
+
+    # max model response, rest gets truncated
+    GOOSE_MAX_TOKENS = GOOSE_CONTEXT_LIMIT / 2;
+
+    # "GOOSE_INPUT_LIMIT: Override input token limit for Ollama"
+    GOOSE_INPUT_LIMIT = GOOSE_MAX_TOKENS;
 
     GOOSE_DISABLE_SESSION_NAMING = true;
     GOOSE_RANDOM_THINKING_MESSAGES = false;
-    GOOSE_NO_CODE_TRUNCATION = false;
+    GOOSE_NO_CODE_TRUNCATION = true;
+    GOOSE_CLI_SHOW_THINKING = true;
     GOOSE_DISABLE_KEYRING = true;
     GOOSE_CLI_THEME = "dark";
   }
   // lib.optionalAttrs cfg.debug {
     GOOSE_DEBUG = 1;
     GOOSE_SHOW_FULL_OUTPUT = true;
-    GOOSE_CLI_SHOW_THINKING = true;
     GOOSE_CLI_MIN_PRIORITY = 0.0; # tool output verbosity: 0.0 = max
   };
 
@@ -96,7 +100,7 @@ let
     binutils
     gnused
     gnugrep
-    #ripgrep
+    ripgrep
     gawk
     which
     hostname
@@ -187,10 +191,15 @@ in
           # goose
           ${goose_pkg}/bin/* ix,
           owner /var/tmp/etilqs_* rw,
+          deny ${home}/.goose/** rwklmx,
+          ${xdg.configHome}/goose/** rwk,
+          ${xdg.dataHome}/goose/** rwk,
+          ${xdg.stateHome}/goose/** rwk,
 
           deny ${home}/**/{.git,.svn,.hg}/** wklmx,
           deny ${home}/ rwklmx,
           deny ${home}/.bash_history rwklmx,
+          deny / rwklmx,
 
           ${home}/.rustup/** r,
           ${home}/.cargo/ r,
@@ -199,9 +208,6 @@ in
 
           ${xdg.binHome}/** r,
           ${xdg.configHome}/** r,
-          ${xdg.configHome}/goose/** rwk,
-          ${xdg.dataHome}/goose/** rwk,
-          ${xdg.stateHome}/goose/** rwk,
 
           #deny network,
           network inet stream,

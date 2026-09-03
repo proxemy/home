@@ -8,31 +8,41 @@
   ...
 }:
 let
-  llama_pkg = (pkgs.llama-cpp.override { cudaSupport = true; });
+  llama_pkg = (pkgs.llama-cpp.override {
+    cudaSupport = true;
+    cpuArchDynamicDispatch = true;
+  });
 
   models = {
     # see:
     # https://wiki.nixos.org/wiki/Llama-cpp#Migration_to_nixos-unstable_(RFC42)
     # https://github.com/ggml-org/llama.cpp/blob/master/docs/preset.md
 
-    "unsloth/Qwen3.8-27B-GGUF:Q6_K" = rec {
+    "Qwen3.8-27B" = rec {
       alias = "Qwen3.8";
       hf-repo = "unsloth/Qwen3.8-27B-GGUF";
       #hf-file = "Qwen3.8-27B-UD-Q8_K_XL.gguf"; # 31.6GB
-      hf-file = "Qwen3.8-27B-UD-Q6_K.gguf"; # 22 GB
+      #hf-file = "Qwen3.8-27B-UD-Q6_K.gguf"; # 22 GB
+      hf-file = "Qwen3.8-27B-UD-Q5_K_S.gguf"; # 18.7 GB
 
-      ctx-size = 48 * 1024;
-      reasoning-budget = ctx-size / 8;
+      n-gpu-layers = 999;
+      n-gpu-layers-draft = 0;
+
+      ctx-size = 80 * 1024;
+      #reasoning-budget = ctx-size / 4;
+
       temperature = 1.0;
       top-k = 20;
       top-p = 0.95;
       min-p = 0.0;
       repeat-penalty = 1.0;
       presence-penalty = 0.0;
-      #spec-type = "draft-mtp";
-      #spec-draft-n-max = 2;
-      #spec-draft-type-k = "q5_0";
-      #spec-draft-type-v = "q5_0";
+
+      spec-type = "draft-mtp";
+      spec-draft-n-max = 3;
+      spec-draft-n-min = 1;
+      spec-draft-type-k = "q8_0";
+      spec-draft-type-v = spec-draft-type-k;
     };
 
     #"TestModel_SmolLM2" = {
@@ -59,20 +69,33 @@ in
       port = 8080;
 
       device = cuda_device;
-      n-gpu-layers = 999;
-      n-gpu-layers-draft = n-gpu-layers;
-      cache-ram = -1;
+      threads = 20;
+      cache-ram = 24 * 1024;
+      fit = "no";
+      #fit-target = cache-ram;
+      #numa = "numactl";
 
       flash-attn = "on";
+      swa-full = "";
       batch-size = 1024;
       ubatch-size = 256;
-
-      jinja = "";
-      reasoning-budget-message = lib.escapeShellArg "Reasoning done.";
-      offline = "";
-      parallel = 1;
+      override-tensor = builtins.concatStringsSep "," [
+        "token_embd.weight=CPU"
+        "per_layer_token_embd=CPU"
+      ]; # frees vram
+      #load-mode = "none";
+      rope-scaling = "yarn";
+      #kv-unified = "";
+      #keep = -1;
       #context-shift = "";
-      sleep-idle-seconds = 15 * 60;
+      #jinja = "";
+
+      #reasoning-budget-message = lib.escapeShellArg "Reasoning done.";
+      offline = "";
+      cors-origins = "localhost";
+      parallel = 1;
+      models-max = 1;
+      sleep-idle-seconds = 5 * 60;
       verbosity = if cfg.debug then 3 else 2;
 
       models-preset = (pkgs.formats.ini { }).generate "llama-models-presets.ini" models;
@@ -86,14 +109,17 @@ in
       wantedBy = lib.mkForce [ ];
 
       environment = {
+        # DANGEROUS: exceeds ram fast! Beware of too much ctx-size.
         #GGML_CUDA_ENABLE_UNIFIED_MEMORY = "1";
 
         # https://github.com/ggml-org/llama.cpp/blob/master/docs/build.md
         #GGML_CUDA_FORCE_MMQ = "1";
         #GGML_CUDA_FORCE_CUBLAS = "1";
+        #GGML_CUDA_FA_ALL_QUANTS = "1";
       };
 
       serviceConfig = import "${self}/lib/mk_systemd_service.nix" {
+        #Restart = false;
         PrivateDevices = false; # required for cuda
         #ProcSubset = lib.mkForce "all";
       };
@@ -129,11 +155,13 @@ in
 
         ${builtins.toString (
           builtins.map (model: ''
+            echo checking: ${model.hf-repo} / ${model.hf-file}
+
             if ! grep -q "${model.hf-repo}" <<< "$cached_models" \
-              || ! find "$LLAMA_CACHE" -name "${model.hf-file}" \
+              || [ ! -f "$LLAMA_CACHE"/**/"${model.hf-file}" ] \
             ; then
-              echo Missing repo: "${model.hf-repo}" or
-              echo missing file: "${model.hf-file}"
+              echo Missing repo: "${model.hf-repo}"
+              echo or missing file: "${model.hf-file}"
               echo downloading ...
 
               ${llama_pkg}/bin/llama download \
