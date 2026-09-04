@@ -27,11 +27,12 @@ let
       #hf-file = "Qwen3.8-27B-UD-Q6_K.gguf"; # 22 GB
       hf-file = "Qwen3.8-27B-UD-Q5_K_S.gguf"; # 18.7 GB
 
-      n-gpu-layers = 999;
+      n-gpu-layers = 63; # of 64
       n-gpu-layers-draft = 0;
 
-      ctx-size = 80 * 1024;
-      #reasoning-budget = ctx-size / 4;
+      ctx-size = 84 * 1024;
+      reasoning-budget = ctx-size / 2;
+      no-reasoning-preserve = "";
 
       temperature = 1.0;
       top-k = 20;
@@ -41,8 +42,7 @@ let
       presence-penalty = 0.0;
 
       spec-type = "draft-mtp";
-      spec-draft-n-max = 3;
-      spec-draft-n-min = 1;
+      spec-draft-n-max = 2;
       spec-draft-type-k = "q8_0";
       spec-draft-type-v = spec-draft-type-k;
     };
@@ -71,28 +71,27 @@ in
       port = 8080;
 
       device = cuda_device;
-      threads = 20;
+      threads = 23;
       cache-ram = 24 * 1024;
-      fit = "no";
       #fit-target = cache-ram;
-      #numa = "numactl";
+      numa = "numactl";
+      no-mmap = "";
 
       flash-attn = "on";
-      swa-full = "";
       batch-size = 1024;
       ubatch-size = 256;
       override-tensor = builtins.concatStringsSep "," [
         "token_embd.weight=CPU"
         "per_layer_token_embd=CPU"
       ]; # frees vram
-      #load-mode = "none";
+      #load-mode = "mlock"; # default: "auto"
       rope-scaling = "yarn";
       #kv-unified = "";
-      #keep = -1;
-      #context-shift = "";
+      keep = -1;
+      context-shift = "";
       #jinja = "";
 
-      #reasoning-budget-message = lib.escapeShellArg "Reasoning done.";
+      reasoning-budget-message = lib.escapeShellArg "Internal reasoning truncated! Compact your relevant progress!";
       offline = "";
       cors-origins = "localhost";
       parallel = 1;

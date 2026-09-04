@@ -29,41 +29,43 @@ let
     GOOSE_MODEL = "Qwen3.8-27B"; # sync with llama.models naming
 
     GOOSE_MODE = "auto"; # "approve";
-    GOOSE_TOOLSHIM = true;
+    #GOOSE_TOOLSHIM = true;
     GOOSE_MAX_TURNS = 200;
 
     GOOSE_TELEMETRY_ENABLED = false;
     GOOSE_CLI_SHOW_COST = true;
   };
 
+  input_margin = 0.4;
+
   # which parameters can be written in the config.yaml and which not is a total mess
   goose_env_vars = rec {
     # https://goose-docs.ai/docs/guides/environment-variables/
 
-    #GOOSE_TOOLSHIM_BACKEND = "llama.cpp"; # breaks conn
+    #GOOSE_TOOLSHIM_BACKEND = "local"; "llama.cpp"; # breaks conn
 
     # displayed/compacted max context size
     GOOSE_CONTEXT_LIMIT = (lib.toInt llama.presets."${goose_settings.GOOSE_MODEL}".ctx-size);
-    GOOSE_AUTO_COMPACT_THRESHOLD = 0.5;
+    GOOSE_AUTO_COMPACT_THRESHOLD = input_margin;
     GOOSE_CONTEXT_STRATEGY = "summary";
 
     # max model response, rest gets truncated
-    GOOSE_MAX_TOKENS = GOOSE_CONTEXT_LIMIT / 2;
+    GOOSE_MAX_TOKENS = GOOSE_CONTEXT_LIMIT;
 
     # "GOOSE_INPUT_LIMIT: Override input token limit for Ollama"
-    GOOSE_INPUT_LIMIT = GOOSE_MAX_TOKENS;
+    GOOSE_INPUT_LIMIT = lib.floor (GOOSE_MAX_TOKENS * input_margin);
 
     GOOSE_DISABLE_SESSION_NAMING = true;
+    GOOSE_DISABLE_KEYRING = true;
+    GOOSE_CLI_THEME = "dark";
+
     GOOSE_RANDOM_THINKING_MESSAGES = false;
     GOOSE_NO_CODE_TRUNCATION = true;
     GOOSE_CLI_SHOW_THINKING = true;
-    GOOSE_DISABLE_KEYRING = true;
-    GOOSE_CLI_THEME = "dark";
-  }
-  // lib.optionalAttrs cfg.debug {
-    GOOSE_DEBUG = 1;
-    GOOSE_SHOW_FULL_OUTPUT = true;
+    #GOOSE_SHOW_FULL_OUTPUT = true;
     GOOSE_CLI_MIN_PRIORITY = 0.0; # tool output verbosity: 0.0 = max
+  } // lib.optionalAttrs cfg.debug {
+    GOOSE_DEBUG = 1;
   };
 
   goose_settings_yq_filter = lib.concatMapAttrsStringSep " | " (
