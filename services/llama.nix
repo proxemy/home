@@ -31,7 +31,7 @@ let
       n-gpu-layers-draft = 0;
 
       ctx-size = 84 * 1024;
-      reasoning-budget = ctx-size / 2;
+      reasoning-budget = ctx-size / 4;
       no-reasoning-preserve = "";
 
       temperature = 1.0;
@@ -75,7 +75,6 @@ in
       cache-ram = 24 * 1024;
       #fit-target = cache-ram;
       numa = "numactl";
-      no-mmap = "";
 
       flash-attn = "on";
       batch-size = 1024;

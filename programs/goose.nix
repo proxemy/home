@@ -36,8 +36,6 @@ let
     GOOSE_CLI_SHOW_COST = true;
   };
 
-  input_margin = 0.4;
-
   # which parameters can be written in the config.yaml and which not is a total mess
   goose_env_vars = rec {
     # https://goose-docs.ai/docs/guides/environment-variables/
@@ -46,14 +44,14 @@ let
 
     # displayed/compacted max context size
     GOOSE_CONTEXT_LIMIT = (lib.toInt llama.presets."${goose_settings.GOOSE_MODEL}".ctx-size);
-    GOOSE_AUTO_COMPACT_THRESHOLD = input_margin;
+    GOOSE_AUTO_COMPACT_THRESHOLD = 0.7;
     GOOSE_CONTEXT_STRATEGY = "summary";
 
-    # max model response, rest gets truncated
-    GOOSE_MAX_TOKENS = GOOSE_CONTEXT_LIMIT;
+    # max model response
+    GOOSE_MAX_TOKENS = GOOSE_CONTEXT_LIMIT / 8;
 
     # "GOOSE_INPUT_LIMIT: Override input token limit for Ollama"
-    GOOSE_INPUT_LIMIT = lib.floor (GOOSE_MAX_TOKENS * input_margin);
+    GOOSE_INPUT_LIMIT = (GOOSE_CONTEXT_LIMIT - GOOSE_MAX_TOKENS) / 4;
 
     GOOSE_DISABLE_SESSION_NAMING = true;
     GOOSE_DISABLE_KEYRING = true;
@@ -64,7 +62,8 @@ let
     GOOSE_CLI_SHOW_THINKING = true;
     #GOOSE_SHOW_FULL_OUTPUT = true;
     GOOSE_CLI_MIN_PRIORITY = 0.0; # tool output verbosity: 0.0 = max
-  } // lib.optionalAttrs cfg.debug {
+  }
+  // lib.optionalAttrs cfg.debug {
     GOOSE_DEBUG = 1;
   };
 
@@ -78,7 +77,6 @@ let
     * Do not try to investigate or fix 'Permission denied' and similar errors.
     * The $PWD is the project to work on.
     * You cannot commit to version control.
-    * For open web searches, use `ddgr --json "<query>" [-n <max-results>]`.
 
     Directories you can write to and execute from are:
     ${builtins.toString writable_dirs}
@@ -118,7 +116,6 @@ let
     iproute2
     iputils
     nmap
-    ddgr
 
     # TODO import profiles/dev.nix packages and remove duplicates below
     python3
@@ -164,21 +161,25 @@ in
 
     # goose does not respect all 'goose_settings' in its config.yaml,
     # so pass them as wrapped env vars too. Launched with this alias.
-    shellAliases.goose = builtins.toString (
-      pkgs.runCommand "goose_wrapper"
-        {
-          nativeBuildInputs = [ pkgs.makeWrapper ];
-        }
-        ''
-          makeWrapper ${lib.getBin goose_pkg}/bin/goose $out \
-            ${lib.concatMapAttrsStringSep " " (
-              k: v:
-              "--set-default ${k} ${
-                lib.escapeShellArg (if builtins.isBool v then if v then "true" else "false" else v)
-              }"
-            ) goose_env_vars}
-        ''
-    );
+    shellAliases = {
+      goose = builtins.toString (
+        pkgs.runCommand "goose_wrapper"
+          {
+            nativeBuildInputs = [ pkgs.makeWrapper ];
+          }
+          ''
+            makeWrapper ${lib.getBin goose_pkg}/bin/goose $out \
+              ${lib.concatMapAttrsStringSep " " (
+                k: v:
+                "--set-default ${k} ${
+                  lib.escapeShellArg (if builtins.isBool v then if v then "true" else "false" else v)
+                }"
+              ) goose_env_vars}
+          ''
+      );
+
+      goose-log = "tail -f ~/.local/state/goose/logs/cli/$(date +%Y-%m-%d)/*";
+    };
   };
 
   security.apparmor.policies.goose =
