@@ -8,10 +8,12 @@
   ...
 }:
 let
-  llama_pkg = (pkgs.llama-cpp.override {
-    cudaSupport = true;
-    cpuArchDynamicDispatch = true;
-  });
+  llama_pkg = (
+    pkgs.llama-cpp.override {
+      cudaSupport = true;
+      cpuArchDynamicDispatch = true;
+    }
+  );
 
   models = {
     # see:

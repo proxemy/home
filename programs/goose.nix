@@ -3,6 +3,7 @@
   lib,
   home-manager,
   config,
+  self,
   cfg,
   secrets,
   ...
@@ -13,7 +14,7 @@ let
   llama = {
     host = config.services.llama-cpp.settings.host;
     port = builtins.toString config.services.llama-cpp.settings.port;
-    #model = config.services.llama-cpp.model;
+    presets = (import "${self}/lib/read_ini.nix" lib) config.services.llama-cpp.settings.models-preset.text;
   };
 
   # construct yq compatible filter rule
@@ -25,7 +26,7 @@ let
     OPENAI_HOST = "http://${llama.host}:${llama.port}";
     OPENAI_BASE_PATH = "v1/chat/completions";
     GOOSE_PROVIDER = "openai";
-    GOOSE_MODEL = "Qwen3.8-27B";
+    GOOSE_MODEL = "Qwen3.8-27B"; # sync with llama.models naming
 
     GOOSE_MODE = "auto"; # "approve";
     GOOSE_TOOLSHIM = true;
@@ -42,7 +43,7 @@ let
     #GOOSE_TOOLSHIM_BACKEND = "llama.cpp"; # breaks conn
 
     # displayed/compacted max context size
-    GOOSE_CONTEXT_LIMIT = 80 * 1024; # sync with model ctx-size
+    GOOSE_CONTEXT_LIMIT = (lib.toInt llama.presets."${goose_settings.GOOSE_MODEL}".ctx-size);
     GOOSE_AUTO_COMPACT_THRESHOLD = 0.5;
     GOOSE_CONTEXT_STRATEGY = "summary";
 

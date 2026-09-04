@@ -1,4 +1,9 @@
-{ pkgs, self, secrets, ... }:
+{
+  pkgs,
+  self,
+  secrets,
+  ...
+}:
 let
   # TODO: maybe create a dedicated rust_dev profile
   rust_tools = with pkgs; [
