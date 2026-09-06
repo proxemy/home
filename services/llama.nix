@@ -32,6 +32,7 @@ let
 
       ctx-size = 84 * 1024;
       reasoning-budget = ctx-size / 4;
+      n-predict = ctx-size / 4;
       no-reasoning-preserve = "";
 
       temperature = 1.0;
@@ -83,7 +84,7 @@ in
         "token_embd.weight=CPU"
         "per_layer_token_embd=CPU"
       ]; # frees vram
-      #load-mode = "mlock"; # default: "auto"
+      load-mode = "none";
       rope-scaling = "yarn";
       #kv-unified = "";
       keep = -1;

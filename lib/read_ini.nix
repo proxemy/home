@@ -1,4 +1,4 @@
-# measures of desperation
+# measures of desperation. many unmet edge cases.
 lib: ini_text:
 with builtins;
 let
@@ -11,7 +11,11 @@ let
 
   param_tuple_to_attr = p: {
     name = lib.strings.trim (lib.head p);
-    value = toString (lib.drop 1 p);
+    value =
+      let
+        rest = toString (lib.drop 1 p);
+      in
+      if match "^-?[0-9.]+$" rest != null then (fromJSON rest) else rest;
   };
 
   sections_values = split_sections ini_text;

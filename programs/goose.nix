@@ -11,10 +11,12 @@
 let
   goose_pkg = pkgs.goose-cli;
 
-  llama = {
-    host = config.services.llama-cpp.settings.host;
-    port = builtins.toString config.services.llama-cpp.settings.port;
-    presets = (import "${self}/lib/read_ini.nix" lib) config.services.llama-cpp.settings.models-preset.text;
+  llama = rec {
+    cfg = config.services.llama-cpp;
+    host = cfg.settings.host;
+    port = builtins.toString cfg.settings.port;
+    presets = (import "${self}/lib/read_ini.nix" lib) cfg.settings.models-preset.text;
+    model = presets."${goose_settings.GOOSE_MODEL}";
   };
 
   # construct yq compatible filter rule
@@ -43,15 +45,15 @@ let
     #GOOSE_TOOLSHIM_BACKEND = "local"; "llama.cpp"; # breaks conn
 
     # displayed/compacted max context size
-    GOOSE_CONTEXT_LIMIT = (lib.toInt llama.presets."${goose_settings.GOOSE_MODEL}".ctx-size);
-    GOOSE_AUTO_COMPACT_THRESHOLD = 0.7;
+    GOOSE_CONTEXT_LIMIT = llama.model.ctx-size;
+    GOOSE_AUTO_COMPACT_THRESHOLD = GOOSE_INPUT_LIMIT / (GOOSE_CONTEXT_LIMIT + 0.0);
     GOOSE_CONTEXT_STRATEGY = "summary";
 
     # max model response
-    GOOSE_MAX_TOKENS = GOOSE_CONTEXT_LIMIT / 8;
+    GOOSE_MAX_TOKENS = GOOSE_CONTEXT_LIMIT;
 
     # "GOOSE_INPUT_LIMIT: Override input token limit for Ollama"
-    GOOSE_INPUT_LIMIT = (GOOSE_CONTEXT_LIMIT - GOOSE_MAX_TOKENS) / 4;
+    GOOSE_INPUT_LIMIT = llama.model.reasoning-budget;
 
     GOOSE_DISABLE_SESSION_NAMING = true;
     GOOSE_DISABLE_KEYRING = true;
@@ -75,6 +77,7 @@ let
     Prime Directives:
     * You are an expert coding assistant running in a restricted environment.
     * Do not try to investigate or fix 'Permission denied' and similar errors.
+    * Keep your instructions and reasoning short to spare resources and context window.
     * The $PWD is the project to work on.
     * You cannot commit to version control.
 
@@ -172,7 +175,9 @@ in
               ${lib.concatMapAttrsStringSep " " (
                 k: v:
                 "--set-default ${k} ${
-                  lib.escapeShellArg (if builtins.isBool v then if v then "true" else "false" else v)
+                  lib.escapeShellArg (
+                    if builtins.isBool v then if v then "true" else "false" else (builtins.toString v)
+                  )
                 }"
               ) goose_env_vars}
           ''
@@ -209,6 +214,8 @@ in
           ${home}/.cargo/ r,
           ${home}/.cargo/.* rwk,
           ${home}/.cargo/registry/** r,
+          /nix/store/*-rust-nightly/bin/* rix,
+          /nix/store/*-rust-nightly-complete-with-components-*/bin/* rix,
 
           ${xdg.binHome}/** r,
           ${xdg.configHome}/** r,
