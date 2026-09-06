@@ -82,7 +82,7 @@ let
     * You cannot commit to version control.
 
     Directories you can write to and execute from are:
-    ${builtins.toString writable_dirs}
+    ${builtins.toString (builtins.map (d: "${d}**") writable_dirs)}
 
     You can use the following tools / packages:
     ${builtins.toString (builtins.map (p: p.meta.mainProgram or p.pname) allowed_tools)}
