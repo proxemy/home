@@ -60,6 +60,10 @@
       options = "---delete-older-than 30d";
       dates = "weekly";
     };
+
+    extraOptions = ''
+      experimental-features = nix-command flakes
+    '';
   };
 
   boot.loader.timeout = lib.mkDefault 2;
