@@ -2,31 +2,20 @@
   pkgs,
   lib,
   config,
+  self,
   secrets,
   ...
 }:
 let
 
-  arkenfox = rec {
-    userjs = builtins.readFile "${pkgs.arkenfox-userjs}/user.js";
-    split = builtins.split "\nuser_pref\\(([^)]+)" userjs;
-    flatten = lib.lists.flatten (builtins.filter builtins.isList split);
-    filter = builtins.filter (line: !lib.strings.hasPrefix "\"_user.js" line) flatten;
-    attrs =
-      let
-        split_pair = line: builtins.split ",[[:space:]]+" line;
-        remove_quotes = str: lib.strings.replaceString "\"" "" str;
-        attr_name = line: (remove_quotes (lib.lists.head (split_pair line)));
-        attr_value = line: (remove_quotes (lib.lists.last (split_pair line)));
-      in
-      lib.attrsets.genAttrs' filter (line: lib.nameValuePair (attr_name line) (attr_value line));
-  };
-
-  arkenfox_overrides = {
-    "security.OCSP.enabled" = 0;
-    "security.OCSP.require" = false;
-    "privacy.resistFingerprinting.letterboxing" = false;
-  };
+  arkenfox_userjs =
+    (import "${self}/lib/read_user_js.nix" (builtins.readFile "${pkgs.arkenfox-userjs}/user.js")).parsed
+    // {
+      # overrides
+      "security.OCSP.enabled" = 0;
+      "security.OCSP.require" = false;
+      "privacy.resistFingerprinting.letterboxing" = false;
+    };
 
   custom_settings =
     let
@@ -134,8 +123,7 @@ in
         isDefault = true;
         settings =
           import ./mozilla_prefs.nix { inherit lib; }
-          // arkenfox.attrs
-          // arkenfox_overrides
+          // arkenfox_userjs
           // custom_settings;
 
         bookmarks = {
