@@ -42,7 +42,10 @@ in
     mounts = [
       {
         type = mount.type;
-        mountConfig.Options = mount.options;
+        mountConfig = {
+          Options = mount.options;
+          TimeoutStartSec = 10;
+        };
         what = mount.source;
         where = mount.target;
         after = [
