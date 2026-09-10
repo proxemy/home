@@ -32,6 +32,7 @@ let
 
       ctx-size = 84 * 1024;
       reasoning-budget = ctx-size / 4;
+      #reasoning-effort = "low";
       n-predict = ctx-size / 4;
       no-reasoning-preserve = "";
 

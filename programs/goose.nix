@@ -216,10 +216,9 @@ in
           ${xdg.stateHome}/goose/** rwk,
 
           deny ${home}/**/{.git,.svn,.hg}/** wklmx,
-          deny ${home}/**/.env rwklmx,
+          audit deny ${home}/**/.env rwklmx,
           deny ${home}/ rwklmx,
           deny ${home}/.bash_history rwklmx,
-          deny / rwklmx,
 
           ${home}/.rustup/** r,
           ${home}/.cargo/ r,
@@ -227,6 +226,7 @@ in
           ${home}/.cargo/registry/** r,
           /nix/store/*-rust-nightly/bin/* rix,
           /nix/store/*-rust-nightly-complete-with-components-*/bin/* rix,
+          /nix/store/*-rustfmt-preview-nightly-complete-*/bin/* rix,
 
           ${xdg.binHome}/** r,
           ${xdg.configHome}/** r,
@@ -263,10 +263,12 @@ in
             ${p}/libexec/** ix,
           '') (goose.allowed_tools ++ goose.rt_deps)}
 
+          #nix
           /nix/store/ r,
           /nix/store/** r,
           /nix/store/*/lib/**.so* rm,
           ${xdg.cacheHome}/nix/** rwk,
+          / r,
 
           @{etc_ro}/ssl/certs/ r,
           @{etc_ro}/ssl/certs/** r,
@@ -288,7 +290,7 @@ in
           /dev/urandom r,
           /dev/null rw,
           /tmp/ r,
-          owner /tmp/**wk,
+          owner /tmp/** wk,
         }
       '';
     };
