@@ -21,17 +21,17 @@ let
     pkg = pkgs.goose-cli;
 
     hints = ''
-      Prime Directives:
-      * You are an expert coding assistant running in a restricted environment.
-      * Do not try to investigate or fix 'Permission denied' and similar errors.
-      * Keep your instructions and reasoning short to spare resources and context window.
-      * The $PWD is the project to work on. Do not consider outside directories.
-      * You cannot commit to version control.
+      # Prime Directives  
+      * You are an expert coding assistant running in a restricted environment.  
+      * Do not try to investigate or fix 'Permission denied' and similar errors.  
+      * Keep your instructions and reasoning short to spare resources and context window.  
+      * The $PWD is the project to work on. Do not consider outside directories.  
+      * You cannot commit or write to version control (.git,.svn,etc.). Don't use it.  
 
-      Directories you can write to and execute from are:
-      ${builtins.toString (builtins.map (d: "${d}**") workdirs)}
+      # Executable / writable directories  
+      ${builtins.toString (builtins.map (d: "${d}**\n  ") workdirs)}
 
-      You can use the following tools / packages:
+      # Allowed tools / packages  
       ${builtins.toString (builtins.map (p: p.meta.mainProgram or p.pname) allowed_tools)}
     '';
 
@@ -112,14 +112,16 @@ let
       nmap
 
       # TODO import profiles/dev.nix packages and remove duplicates below
+      config.nix.package
       python3
       gcc
-      cargo
-      rust-analyzer
-      rustc-unwrapped
-      rustfmt
-      clippy
-      config.nix.package
+
+      # Rust is usuall handled via flakes, cannot pin version here
+      #cargo
+      #rust-analyzer
+      #rustc-unwrapped
+      #rustfmt
+      #clippy
     ];
 
     # indirect calls, transitive allowed tools
@@ -178,10 +180,11 @@ in
           ''
             makeWrapper ${lib.getExe goose.pkg} $out \
               --run ${pkgs.writeShellScript "goose_init.sh" ''
-                for wd in ${builtins.toString goose.workdirs}; do
-                  [ ! -d "$wd" ] && mkdir -p "$wd" || true
+                for work_dir in ${builtins.toString goose.workdirs}; do
+                  [ ! -d "$work_dir" ] && mkdir -p "$work_dir" || true
                 done
               ''} \
+              --prefix PATH : ${lib.makeBinPath (goose.allowed_tools ++ goose.rt_deps)} \
               ${lib.concatMapAttrsStringSep " " (
                 k: v:
                 "--set-default ${k} ${
@@ -221,20 +224,18 @@ in
           deny ${home}/ rwklmx,
           deny ${home}/.bash_history rwklmx,
 
-          # rust
+          # rust, for projects managed by rustup and not nix
           ${home}/.rustup/** r,
           ${home}/.cargo/ r,
           ${home}/.cargo/.* rwk,
           ${home}/.cargo/registry/ r,
           ${home}/.cargo/registry/** r,
-          /nix/store/*-rust-nightly/bin/* rix,
-          /nix/store/*-rust-nightly-complete-with-components-*/bin/* rix,
-          /nix/store/*-rustfmt-preview-nightly-complete-*/bin/* rix,
+          /nix/store/*-rust{c,fmt,-analyzer}-*/** rix,
 
           ${xdg.binHome}/** r,
           ${xdg.configHome}/** r,
 
-          #deny network,
+          #audit deny network,
           network inet stream,
           network inet6 stream,
           audit deny dbus,
@@ -293,6 +294,7 @@ in
           /dev/urandom r,
           /dev/null rw,
           /tmp/ r,
+          /tmp/** r,
           owner /tmp/** wk,
         }
       '';
