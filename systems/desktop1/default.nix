@@ -19,6 +19,7 @@
     "${self}/programs/goose.nix"
     "${self}/programs/steam.nix"
     "${self}/programs/chromium.nix"
+    "${self}/programs/discord.nix"
   ];
 
   hardware.cpu.amd = {
