@@ -11,7 +11,6 @@ let
   arkenfox_userjs =
     (import "${self}/lib/read_user_js.nix" (builtins.readFile "${pkgs.arkenfox-userjs}/user.js")).parsed
     // {
-      # overrides
       "security.OCSP.enabled" = 0;
       "security.OCSP.require" = false;
       "privacy.resistFingerprinting.letterboxing" = false;
@@ -38,10 +37,12 @@ let
       "toolkit.telemetry.unified" = false;
 
       "browser.casting.enabled" = false;
+      "browser.compactmode.show" = true;
       "browser.download.folderList" = 2;
       "browser.download.forbid_open_with" = true;
       "browser.fixup.alternate.enabled" = false; # Dont fix typed URLs with eg 'www' prefix. for urlbar search keys
       "browser.translations.enable" = false;
+      "browser.uidensity" = 1;
       "browser.uitour.url" = "";
       "browser.urlbar.suggest.history" = false;
       "browser.urlbar.suggest.openpage" = false;
@@ -77,6 +78,13 @@ let
       "privacy.resistFingerprinting" = false; # sadly, this need to be, otherwise prefers-color-scheme is inaccessible for websites
       # https://superuser.com/questions/1610744/how-do-i-get-around-resistfingerprinting-setting-my-preferred-firefox-theme-to-l
       "privacy.fingerprintingProtection.overrides" = "+AllTargets,-CSSPrefersColorScheme";
+
+      # disable nova design
+      "browser.aboutaddons.novaThemesPickerEnabled" = false;
+      "browser.newtabpage.activity-stream.nova.enabled" = false;
+      "browser.nova.enabled" = false;
+      "browser.urlbar.quicksuggest.ampTopPickUseNovaIconSize" = false;
+      "pdfjs.enableNova" = false;
 
       # https://www.theregister.com/2024/06/18/mozilla_buys_anonym_betting_privacy/
       "dom.private-attribution.submission.enabled" = "false";
@@ -121,10 +129,7 @@ in
         id = 0;
         name = "default";
         isDefault = true;
-        settings =
-          import ./mozilla_prefs.nix { inherit lib; }
-          // arkenfox_userjs
-          // custom_settings;
+        settings = import ./mozilla_prefs.nix { inherit lib; } // arkenfox_userjs // custom_settings;
 
         bookmarks = {
           enable = true;
