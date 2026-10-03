@@ -225,12 +225,13 @@ in
           deny ${home}/.bash_history rwklmx,
 
           # rust, for projects managed by rustup and not nix
-          ${home}/.rustup/** r,
-          ${home}/.cargo/ r,
+          ${home}/.rustup/{,**} r,
+          ${home}/.cargo/{,**} r,
           ${home}/.cargo/.* rwk,
-          ${home}/.cargo/registry/ r,
-          ${home}/.cargo/registry/** r,
-          /nix/store/*-rust{c,fmt,-analyzer}-*/** rix,
+          ${home}/.cargo/registry/{,**} r,
+          /nix/store/*-rust{,up,c,fmt,-analyzer}-*/** rix,
+          /nix/store/*-cargo-*/** rix,
+          ${home}/.rustup/toolchains/** rix,
 
           ${xdg.binHome}/** r,
           ${xdg.configHome}/** r,
@@ -257,8 +258,7 @@ in
 
           # write-exec dirs
           ${mk_aa_rules (dir: ''
-            ${dir}/ rw,
-            ${dir}/** rwixklm,
+            ${dir}/{,**} rwixklm,
           '') goose.workdirs}
 
           # tools and rt deps
@@ -268,16 +268,13 @@ in
           '') (goose.allowed_tools ++ goose.rt_deps)}
 
           #nix
-          /nix/store/ r,
-          /nix/store/** r,
+          /nix/store/{,**} r,
           /nix/store/*/lib/**.so* rm,
           ${xdg.cacheHome}/nix/** rwk,
           / r,
 
-          @{etc_ro}/ssl/certs/ r,
-          @{etc_ro}/ssl/certs/** r,
-          @{etc_ro}/pki/tls/certs/ r,
-          @{etc_ro}/pki/tls/certs/** r,
+          @{etc_ro}/ssl/certs/{,**} r,
+          @{etc_ro}/pki/tls/certs/{,**} r,
           @{etc_ro}/passwd r,
           @{run}/nscd/socket r,
           @{run}/systemd/resolve/stub-resolv.conf r,
@@ -293,8 +290,7 @@ in
           owner /dev/pts/** rw,
           /dev/urandom r,
           /dev/null rw,
-          /tmp/ r,
-          /tmp/** r,
+          /tmp/{,**} r,
           owner /tmp/** wk,
         }
       '';
