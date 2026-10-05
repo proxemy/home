@@ -100,9 +100,12 @@ in
     mounts = [
       {
         type = mount.type;
-        mountConfig.Options = mount.options;
         what = mount.source;
         where = mount.target;
+        mountConfig = {
+          Options = mount.options;
+          TimeoutSec = 5;
+        };
       }
     ];
 
