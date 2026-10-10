@@ -157,14 +157,22 @@ in
 
         ${builtins.toString (
           builtins.map (model: ''
-            echo checking: ${model.hf-repo} / ${model.hf-file}
+            echo Checking HF repo/file: ${model.hf-repo} / ${model.hf-file}
+            found=true
 
-            if ! grep -q "${model.hf-repo}" <<< "$cached_models" \
-              || [ ! -f "$LLAMA_CACHE"/**/"${model.hf-file}" ] \
-            ; then
-              echo Missing repo: "${model.hf-repo}"
-              echo or missing file: "${model.hf-file}"
-              echo downloading ...
+            if ! grep -q "${model.hf-repo}" <<< "$cached_models"; then
+              echo Mising repo: "${model.hf-repo}"
+              found=false
+            fi
+
+            # TODO: this is still weak. searches across all possible repos for a named file.
+            if [[ -z $(find -L "$LLAMA_CACHE" -name "${model.hf-file}") ]]; then
+              echo Mising file: "${model.hf-file}"
+              found=false
+            fi
+
+            if ! $found; then
+              echo downloading from HF...
 
               ${llama_pkg}/bin/llama download \
                 --hf-repo "${model.hf-repo}" \
