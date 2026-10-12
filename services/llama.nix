@@ -30,7 +30,7 @@ let
       n-gpu-layers = 63; # of 64
       n-gpu-layers-draft = 0;
 
-      ctx-size = 84 * 1024;
+      ctx-size = 75 * 1024;
       reasoning-budget = ctx-size / 4;
       #reasoning-effort = "low";
       n-predict = ctx-size / 4;
