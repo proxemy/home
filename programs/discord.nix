@@ -4,5 +4,8 @@
     pkgs.discord
   ];
 
-  nixpkgs.config.allowUnfreePackages = [ "discord" "discord-unwrapped" ];
+  nixpkgs.config.allowUnfreePackages = [
+    "discord"
+    "discord-unwrapped"
+  ];
 }
