@@ -15,7 +15,7 @@
     wireshark.enable = true;
     usbtop.enable = true;
     htop.enable = true;
-    sedutil.enable = true;
+    #sedutil.enable = true; # TMP: disabled to fix breakage
   };
 
   users.users.${secrets.username}.packages = with pkgs; [

@@ -16,7 +16,7 @@
     #"${self}/services/ollama.nix"
     #"${self}/services/open-webui.nix"
     "${self}/services/llama.nix"
-    "${self}/programs/goose.nix"
+    #"${self}/programs/goose.nix" # TMP: fixing breakage
     "${self}/programs/steam.nix"
     "${self}/programs/chromium.nix"
     "${self}/programs/discord.nix"
