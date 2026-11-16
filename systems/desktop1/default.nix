@@ -13,10 +13,10 @@
     "${self}/profiles/dev.nix"
     "${self}/profiles/nvidia_gpu.nix"
     "${self}/services/nas_client.nix"
-    #"${self}/services/ollama.nix"
+    "${self}/services/ollama.nix"
     #"${self}/services/open-webui.nix"
     "${self}/services/llama.nix"
-    #"${self}/programs/goose.nix" # TMP: fixing breakage
+    "${self}/programs/goose.nix" # TMP: fixing breakage
     "${self}/programs/steam.nix"
     "${self}/programs/chromium.nix"
     "${self}/programs/discord.nix"

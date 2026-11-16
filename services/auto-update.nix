@@ -19,7 +19,7 @@ in
   system.autoUpgrade = {
     enable = true;
     allowReboot = true;
-    dates = "03:00";
+    operation = "boot";
     flake = home_git_dir;
 
     flags = [
@@ -28,10 +28,11 @@ in
     ]
     ++ lib.optional cfg.debug "--verbose";
 
+    dates = "03:00";
     randomizedDelaySec = "30min";
     rebootWindow = {
       lower = "03:00";
-      upper = "04:00";
+      upper = "05:00";
     };
   };
 

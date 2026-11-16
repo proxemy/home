@@ -43,7 +43,7 @@
 
   boot.binfmt.emulatedSystems = lib.lists.remove host.platform cfg.supported_systems;
 
-  system.autoUpgrade.operation = "boot";
+  system.autoUpgrade.allowReboot = lib.mkForce false;
 
   services = {
     devmon.enable = true;
