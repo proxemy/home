@@ -105,10 +105,11 @@
             "nixos-rebuild build --flake .#${laptop2}[-installer]\n" \
             "nix run .#dd_installer -- <hostname> [<block device>]\n" \
             "nixos-generate --flake .#${rpi1} --format iso --out-link result\n" \
-            "nix build .#nixosConfigurations.${rpi1}.config.system.build.sdImage\n" \
+            "nix build .#nixosConfigurations.${rpi1}.config.system.build.images.sd-card\n" \
             "nix build .#nixosConfigurations.${desktop1}.config.home-manager.users.${username}.home-files\n" \
             "home-manager switch --flake .\n" \
             "nixos-option --flake .#${rpi2} --recursive boot.kernelPackages.kernel\n" \
+            "nixos-rebuild build-vm --flake .#${rpi2}\n" \
             "Hosts: ${builtins.toString list_of.hostnames}"
           '';
       };

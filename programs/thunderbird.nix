@@ -53,6 +53,7 @@ in
           "network.proxy.socks_port" = secrets.tor_proxy.socks_port;
           "network.proxy.allow_bypass" = false;
           "network.proxy.socks_remote_dns" = true;
+          "network.proxy.socks5_remote_dns" = true;
 
           "browser.search.suggest.enabled" = false;
           "browser.search.update" = false;

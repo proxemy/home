@@ -77,4 +77,6 @@
   services.pipewire.enable = false; # conflict with Pulseaudio
 
   zramSwap.enable = true;
+
+  environment.enableDebugInfo = cfg.debug;
 }
