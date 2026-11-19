@@ -33,8 +33,10 @@
       ExitRelay = false;
       #Sandbox = true;
 
-      ORPort = [ 9001 ]; # Onion Routing Port for data
-      #DirPort = [ 9030 ]; # Directory Port for node organisation # not for bridge relays
+      ORPort = [ 9001 ]; # Onion routing port, peer to peer
+      ControlPort = 0;
+      ControlSocket = null;
+      #DirPort = [ 9030 ]; # optional, directory querying.
       ConnLimit = 200;
 
       HeartbeatPeriod = "2 hours"; # log message interval, default: 6 hours
