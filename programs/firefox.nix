@@ -36,38 +36,48 @@ let
       "toolkit.telemetry.server" = "";
       "toolkit.telemetry.unified" = false;
 
+      "beacon.enabled" = false;
       "browser.casting.enabled" = false;
       "browser.compactmode.show" = true;
       "browser.download.folderList" = 2;
       "browser.download.forbid_open_with" = true;
       "browser.fixup.alternate.enabled" = false; # Dont fix typed URLs with eg 'www' prefix. for urlbar search keys
+      "browser.send_pings" = false;
       "browser.translations.enable" = false;
       "browser.uidensity" = 1;
       "browser.uitour.url" = "";
       "browser.urlbar.suggest.history" = false;
       "browser.urlbar.suggest.openpage" = false;
       "browser.urlbar.suggest.topsites" = false;
+      "dom.event.clipboardevents.enabled" = false;
       "dom.popup_allowed_events" = "click dblclick mousedown pointerdown";
+      "dom.security.https_only_mode" = true;
+      "dom.security.https_only_mode_pbm" = true;
       #"extensions.autoDisableScopes" = 15;
       "extensions.formautofill.addresses.enabled" = false;
       "extensions.formautofill.creditCards.enabled" = false;
+      "geo.enabled" = false;
       "keyword.enabled" = true; # Enable keyword search in the urlbar.
       "layout.css.visited_links_enabled" = false;
       "media.gmp-gmpopenh264.enabled" = false;
       "media.gmp-provider.enabled" = false;
+      "media.peerconnection.enabled" = false;
       "media.peerconnection.ice.no_host" = true;
+      "network.http.referer.XOriginPolicy" = 1;
+      "network.http.sendRefererHeader" = 0;
       "network.proxy.allow_bypass" = false;
-      "etwork.http.sendRefererHeader" = 0;
       "network.trr.custom_uri" = dns_server;
-      "network.trr.uri" = dns_server;
       "network.trr.default_provider_uri" = dns_server;
       "network.trr.mode" = 3;
+      "network.trr.uri" = dns_server;
       "permissions.default.shortcuts" = 2;
       "places.history.enabled" = false;
       "privacy.fingerprintingProtection.remoteOverrides.enabled" = false;
+      "privacy.partition.network_state" = true;
       "privacy.resistFingerprinting.randomization.daily_reset.enabled" = true;
       "privacy.resistFingerprinting.randomization.daily_reset.private.enabled" = true;
       "privacy.trackingprotection.enabled" = true;
+      "security.mixed_content.block_active_content" = true;
       "security.mixed_content.block_display_content" = true;
       "signon.rememberSignons" = false;
 
@@ -79,7 +89,7 @@ let
       # https://superuser.com/questions/1610744/how-do-i-get-around-resistfingerprinting-setting-my-preferred-firefox-theme-to-l
       "privacy.fingerprintingProtection.overrides" = "+AllTargets,-CSSPrefersColorScheme";
 
-      # disable nova design
+      # disable nova UI design
       "browser.aboutaddons.novaThemesPickerEnabled" = false;
       "browser.newtabpage.activity-stream.nova.enabled" = false;
       "browser.nova.enabled" = false;
